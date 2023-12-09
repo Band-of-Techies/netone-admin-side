@@ -9,6 +9,7 @@ import 'package:netone_loanmanagement_admin/src/pages/dashboard/agents.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/bankstatus.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/closedorders.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/customers.dart';
+import 'package:netone_loanmanagement_admin/src/pages/dashboard/products.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/searchSection.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/netonestatus.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/orderconfirmed.dart';
@@ -168,7 +169,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   isSelected: selectedTab == 'order_closed',
                   onTap: () => onTabSelected('order_closed'),
                 ),
-                SizedBox(height: 20),
                 SidebarTab(
                   title: 'Search',
                   isSelected: selectedTab == 'search_requests',
@@ -184,7 +184,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   isSelected: selectedTab == 'order_rejected',
                   onTap: () => onTabSelected('order_rejected'),
                 ),
-                SizedBox(height: 10),
+                SidebarTab(
+                  title: 'Products',
+                  isSelected: selectedTab == 'products',
+                  onTap: () => onTabSelected('products'),
+                ),
                 SidebarTab(
                   title: 'Agents',
                   isSelected: selectedTab == 'agents',
@@ -253,6 +257,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return AgentStatus();
       case 'search_requests':
         return SearchStatus();
+      case 'products':
+        return ProductsStatus();
       case 'logout':
         clearSharedPreferences();
         return SizedBox();

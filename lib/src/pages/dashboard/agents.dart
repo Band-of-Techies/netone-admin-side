@@ -3,6 +3,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 
@@ -24,7 +25,8 @@ class _AgentStatusState extends State<AgentStatus> {
   TextEditingController addpasswordController = TextEditingController();
   TextEditingController addconfirmPasswordController = TextEditingController();
   TextEditingController addemailController = TextEditingController();
-
+  List<Map<String, dynamic>> agentsList = [];
+  String? createddate;
   bool isEditing = true;
   @override
   Widget build(BuildContext context) {
@@ -45,8 +47,12 @@ class _AgentStatusState extends State<AgentStatus> {
                 children: [
                   Wrap(
                     children: [
-                      for (int i = 0; i < 10; i++)
-                        agentcontainer('Agent ${i + 1}'),
+                      for (int i = 0; i < agentsList.length; i++)
+                        GestureDetector(
+                            onTap: () {
+                              fetchDataForAgent(agentsList[i]['id']);
+                            },
+                            child: agentcontainer(agentsList[i]['name'])),
                     ],
                   ),
                   SizedBox(
@@ -55,7 +61,11 @@ class _AgentStatusState extends State<AgentStatus> {
                   SizedBox(
                     width: 500,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        if (createddate != null)
+                          CustomText(text: 'Create At: $createddate'),
+                        SizedBox(height: 30),
                         buildEditableField(
                           'Username',
                           usernameController,
@@ -300,6 +310,79 @@ class _AgentStatusState extends State<AgentStatus> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    fetchDataAndBuildUI();
+  }
+
+  Future<void> fetchDataForAgent(int i) async {
+    String bearerToken =
+        'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAyNjYwNzk3fQ.aNgcnhSk31oF3CP_72Aiy38hKiNYIuhrNrxcGk6jp7Y';
+    try {
+      final response = await Dio().get(
+        'https://loan-managment.onrender.com/users/$i',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $bearerToken',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        // Extract name and email from the response and update the controllers
+        setState(() {
+          DateTime originalDate = DateTime.parse(response.data['created_at']);
+
+          // Format the date in the desired format
+          String formattedDate =
+              DateFormat("dd MMMM yyyy hh:mm a").format(originalDate);
+
+          usernameController.text = response.data['name'];
+          emailController.text = response.data['email'];
+          createddate = formattedDate;
+        });
+      } else {
+        // Handle error if the request fails
+        throw Exception('Failed to load agent data');
+      }
+    } catch (error) {
+      // Handle Dio errors or network errors
+      print('Error: $error');
+      throw Exception('Failed to load agent data');
+    }
+  }
+
+  Future<void> fetchDataAndBuildUI() async {
+    try {
+      // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
+      String bearerToken =
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAyNjYwNzk3fQ.aNgcnhSk31oF3CP_72Aiy38hKiNYIuhrNrxcGk6jp7Y';
+
+      final response = await Dio().get(
+        'https://loan-managment.onrender.com/users',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $bearerToken',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          agentsList = List<Map<String, dynamic>>.from(response.data['users']);
+        });
+      } else {
+        // If the request fails, you can throw an exception or handle it accordingly
+        throw Exception('Failed to load user data');
+      }
+    } catch (error) {
+      // Handle Dio errors or network errors
+      print('Error: $error');
+      throw Exception('Failed to load user data');
+    }
+  }
+
   Future<void> createUser(String name, String password, String confirmPassword,
       String email) async {
     try {
@@ -316,16 +399,20 @@ class _AgentStatusState extends State<AgentStatus> {
         options: Options(
           headers: {
             'Authorization':
-                'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAxNjc0NjE5fQ.6vC4yaryRm4Q3mwfzAPvP-JxbqqF-3YmS6qQW_00bbk',
+                'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAyNjYwNzk3fQ.aNgcnhSk31oF3CP_72Aiy38hKiNYIuhrNrxcGk6jp7Y',
           },
         ),
       );
 
       // Check if the response status code is in the success range (200-299)
-      if (response.statusCode == 200 && response.statusCode == 201) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         // Successful request
-        warning('Agent Created');
+        fetchDataAndBuildUI();
         print('Success: ${response.data}');
+        addusernameController.clear();
+        addpasswordController.clear();
+        addconfirmPasswordController.clear();
+        addemailController.clear();
       } else {
         warning('Email already exist');
         // Request failed with an error status code

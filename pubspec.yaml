@@ -42,7 +42,7 @@ dependencies:
   flutter_bloc: ^8.0.1
   table_calendar: ^3.0.5
   http: ^1.1.0
-  intl: ^0.17.0
+  intl: ^0.18.1
   dropdown_button2: ^2.3.9
   image_picker: ^1.0.4
   file_picker: ^6.1.1
