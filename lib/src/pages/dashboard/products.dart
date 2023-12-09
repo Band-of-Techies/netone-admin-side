@@ -56,65 +56,83 @@ class _ProductsStatusState extends State<ProductsStatus> {
                     decoration: BoxDecoration(
                         color: AppColors.sidebarbackground,
                         borderRadius: BorderRadius.circular(10)),
-                    child: Row(
+                    child: Stack(
                       children: [
-                        Container(
-                          margin: EdgeInsets.only(right: 10),
-                          width: 120,
-                          height: MediaQuery.of(context).size.height * .18,
-                          decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                scale: .5,
-                                opacity: .7,
-                                image: AssetImage(
-                                    '../../assets/png/in-stock.png'), // Replace 'your_image.png' with the path to your image asset
-                                fit: BoxFit.contain,
-                              ),
-                              color: AppColors.mainColor,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  bottomLeft: Radius.circular(10))),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  CustomText(text: products[i]['name']),
-                                  SizedBox(
-                                    width: 20,
+                        Row(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(right: 10),
+                              width: 120,
+                              height: MediaQuery.of(context).size.height * .18,
+                              decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    scale: .5,
+                                    opacity: .7,
+                                    image: AssetImage(
+                                        '../../assets/png/in-stock.png'), // Replace 'your_image.png' with the path to your image asset
+                                    fit: BoxFit.contain,
                                   ),
-                                  CustomText(text: products[i]['price']),
+                                  color: AppColors.mainColor,
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      bottomLeft: Radius.circular(10))),
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      CustomText(text: products[i]['name']),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      CustomText(text: products[i]['price']),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomText(
+                                    text:
+                                        'Created: ${formatDate(products[i]['created_at'])}',
+                                    fontSize: 12,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomText(
+                                    text:
+                                        'Updated: ${formatDate(products[i]['updated_at'])}',
+                                    fontSize: 12,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomText(
+                                    text: products[i]['description'],
+                                    fontSize: 12,
+                                  ),
                                 ],
                               ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomText(
-                                text:
-                                    'Created: ${formatDate(products[i]['created_at'])}',
-                                fontSize: 12,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomText(
-                                text:
-                                    'Updated: ${formatDate(products[i]['updated_at'])}',
-                                fontSize: 12,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomText(
-                                text: products[i]['description'],
-                                fontSize: 12,
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
+                        Positioned(
+                            right: 5,
+                            top: 5,
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.delete,
+                                color: AppColors.mainbackground,
+                              ),
+                              onPressed: () {
+                                // Show the confirmation dialog
+                                _showDeleteConfirmationDialog(
+                                    context, products[i]['id'].toString());
+                              },
+                            ))
                       ],
                     ),
                   ),
@@ -124,6 +142,63 @@ class _ProductsStatusState extends State<ProductsStatus> {
               child: CircularProgressIndicator(color: AppColors.primary),
             ),
     );
+  }
+
+  // Function to show the confirmation dialog
+  Future<void> _showDeleteConfirmationDialog(
+      BuildContext context, String productId) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.sidebarbackground,
+          title: CustomText(text: 'Delete Confirmation'),
+          content: CustomText(text: 'Are you sure you want to delete?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: CustomText(text: 'Cancel'),
+            ),
+            ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(AppColors.mainColor)),
+              onPressed: () {
+                _deleteProduct(productId);
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: CustomText(text: 'Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteProduct(String productId) async {
+    try {
+      print(productId);
+      Dio dio = Dio();
+      dio.options.headers['Authorization'] =
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAyNjYwNzk3fQ.aNgcnhSk31oF3CP_72Aiy38hKiNYIuhrNrxcGk6jp7Y';
+      final response = await dio
+          .delete('https://loan-managment.onrender.com/products/$productId');
+
+      // Check the response status code and handle accordingly
+      if (response.statusCode == 200) {
+        // Successful delete
+        _fetchProducts();
+        print('Product deleted successfully.');
+      } else {
+        // Handle error
+        print('Error deleting product. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle Dio errors
+      print('Dio error: $error');
+    }
   }
 
   String formatDate(String dateString) {
@@ -157,7 +232,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter a product';
                           } else if (value.length < 4) {
-                            return 'Username must be at least 4 characters long';
+                            return 'Product name must be at least 4 characters long';
                           }
                           return null; // Return null if validation passes
                         },

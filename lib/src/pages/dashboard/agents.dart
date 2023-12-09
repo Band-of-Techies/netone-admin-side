@@ -20,11 +20,6 @@ class _AgentStatusState extends State<AgentStatus> {
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   final GlobalKey<FormState> _formKeycreateagent = GlobalKey<FormState>();
-  final GlobalKey<FormState> _formKeyeditagent = GlobalKey<FormState>();
-  TextEditingController addusernameController = TextEditingController();
-  TextEditingController addpasswordController = TextEditingController();
-  TextEditingController addconfirmPasswordController = TextEditingController();
-  TextEditingController addemailController = TextEditingController();
   List<Map<String, dynamic>> agentsList = [];
   String? createddate;
   bool isEditing = true;
@@ -32,251 +27,115 @@ class _AgentStatusState extends State<AgentStatus> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.mainbackground,
-      body: SingleChildScrollView(
-          child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 800,
-            child: Form(
-              key: _formKeyeditagent,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Wrap(
-                    children: [
-                      for (int i = 0; i < agentsList.length; i++)
-                        GestureDetector(
-                            onTap: () {
-                              fetchDataForAgent(agentsList[i]['id']);
-                            },
-                            child: agentcontainer(agentsList[i]['name'])),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  SizedBox(
-                    width: 500,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.add,
+          color: AppColors.neutral,
+        ),
+        backgroundColor: AppColors.mainColor,
+        onPressed: () {
+          usernameController.clear();
+          confirmPasswordController.clear();
+          passwordController.clear();
+          _showAddAgentPopup(context);
+        },
+      ),
+      body: agentsList != null && agentsList.isNotEmpty
+          ? Wrap(children: [
+              for (int i = 0; i < agentsList.length; i++)
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    margin: EdgeInsets.all(10),
+                    width: MediaQuery.of(context).size.width * .35,
+                    height: MediaQuery.of(context).size.height * .1,
+                    decoration: BoxDecoration(
+                        color: AppColors.sidebarbackground,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Stack(
                       children: [
-                        if (createddate != null)
-                          CustomText(text: 'Create At: $createddate'),
-                        SizedBox(height: 30),
-                        buildEditableField(
-                          'Username',
-                          usernameController,
-                          isEditing,
-                          (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a username';
-                            } else if (value.length < 6) {
-                              return 'Username must be at least 6 characters long';
-                            }
-                            return null; // Return null if validation passes
-                          },
+                        Row(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(right: 10),
+                              width: 120,
+                              height: MediaQuery.of(context).size.height * .18,
+                              decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    scale: .5,
+                                    opacity: .7,
+                                    image: AssetImage(
+                                        '../../assets/png/agent.png'), // Replace 'your_image.png' with the path to your image asset
+                                    fit: BoxFit.contain,
+                                  ),
+                                  color: AppColors.mainColor,
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      bottomLeft: Radius.circular(10))),
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      CustomText(text: agentsList[i]['name']),
+                                      SizedBox(
+                                        width: 30,
+                                      ),
+                                      CustomText(
+                                        text: agentsList[i]['role'],
+                                        fontSize: 12,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomText(
+                                    text: agentsList[i]['email'],
+                                    fontSize: 12,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 30),
-                        buildEditableField(
-                          'Email',
-                          emailController,
-                          isEditing,
-                          (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter an email';
-                            } else if (!value.contains('@') ||
-                                !value.contains('.com')) {
-                              return 'Email format error';
-                            }
-                            return null; // Return null if validation passes
-                          },
-                        ),
-                        SizedBox(height: 30),
-                        buildEditableField(
-                          'Password',
-                          passwordController,
-                          isEditing,
-                          (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a password';
-                            }
-                            return null; // Return null if validation passes
-                          },
-                        ),
-                        SizedBox(height: 30),
-                        buildEditableField(
-                          'Confirm Password',
-                          confirmPasswordController,
-                          isEditing,
-                          (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please confirm your password';
-                            } else if (value != passwordController.text) {
-                              return 'Passwords do not match';
-                            }
-                            return null; // Return null if validation passes
-                          },
-                        ),
+                        Positioned(
+                            right: 5,
+                            top: 5,
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.delete,
+                                color: AppColors.mainbackground,
+                              ),
+                              onPressed: () {
+                                _showDeleteConfirmationDialog(
+                                    context, agentsList[i]['id'].toString());
+                                // Show the confirmation dialog
+                              },
+                            ))
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
-
-                  //show this button only when agents are fetched and clicked on any of the agents
-                  ElevatedButton(
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(AppColors.mainColor),
-                          padding:
-                              MaterialStateProperty.all(EdgeInsets.all(15))),
-                      onPressed: () {
-                        setState(() {
-                          isEditing = !isEditing;
-                        });
-                        if (_formKeyeditagent.currentState?.validate() ??
-                            false) {
-                          // The form is valid, perform the necessary actions
-                        }
-                      },
-                      child: CustomText(
-                        text: isEditing == true ? 'Edit' : 'Update',
-                        color: AppColors.neutral,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      )),
-                ],
-              ),
+                )
+            ])
+          : Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
             ),
-          ),
-          Container(
-            height: 200,
-            width: 2, // Adjust the width as needed
-            color: AppColors.neutral, // Set the color of the divider
-          ),
-          Form(
-            key: _formKeycreateagent,
-            child: Column(
-              children: [
-                SizedBox(
-                  width: 300,
-                  child: Column(
-                    children: [
-                      buildEditableField(
-                        'Username',
-                        addusernameController,
-                        false,
-                        (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a username';
-                          } else if (value.length < 6) {
-                            return 'Username must be at least 6 characters long';
-                          }
-                          return null; // Return null if validation passes
-                        },
-                      ),
-                      SizedBox(height: 30),
-                      buildEditableField(
-                        'Email',
-                        addemailController,
-                        false,
-                        (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter an email';
-                          } else if (!value.contains('@') ||
-                              !value.contains('.com')) {
-                            return 'Email format error';
-                          }
-                          return null; // Return null if validation passes
-                        },
-                      ),
-                      SizedBox(height: 30),
-                      buildEditableField(
-                        'Password',
-                        addpasswordController,
-                        false,
-                        (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a password';
-                          } else if (!RegExp(r'^(?=.*[a-zA-Z])(?=.*\d).{6,}$')
-                              .hasMatch(value)) {
-                            return 'Password must contain at least one letter, one number, and be at least 6 characters long';
-                          }
-                          return null; // Return null if validation passes
-                        },
-                      ),
-                      SizedBox(height: 30),
-                      buildEditableField(
-                        'Confirm Password',
-                        addconfirmPasswordController,
-                        false,
-                        (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please confirm your password';
-                          } else if (value != addpasswordController.text) {
-                            return 'Passwords do not match';
-                          }
-                          return null; // Return null if validation passes
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(AppColors.mainColor),
-                        padding: MaterialStateProperty.all(EdgeInsets.all(15))),
-                    onPressed: () {
-                      if (_formKeycreateagent.currentState?.validate() ??
-                          false) {
-                        createUser(
-                            addusernameController.text,
-                            addpasswordController.text,
-                            addconfirmPasswordController.text,
-                            addemailController.text);
-                        // The form is valid, perform the necessary actions
-                      }
-                    },
-                    child: const CustomText(
-                      text: 'Add Agent',
-                      color: AppColors.neutral,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    )),
-              ],
-            ),
-          )
-        ],
-      )),
     );
   }
 
-  Container agentcontainer(String title) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          color: AppColors.sidebarbackground),
-      padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
-      margin: EdgeInsets.all(6),
-      child: CustomText(
-        text: title,
-        color: AppColors.neutral,
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-      ),
-    );
+  String formatDate(String dateString) {
+    DateTime dateTime = DateTime.parse(dateString);
+    String formattedDate = DateFormat('dd MMM yy, hh:mma').format(dateTime);
+    return formattedDate;
   }
 
   Widget buildEditableField(String labelText, TextEditingController controller,
-      bool isEditing, String? Function(String?)? validator) {
+      String? Function(String?)? validator) {
     return TextFormField(
-      readOnly: isEditing,
       controller: controller,
       decoration: InputDecoration(
         labelText: labelText,
@@ -314,43 +173,6 @@ class _AgentStatusState extends State<AgentStatus> {
   void initState() {
     super.initState();
     fetchDataAndBuildUI();
-  }
-
-  Future<void> fetchDataForAgent(int i) async {
-    String bearerToken =
-        'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAyNjYwNzk3fQ.aNgcnhSk31oF3CP_72Aiy38hKiNYIuhrNrxcGk6jp7Y';
-    try {
-      final response = await Dio().get(
-        'https://loan-managment.onrender.com/users/$i',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $bearerToken',
-          },
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        // Extract name and email from the response and update the controllers
-        setState(() {
-          DateTime originalDate = DateTime.parse(response.data['created_at']);
-
-          // Format the date in the desired format
-          String formattedDate =
-              DateFormat("dd MMMM yyyy hh:mm a").format(originalDate);
-
-          usernameController.text = response.data['name'];
-          emailController.text = response.data['email'];
-          createddate = formattedDate;
-        });
-      } else {
-        // Handle error if the request fails
-        throw Exception('Failed to load agent data');
-      }
-    } catch (error) {
-      // Handle Dio errors or network errors
-      print('Error: $error');
-      throw Exception('Failed to load agent data');
-    }
   }
 
   Future<void> fetchDataAndBuildUI() async {
@@ -408,11 +230,8 @@ class _AgentStatusState extends State<AgentStatus> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Successful request
         fetchDataAndBuildUI();
+        Navigator.pop(context);
         print('Success: ${response.data}');
-        addusernameController.clear();
-        addpasswordController.clear();
-        addconfirmPasswordController.clear();
-        addemailController.clear();
       } else {
         warning('Email already exist');
         // Request failed with an error status code
@@ -438,5 +257,168 @@ class _AgentStatusState extends State<AgentStatus> {
               color: AppColors.mainbackground,
               fontWeight: FontWeight.w500),
         )));
+  }
+
+  Future<void> _showDeleteConfirmationDialog(
+      BuildContext context, String agentid) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.sidebarbackground,
+          title: CustomText(text: 'Delete Confirmation'),
+          content: CustomText(text: 'Are you sure you want to delete?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: CustomText(text: 'Cancel'),
+            ),
+            ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(AppColors.mainColor)),
+              onPressed: () {
+                _deleteAgent(agentid);
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: CustomText(text: 'Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteAgent(String agentid) async {
+    try {
+      print(agentid);
+      Dio dio = Dio();
+      dio.options.headers['Authorization'] =
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAyNjYwNzk3fQ.aNgcnhSk31oF3CP_72Aiy38hKiNYIuhrNrxcGk6jp7Y';
+      final response = await dio
+          .delete('https://loan-managment.onrender.com/users/$agentid');
+
+      // Check the response status code and handle accordingly
+      if (response.statusCode! > 200 || response.statusCode! < 290) {
+        // Successful delete
+        fetchDataAndBuildUI();
+        print('Product deleted successfully.');
+      } else {
+        // Handle error
+        print('Error deleting product. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle Dio errors
+      print('Dio error: $error');
+    }
+  }
+
+  void _showAddAgentPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.sidebarbackground,
+          title: CustomText(text: 'Add Agent'),
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width * .4,
+            child: Form(
+              key: _formKeycreateagent,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Add your form fields or content for adding a product
+                  buildEditableField(
+                    'Username',
+                    usernameController,
+                    (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a username';
+                      } else if (value.length < 6) {
+                        return 'Username must be at least 6 characters long';
+                      }
+                      return null; // Return null if validation passes
+                    },
+                  ),
+                  SizedBox(height: 30),
+                  buildEditableField(
+                    'Email',
+                    emailController,
+                    (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter an email';
+                      } else if (!value.contains('@') ||
+                          !value.contains('.com')) {
+                        return 'Email format error';
+                      }
+                      return null; // Return null if validation passes
+                    },
+                  ),
+                  SizedBox(height: 30),
+                  buildEditableField(
+                    'Password',
+                    passwordController,
+                    (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a password';
+                      }
+                      return null; // Return null if validation passes
+                    },
+                  ),
+                  SizedBox(height: 30),
+                  buildEditableField(
+                    'Confirm Password',
+                    confirmPasswordController,
+                    (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please confirm your password';
+                      } else if (value != passwordController.text) {
+                        return 'Passwords do not match';
+                      }
+                      return null; // Return null if validation passes
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Close the popup
+                Navigator.of(context).pop();
+              },
+              child: CustomText(
+                text: 'Cancel',
+                fontSize: 16,
+                color: AppColors.mainColor,
+              ),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(AppColors.mainColor)),
+              onPressed: () async {
+                if (_formKeycreateagent.currentState!.validate()) {
+                  createUser(usernameController.text, passwordController.text,
+                      confirmPasswordController.text, emailController.text);
+                }
+              },
+              child: CustomText(
+                text: 'Add',
+                fontSize: 16,
+                color: AppColors.neutral,
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
