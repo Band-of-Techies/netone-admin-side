@@ -49,7 +49,9 @@ class _NetoneStatusSectionState extends State<NetoneStatusSection> {
         itemBuilder: (context, index) {
           RequestData requestData = requestList[index];
 
-          return RequestItem(
+          return SizedBox();
+          /*return RequestItem(
+            loanid: 12,
             agent: requestData.selectedAgent,
             functionstring: requestData.functionstring,
             productname: requestData.productname,
@@ -79,7 +81,7 @@ class _NetoneStatusSectionState extends State<NetoneStatusSection> {
             onVerticalMenuPressed: () {
               // Handle vertical menu press
             },
-          );
+          );*/
         },
       ),
     );

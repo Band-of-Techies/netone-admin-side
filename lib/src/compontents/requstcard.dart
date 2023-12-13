@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, library_private_types_in_public_api, use_key_in_widget_constructors
 
+import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,17 +14,19 @@ class RequestItem extends StatefulWidget {
   final String date;
   final bool isChecked;
   final Function(bool?) onCheckboxChanged;
-  final List<String> agents;
+  final List<Map<String, dynamic>> agents;
   final String selectedAgent;
-  final Function(String?) onAgentSelected;
+
   final VoidCallback onConfirm;
   final VoidCallback onVerticalMenuPressed;
   final String productname;
   final String amount;
   final String functionstring;
   final String agent;
+  final int loanid;
 
   RequestItem({
+    required this.loanid,
     required this.agent,
     required this.functionstring,
     required this.requestId,
@@ -33,7 +36,6 @@ class RequestItem extends StatefulWidget {
     required this.onCheckboxChanged,
     required this.agents,
     required this.selectedAgent,
-    required this.onAgentSelected,
     required this.onConfirm,
     required this.onVerticalMenuPressed,
     required this.amount,
@@ -45,6 +47,7 @@ class RequestItem extends StatefulWidget {
 }
 
 class _RequestItemState extends State<RequestItem> {
+  String? seletedagent;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -60,65 +63,95 @@ class _RequestItemState extends State<RequestItem> {
           children: [
             Row(
               children: [
-                Checkbox(
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(
-                      color: Colors.white, // Set the border color to white
-                      width: 1.0, // Set the border width
+                Row(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .02,
+                      child: Checkbox(
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(
+                            color:
+                                Colors.white, // Set the border color to white
+                            width: 1.0, // Set the border width
+                          ),
+                          borderRadius: BorderRadius.circular(
+                              4.0), // Adjust the border radius as needed
+                        ),
+                        checkColor: Colors.white,
+                        focusColor: Colors.white,
+                        activeColor: AppColors.mainColor,
+                        value: widget.isChecked,
+                        onChanged: widget.onCheckboxChanged,
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(
-                        4.0), // Adjust the border radius as needed
-                  ),
-                  checkColor: Colors.white,
-                  focusColor: Colors.white,
-                  activeColor: AppColors.mainColor,
-                  value: widget.isChecked,
-                  onChanged: widget.onCheckboxChanged,
+                    SizedBox(width: 12),
+                    SizedBox(
+                        width: MediaQuery.of(context).size.width * .05,
+                        child:
+                            CustomText(fontSize: 14, text: widget.requestId)),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .06,
+                      child: CustomText(
+                        fontSize: 13,
+                        text: widget.agent,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 12),
-                CustomText(fontSize: 14, text: widget.requestId),
                 SizedBox(
                   width: 15,
                 ),
-                CustomText(
-                  fontSize: 13,
-                  text: widget.agent,
-                  fontWeight: FontWeight.w300,
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                //check male or female here, so can check and show iamges accoridngly
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * .15,
+                  child: Row(
+                    children: [
+                      //check male or female here, so can check and show iamges accoridngly
 
-                CircleAvatar(
-                  radius: 20,
-                  backgroundImage: AssetImage('../../assets/png/avatar-4.png'),
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-                CustomText(
-                  fontSize: 15,
-                  text: widget.customerName,
-                  fontWeight: FontWeight.w700,
+                      CircleAvatar(
+                        radius: 20,
+                        backgroundImage:
+                            AssetImage('../../assets/png/avatar-4.png'),
+                      ),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      CustomText(
+                        fontSize: 15,
+                        text: widget.customerName,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-            CustomText(
-              fontSize: 14,
-              text: widget.date,
-              fontWeight: FontWeight.w400,
+            SizedBox(
+              width: MediaQuery.of(context).size.width * .1,
+              child: CustomText(
+                fontSize: 14,
+                text: widget.date,
+                fontWeight: FontWeight.w400,
+              ),
             ),
-            CustomText(
-              fontSize: 14,
-              text: widget.amount,
-              fontWeight: FontWeight.w400,
+            SizedBox(
+              width: MediaQuery.of(context).size.width * .05,
+              child: CustomText(
+                fontSize: 14,
+                text: widget.amount,
+                fontWeight: FontWeight.w400,
+              ),
             ),
-            CustomText(
-              fontSize: 14,
-              text: widget.productname,
-              fontWeight: FontWeight.w400,
+            SizedBox(
+              width: MediaQuery.of(context).size.width * .06,
+              child: CustomText(
+                fontSize: 14,
+                text: widget.productname,
+                fontWeight: FontWeight.w400,
+              ),
             ),
             Row(
               children: [
@@ -142,11 +175,11 @@ class _RequestItemState extends State<RequestItem> {
                     ),
                     items: widget.agents.map((agent) {
                       return DropdownMenuItem<String>(
-                        value: agent,
+                        value: agent['id'].toString(),
                         child: CustomText(
                           fontSize: 14,
                           color: AppColors.neutral,
-                          text: agent,
+                          text: agent['name'].toString(),
                         ),
                       );
                     }).toList(),
@@ -156,7 +189,12 @@ class _RequestItemState extends State<RequestItem> {
                       }
                       return null;
                     },
-                    onChanged: widget.onAgentSelected,
+                    onChanged: (agent) {
+                      setState(() {
+                        seletedagent = agent!;
+                        print(agent);
+                      });
+                    },
                     buttonStyleData: const ButtonStyleData(
                       padding: EdgeInsets.only(right: 8),
                     ),
@@ -179,7 +217,7 @@ class _RequestItemState extends State<RequestItem> {
                   ),
                 ),
                 SizedBox(
-                  width: 30,
+                  width: 25,
                 ),
                 TextButton(
                     style: ButtonStyle(
@@ -193,14 +231,16 @@ class _RequestItemState extends State<RequestItem> {
                         ),
                         backgroundColor:
                             MaterialStateProperty.all(AppColors.mainColor)),
-                    onPressed: () {},
+                    onPressed: () {
+                      _submitAssignment(widget.loanid, seletedagent!);
+                    },
                     child: CustomText(
                       fontSize: 14,
                       color: AppColors.neutral,
                       text: 'Submit',
                     )),
                 SizedBox(
-                  width: 30,
+                  width: 10,
                 ),
                 PopupMenuButton<String>(
                   color: AppColors.sidebarbackground,
@@ -218,7 +258,9 @@ class _RequestItemState extends State<RequestItem> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ViewApplication()),
+                            builder: (context) => ViewApplication(
+                                  loanRequestId: widget.loanid,
+                                )),
                       );
                       // Handle view action
                     }
@@ -258,5 +300,43 @@ class _RequestItemState extends State<RequestItem> {
         ),
       ),
     );
+  }
+
+  Future<void> _submitAssignment(int id, String seletedagent) async {
+    if (seletedagent != null) {
+      // Replace with your actual API endpoint
+      String apiUrl =
+          "https://loan-managment.onrender.com/loan_requests/$id/assign_to_agent";
+      // Replace 'yourAccessToken' with the actual token
+      String accessToken =
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAyNjYwNzk3fQ.aNgcnhSk31oF3CP_72Aiy38hKiNYIuhrNrxcGk6jp7Y';
+
+      Dio dio = Dio();
+      dio.options.headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      };
+
+      // Create the request body
+      Map<String, dynamic> requestBody = {
+        'user_id': seletedagent,
+      };
+      print(seletedagent);
+      print(id);
+      try {
+        Response response = await dio.post(apiUrl, data: requestBody);
+        if (response.statusCode == 201 || response.statusCode == 200) {
+          // Successfully created assignment (status code 201 for POST)
+          print('Assignment created successfully');
+        } else {
+          // Handle error
+          print(
+              'Failed to create assignment. Status code: ${response.statusCode}');
+        }
+      } catch (error) {
+        // Handle error
+        print('Error during POST request: $error');
+      }
+    }
   }
 }

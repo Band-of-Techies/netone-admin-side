@@ -38,7 +38,10 @@ class _EditApplicationState extends State<EditApplication>
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ViewApplication()),
+                  MaterialPageRoute(
+                      builder: (context) => ViewApplication(
+                            loanRequestId: 11,
+                          )),
                 );
               },
             ),

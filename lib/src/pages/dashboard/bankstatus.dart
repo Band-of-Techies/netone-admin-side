@@ -48,8 +48,9 @@ class _BankStatusSectionState extends State<BankStatusSection> {
         itemCount: requestList.length,
         itemBuilder: (context, index) {
           RequestData requestData = requestList[index];
-
-          return RequestItem(
+          return SizedBox();
+          /*   return RequestItem(
+            loanid: 12,
             agent: requestData.selectedAgent,
             functionstring: requestData.functionstring,
             productname: requestData.productname,
@@ -78,7 +79,7 @@ class _BankStatusSectionState extends State<BankStatusSection> {
             onVerticalMenuPressed: () {
               // Handle vertical menu press
             },
-          );
+          );*/
         },
       ),
     );

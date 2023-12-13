@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:netone_loanmanagement_admin/src/compontents/requstcard.dart';
 import 'package:netone_loanmanagement_admin/src/res/apis/request.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
@@ -13,10 +14,11 @@ class RequestsSection extends StatefulWidget {
 class _RequestsSectionState extends State<RequestsSection> {
   TextEditingController search = TextEditingController();
   // Mock data for demonstration purposes
-  List<String> agentList = ['Agent 1', 'Agent 2', 'Agent 3'];
+  List<Map<String, dynamic>> agentList = [];
   final Dio dio = Dio();
   bool isloading = true;
   List<LoanRequest>? loanRequests;
+  String seletedagent = 'Select Agent';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,17 +38,19 @@ class _RequestsSectionState extends State<RequestsSection> {
                 itemCount: loanRequests!.length,
                 itemBuilder: (context, index) {
                   return RequestItem(
+                    loanid: loanRequests![index].id,
                     agent:
-                        '', // Replace with actual agent information from API if available
+                        'Not Assigned', // Replace with actual agent information from API if available
                     functionstring: 'Select Agent',
-                    productname:
-                        'Mobile Phone', // Replace with actual product name from API if available
+                    productname: loanRequests![index]
+                        .product
+                        .name, // Replace with actual product name from API if available
                     amount: loanRequests![index].loanAmount,
                     requestId:
                         '203421', // Assuming 'id' is unique for each request
                     customerName: loanRequests![index].firstName,
-                    date: loanRequests![index]
-                        .createdAt, // Replace with actual date from API if available
+                    date: formatDate(loanRequests![index]
+                        .createdAt), // Replace with actual date from API if available
                     isChecked: false, // Set your own logic for isChecked
                     onCheckboxChanged: (value) {
                       // Handle checkbox change, if needed
@@ -54,10 +58,8 @@ class _RequestsSectionState extends State<RequestsSection> {
                     agents:
                         agentList, // Replace with actual agent list from API if available
                     selectedAgent:
-                        'Agent 1', // Replace with actual selected agent from API if available
-                    onAgentSelected: (agent) {
-                      // Handle agent selection, if needed
-                    },
+                        seletedagent, // Replace with actual selected agent from API if available
+
                     onConfirm: () {
                       // Handle confirmation
                     },
@@ -78,6 +80,12 @@ class _RequestsSectionState extends State<RequestsSection> {
   void initState() {
     super.initState();
     fetchData();
+  }
+
+  String formatDate(String dateString) {
+    DateTime dateTime = DateTime.parse(dateString);
+    String formattedDate = DateFormat('dd MMM yy, hh:mma').format(dateTime);
+    return formattedDate;
   }
 
   void fetchData() async {
@@ -104,6 +112,30 @@ class _RequestsSectionState extends State<RequestsSection> {
         });
       } else {
         print('Error: ${response.statusCode} - ${response.statusMessage}');
+      }
+      final String agentsApiEndpoint =
+          'https://loan-managment.onrender.com/users';
+      var agentsResponse = await dio.get(
+        agentsApiEndpoint,
+        options: Options(
+          headers: {'Authorization': 'Bearer $bearerToken'},
+        ),
+      );
+
+      if (agentsResponse.statusCode == 200 ||
+          agentsResponse.statusCode == 201) {
+        setState(() {
+          // Extract agent names from the response and update the agentList
+          agentList = (agentsResponse.data['users'] as List<dynamic>)
+              .map((agent) => {
+                    'id': agent['id'],
+                    'name': agent['name'],
+                  })
+              .toList();
+        });
+      } else {
+        print(
+            'Error: ${agentsResponse.statusCode} - ${agentsResponse.statusMessage}');
       }
     } catch (error) {
       print('Error: $error');

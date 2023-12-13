@@ -46,8 +46,10 @@ class _ClosedOrderStatusState extends State<ClosedOrderStatus> {
         itemCount: requestList.length,
         itemBuilder: (context, index) {
           RequestData requestData = requestList[index];
-
+          return SizedBox();
+          /*
           return RequestItem(
+            loanid: 12,
             agent: requestData.selectedAgent,
             functionstring: requestData.functionstring,
             productname: requestData.productname,
@@ -76,7 +78,7 @@ class _ClosedOrderStatusState extends State<ClosedOrderStatus> {
             onVerticalMenuPressed: () {
               // Handle vertical menu press
             },
-          );
+          );*/
         },
       ),
     );

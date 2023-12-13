@@ -49,7 +49,9 @@ class _OrderConfirmedStatusState extends State<OrderConfirmedStatus> {
         itemBuilder: (context, index) {
           RequestData requestData = requestList[index];
 
-          return RequestItem(
+          return SizedBox();
+          /* return RequestItem(
+            loanid: 12,
             agent: requestData.selectedAgent,
             functionstring: requestData.functionstring,
             productname: requestData.productname,
@@ -78,7 +80,7 @@ class _OrderConfirmedStatusState extends State<OrderConfirmedStatus> {
             onVerticalMenuPressed: () {
               // Handle vertical menu press
             },
-          );
+          );*/
         },
       ),
     );

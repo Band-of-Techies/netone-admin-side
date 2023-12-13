@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:netone_loanmanagement_admin/src/pages/applications/viewapplication.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'src/navigation/navigation_service.dart';
 import 'src/pages/loginsection/login/log_in_page.dart';
@@ -30,7 +31,9 @@ class App extends StatelessWidget {
             if (snapshot.data == true) {
               return DashboardScreen();
             } else {
-              return DashboardScreen();
+              return ViewApplication(
+                loanRequestId: 20,
+              );
             }
           } else {
             // You can return a loading indicator if needed

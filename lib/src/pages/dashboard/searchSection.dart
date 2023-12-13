@@ -218,8 +218,9 @@ class _SearchStatusState extends State<SearchStatus> {
               SizedBox(
                 height: 50,
               ),
-              for (int i = 0; i < 10; i++)
-                RequestItem(
+              for (int i = 0; i < 10; i++) SizedBox()
+              /* RequestItem(
+                  loanid: 12,
                   agent: 'Agent Name',
                   functionstring: 'Bank Status',
                   productname: 'Mobile',
@@ -244,7 +245,7 @@ class _SearchStatusState extends State<SearchStatus> {
                   onVerticalMenuPressed: () {
                     // Handle vertical menu press
                   },
-                )
+                )*/
             ],
           ),
         ],
