@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
-//for section one
 class LoanDetails {
-  String selectedLoanOption = '';
+  int? selectedLoanOption;
   TextEditingController descriptionController = TextEditingController();
   TextEditingController costofasset = TextEditingController();
   TextEditingController insurancecost = TextEditingController();
   TextEditingController advancepayment = TextEditingController();
   TextEditingController loanamaountapplied = TextEditingController();
-  TextEditingController tenure = TextEditingController();
+  String? tenure;
   TextEditingController firstapplicantproportion = TextEditingController();
   TextEditingController secondapplicantpropotion = TextEditingController();
   TextEditingController thirdapplicantpropotion = TextEditingController();
@@ -17,4 +16,21 @@ class LoanDetails {
   TextEditingController secondapplicant = TextEditingController();
   TextEditingController thirdapplicant = TextEditingController();
   TextEditingController fourthapplicant = TextEditingController();
+
+  void dispose() {
+    descriptionController.dispose();
+    costofasset.dispose();
+    insurancecost.dispose();
+    advancepayment.dispose();
+    loanamaountapplied.dispose();
+
+    firstapplicantproportion.dispose();
+    secondapplicantpropotion.dispose();
+    thirdapplicantpropotion.dispose();
+    fourthapplicantpropotion.dispose();
+    firstapplicant.dispose();
+    secondapplicant.dispose();
+    thirdapplicant.dispose();
+    fourthapplicant.dispose();
+  }
 }

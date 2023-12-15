@@ -1,10 +1,13 @@
 // ignore_for_file: must_be_immutable, avoid_print, prefer_const_constructors, use_key_in_widget_constructors
 
+import 'package:dio/dio.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:netone_loanmanagement_admin/src/application/datas/applicant.dart';
 import 'package:netone_loanmanagement_admin/src/pages/applications/editapplication.dart';
+import 'package:netone_loanmanagement_admin/src/res/apis/loandetails.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:netone_loanmanagement_admin/src/res/textfield.dart';
@@ -13,28 +16,181 @@ import 'package:provider/provider.dart';
 class SectionOne extends StatefulWidget {
   final MyTabController myTabController;
   late TabController _tabController;
-
-  SectionOne(this.myTabController, this._tabController);
+  int? id;
+  SectionOne(this.myTabController, this._tabController, this.id);
   @override
   _SectionOneState createState() => _SectionOneState();
 }
 
-class _SectionOneState extends State<SectionOne> {
+class _SectionOneState extends State<SectionOne>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
-
+  List<String>? applicantKeys;
+  late LoanRequestDetails loanDetail;
   // Controllers for text fields
   List<ApplicantDetails> applicants = [];
   List<String> ownedorlease = ['Owned', 'Lease'];
   List<String> genders = ['Male', 'Female'];
   bool isJointApplication = false;
   int numberOfPersons = 1;
+  List<String> provinces = [
+    'Central',
+    'Copperbelt',
+    'Eastern',
+    'Luapula',
+    'Lusaka',
+    'Northern',
+    'Muchinga',
+    'North-Western',
+    'Southern',
+    'Western',
+  ];
+  Map<String, List<String>> townsByProvince = {
+    'Central': [
+      'Chibombo District',
+      'Chisamba District',
+      'Chitambo District',
+      'Kabwe District',
+      'Kapiri Mposhi District',
+      'Luano District',
+      'Mkushi District',
+      'Mumbwa District',
+      'Ngabwe District',
+      'Serenje District',
+      'Shibuyunji District',
+    ],
+    'Copperbelt': [
+      'Chililabombwe District',
+      'Chingola District',
+      'Kalulushi District',
+      'Kitwe District',
+      'Luanshya District',
+      'Lufwanyama District',
+      'Masaiti District',
+      'Mpongwe District',
+      'Mufulira District',
+      'Ndola District',
+    ],
+    'Eastern': [
+      'Chadiza District',
+      'Chama District',
+      'Chasefu District',
+      'Chipangali District',
+      'Chipata District',
+      'Kasenengwa District',
+      'Katete District',
+      'Lumezi District',
+      'Lundazi District',
+      'Lusangazi District',
+      'Mambwe District',
+      'Nyimba District',
+      'Petauke District',
+      'Sinda District',
+      'Vubwi District',
+    ],
+    'Luapula': [
+      'Chembe District',
+      'Chiengi District',
+      'Chifunabuli District',
+      'Chipili District',
+      'Kawambwa District',
+      'Lunga District',
+      'Mansa District',
+      'Milenge District',
+      'Mwansabombwe District',
+      'Mwense District',
+      'Nchelenge District',
+      'Samfya District',
+    ],
+    'Lusaka': [
+      'Chilanga District',
+      'Chongwe District',
+      'Kafue District',
+      'Luangwa District',
+      'Lusaka District',
+      'Rufunsa District',
+    ],
+    'Muchinga': [
+      'Chinsali District',
+      'Isoka District',
+      'Mafinga District',
+      'Mpika District',
+      'Nakonde District',
+      'Shiwangandu District',
+      'Kanchibiya District',
+      'Lavushimanda District',
+    ],
+    'Northern': [
+      'Kasama District',
+      'Chilubi District',
+      'Kaputa District',
+      'Luwingu District',
+      'Mbala District',
+      'Mporokoso District',
+      'Mpulungu District',
+      'Mungwi District',
+      'Nsama District',
+      'Lupososhi District',
+      'Lunte District',
+      'Senga Hill District',
+    ],
+    'North-Western': [
+      'Chavuma District',
+      'Ikelenge District',
+      'Kabompo District',
+      'Kalumbila District',
+      'Kasempa District',
+      'Manyinga District',
+      'Mufumbwe District',
+      'Mushindamo District',
+      'Mwinilunga District',
+      'Solwezi District',
+      'Zambezi District',
+    ],
+    'Southern': [
+      'Chikankata District',
+      'Chirundu District',
+      'Choma District',
+      'Gwembe District',
+      'Itezhi-Tezhi District',
+      'Kalomo District',
+      'Kazungula District',
+      'Livingstone District',
+      'Mazabuka District',
+      'Monze District',
+      'Namwala District',
+      'Pemba District',
+      'Siavonga District',
+      'Sinazongwe District',
+      'Zimba District',
+    ],
+    'Western': [
+      'Kalabo District',
+      'Kaoma District',
+      'Limulunga District',
+      'Luampa District',
+      'Lukulu District',
+      'Mitete District',
+      'Mongu District',
+      'Mulobezi District',
+      'Mwandi District',
+      'Nalolo District',
+      'Nkeyema District',
+      'Senanga District',
+      'Sesheke District',
+      'Shangombo District',
+      'Sikongo District',
+      'Sioma District',
+    ],
+  };
 
   @override
   Widget build(BuildContext context) {
     final myTabController = Provider.of<MyTabController>(context);
     // Access data from myTabController to pre-fill form fields
     numberOfPersons = myTabController.numberOfPersons;
-    List<ApplicantDetails> applicants = myTabController.applicants;
+    applicants = myTabController.applicants;
+
     return Scaffold(
       backgroundColor: AppColors.mainbackground,
       body: Padding(
@@ -79,8 +235,8 @@ class _SectionOneState extends State<SectionOne> {
                           widget.myTabController.numberOfPersons > 1
                       ? Expanded(
                           child: DropdownButtonFormField(
-                            focusColor: AppColors.mainbackground,
-                            dropdownColor: AppColors.sidebarbackground,
+                            focusColor: AppColors.neutral,
+                            dropdownColor: AppColors.mainbackground,
                             value: numberOfPersons,
                             iconEnabledColor: AppColors.mainColor,
                             items: [1, 2, 3, 4].map((int value) {
@@ -149,30 +305,21 @@ class _SectionOneState extends State<SectionOne> {
                           MaterialStateProperty.all(AppColors.mainColor),
                       padding: MaterialStateProperty.all(EdgeInsets.all(15))),
                   onPressed: () {
-                    if (validateGender(applicants) &&
-                        validateOwnership(applicants)) {
-                      myTabController.applicants = applicants;
-                      myTabController.updateApplicants(applicants);
-                      widget._tabController
-                          .animateTo(widget._tabController.index + 1);
-                      widget.myTabController
-                          .updateNumberOfPersons(numberOfPersons);
-                      DefaultTabController.of(context)?.animateTo(1);
-                    }
-
                     if (_formKey.currentState!.validate()) {
                       // Form is valid, move to the next section
-
-                      //printApplicantDetails();
-                      if (widget._tabController.index <
-                          widget._tabController.length - 1) {
+                      if (validateGender(applicants) &&
+                          validateOwnership(applicants)) {
+                        //printApplicantDetails();
+                        updateData(widget.id!);
+                        print('update');
                       } else {
+                        warning('Complete Gender and Ownership');
                         // Handle the case when the last tab is reached
                       }
                     }
                   },
                   child: CustomText(
-                    text: 'Next',
+                    text: 'Update',
                     color: AppColors.neutral,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -189,7 +336,7 @@ class _SectionOneState extends State<SectionOne> {
       margin: EdgeInsets.only(bottom: 30),
       padding: EdgeInsets.fromLTRB(20, 25, 20, 25),
       decoration: BoxDecoration(
-          color: Color.fromARGB(255, 35, 42, 51),
+          color: AppColors.sidebarbackground,
           borderRadius: BorderRadius.circular(20)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,22 +411,15 @@ class _SectionOneState extends State<SectionOne> {
                 children: genders.map((String value) {
                   return Row(
                     children: [
-                      Theme(
-                        data: ThemeData(
-                          unselectedWidgetColor: AppColors
-                              .neutral, // Set your desired border color
-                        ),
-                        child: Radio(
-                          focusColor: Colors.white,
-                          activeColor: AppColors.mainColor,
-                          value: value,
-                          groupValue: applicant.gender,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              applicant.gender = newValue!;
-                            });
-                          },
-                        ),
+                      Radio(
+                        activeColor: AppColors.mainColor,
+                        value: value,
+                        groupValue: applicant.gender,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            applicant.gender = newValue!;
+                          });
+                        },
                       ),
                       CustomText(
                         text: value,
@@ -342,6 +482,14 @@ class _SectionOneState extends State<SectionOne> {
                   if (value == null || value.isEmpty) {
                     return 'Please enter NRC Number';
                   }
+
+                  // Define a regex pattern for NRC validation
+                  RegExp nrcPattern = RegExp(r'^[0-9/ ]+$');
+
+                  if (!nrcPattern.hasMatch(value)) {
+                    return 'NRC Number can only contain numbers, space, and "/"';
+                  }
+
                   return null;
                 },
               )),
@@ -360,6 +508,9 @@ class _SectionOneState extends State<SectionOne> {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your Telephone';
                   }
+                  if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                    return 'Please enter only numeric digits';
+                  }
                   return null;
                 },
               )),
@@ -372,6 +523,9 @@ class _SectionOneState extends State<SectionOne> {
                   // You might want to add more comprehensive mobile validation
                   if (value == null || value.isEmpty) {
                     return 'Please enter your Mobile Number';
+                  }
+                  if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                    return 'Please enter only numeric digits';
                   }
                   return null;
                 },
@@ -389,6 +543,11 @@ class _SectionOneState extends State<SectionOne> {
               if (value == null || value.isEmpty) {
                 return 'Please enter your Email Address';
               }
+              // Basic email validation using a regular expression
+
+              if (!value.contains('@') || !value.contains('.com')) {
+                return 'Please enter a valid Email Address';
+              }
               return null;
             },
           ),
@@ -401,12 +560,6 @@ class _SectionOneState extends State<SectionOne> {
                   child: FormTextField(
                 controller: applicant.licenseNumberController,
                 labelText: 'Driver License Number',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter License Number';
-                  }
-                  return null;
-                },
               )),
               SizedBox(width: 20),
               Expanded(
@@ -441,12 +594,6 @@ class _SectionOneState extends State<SectionOne> {
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please choose DOB';
-                      }
-                      return null;
-                    },
                   ),
                 ),
               )),
@@ -482,21 +629,15 @@ class _SectionOneState extends State<SectionOne> {
                 children: ownedorlease.map((String value) {
                   return Row(
                     children: [
-                      Theme(
-                        data: ThemeData(
-                          unselectedWidgetColor: AppColors
-                              .neutral, // Set your desired border color
-                        ),
-                        child: Radio(
-                          activeColor: AppColors.mainColor,
-                          value: value,
-                          groupValue: applicant.ownership,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              applicant.ownership = newValue!;
-                            });
-                          },
-                        ),
+                      Radio(
+                        activeColor: AppColors.mainColor,
+                        value: value,
+                        groupValue: applicant.ownership,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            applicant.ownership = newValue!;
+                          });
+                        },
                       ),
                       CustomText(
                         text: value,
@@ -513,12 +654,6 @@ class _SectionOneState extends State<SectionOne> {
                   child: FormTextField(
                 controller: applicant.howlongthisplaceController,
                 labelText: 'How Long at this Place',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'How long this place';
-                  }
-                  return null;
-                },
               )),
             ],
           ),
@@ -541,28 +676,127 @@ class _SectionOneState extends State<SectionOne> {
               )),
               SizedBox(width: 20),
               Expanded(
-                  child: FormTextField(
-                controller: applicant.townController,
-                labelText: 'Town',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter Town';
-                  }
-                  return null;
-                },
-              )),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton2<String>(
+                    dropdownStyleData: DropdownStyleData(
+                      decoration: BoxDecoration(
+                        color: AppColors.mainbackground,
+                      ),
+                      offset: const Offset(-20, 0),
+                      scrollbarTheme: ScrollbarThemeData(
+                        radius: const Radius.circular(40),
+                        thickness: MaterialStateProperty.all<double>(6),
+                        thumbVisibility: MaterialStateProperty.all<bool>(true),
+                      ),
+                    ),
+                    isExpanded: true,
+                    hint: Text(
+                      applicant.provinceController == null
+                          ? 'Select Province'
+                          : applicant.provinceController.toString(),
+                      style: GoogleFonts.dmSans(
+                        fontSize: 15,
+                        color: AppColors.neutral,
+                        height: .5,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    items: provinces
+                        .map((String item) => DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(
+                                item,
+                                style: GoogleFonts.dmSans(
+                                    fontWeight: FontWeight.w500,
+                                    height: .5,
+                                    fontSize: 15,
+                                    color: AppColors.neutral),
+                              ),
+                            ))
+                        .toList(),
+                    value: applicant.provinceController,
+                    onChanged: (String? value) {
+                      setState(() {
+                        applicant.provinceController = value;
+                        applicant.townController = null;
+                      });
+                    },
+                    buttonStyleData: ButtonStyleData(
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: applicant.provinceController == null
+                                  ? Colors.red
+                                  : Colors.grey,
+                              width: 1),
+                          borderRadius: BorderRadius.circular(4)),
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                  ),
+                ),
+              ),
               SizedBox(width: 20),
               Expanded(
-                  child: FormTextField(
-                controller: applicant.provinceController,
-                labelText: 'Province',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter Province';
-                  }
-                  return null;
-                },
-              )),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton2<String>(
+                    dropdownStyleData: DropdownStyleData(
+                      decoration: BoxDecoration(
+                        color: AppColors.mainbackground,
+                      ),
+                      offset: const Offset(-20, 0),
+                      scrollbarTheme: ScrollbarThemeData(
+                        radius: const Radius.circular(40),
+                        thickness: MaterialStateProperty.all<double>(6),
+                        thumbVisibility: MaterialStateProperty.all<bool>(true),
+                      ),
+                    ),
+                    isExpanded: true,
+                    hint: Text(
+                      applicant.townController != null
+                          ? applicant.townController.toString()
+                          : 'Select Town',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 15,
+                        color: AppColors.neutral,
+                        height: .5,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    items: applicant.provinceController != null
+                        ? townsByProvince[applicant.provinceController!]!
+                            .map((String item) => DropdownMenuItem<String>(
+                                  value: item,
+                                  child: Text(
+                                    item,
+                                    style: GoogleFonts.dmSans(
+                                      fontWeight: FontWeight.w500,
+                                      height: .5,
+                                      fontSize: 15,
+                                      color: AppColors.neutral,
+                                    ),
+                                  ),
+                                ))
+                            .toList()
+                        : [],
+                    value: applicant.townController,
+                    onChanged: (String? value) {
+                      setState(() {
+                        applicant.townController = value;
+                      });
+                    },
+                    buttonStyleData: ButtonStyleData(
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: applicant.townController == null &&
+                                      applicant.townController == null
+                                  ? Colors.red
+                                  : Colors.grey,
+                              width: 1),
+                          borderRadius: BorderRadius.circular(4)),
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
@@ -573,24 +807,35 @@ class _SectionOneState extends State<SectionOne> {
   @override
   void initState() {
     super.initState();
-    applicants = List.generate(numberOfPersons, (index) => ApplicantDetails());
+
+    fetchData(widget.id);
   }
 
   Future<void> _selectDate(
       BuildContext context, ApplicantDetails applicant) async {
+    final DateTime currentDate = DateTime.now();
+    final DateTime lastAllowedDate =
+        currentDate.subtract(Duration(days: 18 * 365));
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: lastAllowedDate,
       firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      lastDate: lastAllowedDate,
     );
 
-    if (picked != null && picked != DateTime.now()) {
+    if (picked != null) {
       setState(() {
-        // if backend requires time and date in another format use staring in applicant details and assign here, controller in textfield
-        String formattedDate = DateFormat('dd MMMM yyyy').format(picked);
+        String formattedDate = DateFormat('dd MMMM yyyy').format(picked!);
         applicant.dobController.text = formattedDate;
       });
+    } else {
+      // Handle the case where the selected date is not within the allowed range
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please select a date within the last 18 years.'),
+        ),
+      );
     }
   }
 
@@ -614,8 +859,8 @@ class _SectionOneState extends State<SectionOne> {
       print('Ownership: ${applicants[i].ownership}');
 
       print('Postal Address: ${applicants[i].postalAddressController.text}');
-      print('Town: ${applicants[i].townController.text}');
-      print('Province: ${applicants[i].provinceController.text}');
+      print('Town: ${applicants[i].townController}');
+      print('Province: ${applicants[i].provinceController}');
       print('\n');
     }
   }
@@ -636,32 +881,153 @@ class _SectionOneState extends State<SectionOne> {
       });
     }
   }
-}
 
-bool validateOwnership(List<ApplicantDetails> applicants) {
-  for (int i = 0; i < applicants.length; i++) {
-    String? ownership = applicants[i].ownership;
+  bool validateOwnership(List<ApplicantDetails> applicants) {
+    for (int i = 0; i < numberOfPersons; i++) {
+      String? ownership = applicants[i].ownership;
 
-    if (ownership != 'Owned' && ownership != 'Lease') {
-      // Ownership is not a valid value (neither "Owned" nor "Lease")
-      return false;
+      if (ownership != 'Owned' && ownership != 'Lease') {
+        // Ownership is not a valid value (neither "Owned" nor "Lease")
+        return false;
+      }
+    }
+
+    // All ownership values are either "Owned" or "Lease"
+    return true;
+  }
+
+  bool validateGender(List<ApplicantDetails> applicants) {
+    for (int i = 0; i < numberOfPersons; i++) {
+      String? gender = applicants[i].gender;
+
+      if (gender == null || (gender != 'Male' && gender != 'Female')) {
+        // Gender is either null or not a valid value (neither "Male" nor "Female")
+        return false;
+      }
+    }
+
+    // All genders are either "Male" or "Female"
+    return true;
+  }
+
+  warning(String message) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        width: MediaQuery.of(context).size.width * .7,
+        backgroundColor: AppColors.neutral,
+        duration: Duration(seconds: 3),
+        shape: StadiumBorder(),
+        behavior: SnackBarBehavior.floating,
+        content: Center(
+          child: CustomText(
+              text: message,
+              fontSize: 13,
+              color: AppColors.mainColor,
+              fontWeight: FontWeight.w500),
+        )));
+  }
+
+  // Function to fetch data from the API using dio with Bearer token
+  Future<void> fetchData(int? requestId) async {
+    try {
+      Dio dio = Dio();
+
+      // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
+      String bearertoken =
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
+      dio.options.headers['Authorization'] = 'Bearer $bearertoken';
+
+      final response = await dio.get(
+        'https://loan-managment.onrender.com/loan_requests/$requestId',
+        // Add headers or parameters as needed
+      );
+
+      if (response.statusCode == 200) {
+        final loanDetail = LoanRequestDetails.fromJson(response.data);
+        // print(response.data);
+
+        setState(() {
+          // Move this block here
+          this.loanDetail = loanDetail;
+          for (String key in loanDetail.applicants.keys) {
+            applicantKeys = loanDetail.applicants.keys.toList();
+          }
+          for (int i = 0; i < loanDetail.applicantCount; i++) {
+            applicants[i].surnameController.text =
+                loanDetail.applicants[applicantKeys![i]]!.surname;
+            applicants[i].middleNameController.text =
+                loanDetail.applicants[applicantKeys![i]]!.middleName;
+            applicants[i].firstNameController.text =
+                loanDetail.applicants[applicantKeys![i]]!.firstName;
+            applicants[i].dobController.text =
+                loanDetail.applicants[applicantKeys![i]]!.dob;
+            applicants[i].nrcController.text =
+                loanDetail.applicants[applicantKeys![i]]!.nrc;
+            applicants[i].telephoneController.text =
+                loanDetail.applicants[applicantKeys![i]]!.telephone;
+            applicants[i].mobileController.text =
+                loanDetail.applicants[applicantKeys![i]]!.mobile;
+            applicants[i].emailController.text =
+                loanDetail.applicants[applicantKeys![i]]!.email;
+            applicants[i].licenseNumberController.text =
+                loanDetail.applicants[applicantKeys![i]]!.licenseNumber;
+            applicants[i].licenseExpiryController.text =
+                loanDetail.applicants[applicantKeys![i]]!.licenseExpiry;
+            applicants[i].residentialAddressController.text =
+                loanDetail.applicants[applicantKeys![i]]!.residentialAddress;
+            applicants[i].postalAddressController.text =
+                loanDetail.applicants[applicantKeys![i]]!.postalAddress;
+            applicants[i].howlongthisplaceController.text = '10 Years';
+
+            applicants[i].provinceController =
+                loanDetail.applicants[applicantKeys![i]]!.province;
+            applicants[i].townController =
+                loanDetail.applicants[applicantKeys![i]]!.town;
+
+            applicants[i].gender = 'Male';
+            applicants[i].ownership = 'Owned';
+          }
+        });
+      } else {
+        // Handle error response
+        print('eeee: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle network or other errors
+      print('Errrrror: $error');
     }
   }
 
-  // All ownership values are either "Owned" or "Lease"
-  return true;
-}
+  Future<void> updateData(int? id) async {
+    print(id);
+    Dio dio = Dio();
+    String token =
+        'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
+    try {
+      final response = await dio.patch(
+        'https://loan-managment.onrender.com/loan_requests/$id',
+        data: {
+          "loan_amount": '2000000',
+          // Add your request payload here if needed
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
-bool validateGender(List<ApplicantDetails> applicants) {
-  for (int i = 0; i < applicants.length; i++) {
-    String? gender = applicants[i].gender;
-
-    if (gender == null || (gender != 'Male' && gender != 'Female')) {
-      // Gender is either null or not a valid value (neither "Male" nor "Female")
-      return false;
+      if (response.statusCode == 200) {
+        // Handle a successful response here
+        print(response.data);
+        print('Update successful');
+      } else {
+        // Handle other status codes here
+        print('Update failed with status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle errors here
+      print('Error updating data: $error');
     }
   }
-
-  // All genders are either "Male" or "Female"
-  return true;
 }

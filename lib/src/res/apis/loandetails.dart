@@ -21,6 +21,7 @@ class LoanRequestDetails {
   final Map<String, Applicant> applicants;
   final int applicantCount;
   final int otherRequestCount;
+  final AgentDetails agent;
 
   LoanRequestDetails({
     required this.id,
@@ -45,6 +46,7 @@ class LoanRequestDetails {
     required this.applicants,
     required this.applicantCount,
     required this.otherRequestCount,
+    required this.agent,
   });
 
   factory LoanRequestDetails.fromJson(Map<String, dynamic> json) {
@@ -67,12 +69,29 @@ class LoanRequestDetails {
       requestBankUpdateDate: (json['request_bank_update_date'] ?? "NA"),
       requestSystemUpdateDate: (json['request_system_update_date'] ?? "NA"),
       requestOrderUpdateDate: (json['request_order_update_date'] ?? "NA"),
+      agent: AgentDetails.fromJson(json['assign_to'] ?? "NA"),
       product: Product.fromJson(json['product'] ?? "NA"),
       applicants: (json['applicants'] as Map<String, dynamic>).map(
         (key, value) => MapEntry(key, Applicant.fromJson(value)),
       ),
       applicantCount: json['applicant_count'] ?? "NA",
       otherRequestCount: json['other_request_count'] ?? "NA",
+    );
+  }
+}
+
+class AgentDetails {
+  final dynamic id;
+  final String name;
+
+  AgentDetails({
+    required this.id,
+    required this.name,
+  });
+  factory AgentDetails.fromJson(Map<String, dynamic> json) {
+    return AgentDetails(
+      id: json['id'] ?? "NA",
+      name: json['name'] ?? "NA",
     );
   }
 }

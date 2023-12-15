@@ -38,6 +38,8 @@ class _RequestsSectionState extends State<RequestsSection> {
                 itemCount: loanRequests!.length,
                 itemBuilder: (context, index) {
                   return RequestItem(
+                    updateDataCallback: updateData,
+                    applicantCount: loanRequests![index].applicantCount,
                     loanid: loanRequests![index].id,
                     agent:
                         'Not Assigned', // Replace with actual agent information from API if available
@@ -46,8 +48,9 @@ class _RequestsSectionState extends State<RequestsSection> {
                         .product
                         .name, // Replace with actual product name from API if available
                     amount: loanRequests![index].loanAmount,
-                    requestId:
-                        '203421', // Assuming 'id' is unique for each request
+                    requestId: loanRequests![index]
+                        .id
+                        .toString(), // Assuming 'id' is unique for each request
                     customerName: loanRequests![index].firstName,
                     date: formatDate(loanRequests![index]
                         .createdAt), // Replace with actual date from API if available
@@ -88,12 +91,16 @@ class _RequestsSectionState extends State<RequestsSection> {
     return formattedDate;
   }
 
+  void updateData() {
+    fetchData(); // Call fetchData to refresh the data
+  }
+
   void fetchData() async {
     try {
       final String apiEndpoint =
           'https://loan-managment.onrender.com/loan_requests?filter=new';
       final String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAyNjYwNzk3fQ.aNgcnhSk31oF3CP_72Aiy38hKiNYIuhrNrxcGk6jp7Y';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
 
       var response = await dio.get(
         apiEndpoint,

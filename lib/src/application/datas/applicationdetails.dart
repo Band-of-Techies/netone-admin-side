@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-//for section two
 class EmployemntandKlinDetails {
   TextEditingController jobTitleController = TextEditingController();
   TextEditingController ministryController = TextEditingController();
@@ -12,14 +11,14 @@ class EmployemntandKlinDetails {
       TextEditingController();
   TextEditingController postalAddressControllerforKline =
       TextEditingController();
-  TextEditingController townController = TextEditingController();
-  TextEditingController provinceController = TextEditingController();
+  String? townController;
+  String? provinceController;
   TextEditingController grossSalaryController = TextEditingController();
   TextEditingController netSalaryController = TextEditingController();
-  TextEditingController salaryScaleController = TextEditingController();
+  String? salaryScaleController;
   TextEditingController retirementYearController = TextEditingController();
   TextEditingController employeeNumberController = TextEditingController();
-  TextEditingController yearsInEmploymentController = TextEditingController();
+  String? yearsInEmploymentController;
   String employmentType = '';
   TextEditingController expiryDateController = TextEditingController();
   TextEditingController nameController = TextEditingController();
@@ -28,38 +27,28 @@ class EmployemntandKlinDetails {
   TextEditingController emailAddressController = TextEditingController();
   TextEditingController currentNetSalaryController = TextEditingController();
   TextEditingController temperoryexpirydate = TextEditingController();
-  TextEditingController preferredYearOfRetirementController =
-      TextEditingController();
+  String? preferredYearOfRetirementController;
 
-  // Add more controllers as needed for additional fields
-
-  // Function to dispose of controllers when they are no longer needed
   void dispose() {
-    expiryDateController.dispose();
     jobTitleController.dispose();
     ministryController.dispose();
-    temperoryexpirydate.dispose();
-    physicalAddressControllernextofkin.dispose();
     physicalAddressControlleremployment.dispose();
+    physicalAddressControllernextofkin.dispose();
     postalAddressControllerEmployment.dispose();
     postalAddressControllerforKline.dispose();
-    townController.dispose();
-    provinceController.dispose();
+
     grossSalaryController.dispose();
     netSalaryController.dispose();
-    salaryScaleController.dispose();
+
     retirementYearController.dispose();
     employeeNumberController.dispose();
-    yearsInEmploymentController.dispose();
 
+    expiryDateController.dispose();
     nameController.dispose();
     otherNamesController.dispose();
     cellNumberController.dispose();
     emailAddressController.dispose();
-
     currentNetSalaryController.dispose();
-    preferredYearOfRetirementController.dispose();
-
-    // Dispose of additional controllers as needed
+    temperoryexpirydate.dispose();
   }
 }

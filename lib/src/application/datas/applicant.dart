@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-//for section one
 class ApplicantDetails {
   TextEditingController surnameController = TextEditingController();
   TextEditingController middleNameController = TextEditingController();
@@ -15,8 +14,26 @@ class ApplicantDetails {
   TextEditingController residentialAddressController = TextEditingController();
   TextEditingController postalAddressController = TextEditingController();
   TextEditingController howlongthisplaceController = TextEditingController();
-  TextEditingController townController = TextEditingController();
-  TextEditingController provinceController = TextEditingController();
+  String? townController;
+  String? provinceController;
   String? gender;
   String? ownership;
+  String? selectedtown;
+  String? selectedprovince;
+
+  void dispose() {
+    surnameController.dispose();
+    middleNameController.dispose();
+    firstNameController.dispose();
+    dobController.dispose();
+    nrcController.dispose();
+    telephoneController.dispose();
+    mobileController.dispose();
+    emailController.dispose();
+    licenseNumberController.dispose();
+    licenseExpiryController.dispose();
+    residentialAddressController.dispose();
+    postalAddressController.dispose();
+    howlongthisplaceController.dispose();
+  }
 }

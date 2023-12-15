@@ -4,12 +4,13 @@ import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:netone_loanmanagement_admin/src/application/datas/loandetails.dart';
+import 'package:intl/intl.dart';
 import 'package:netone_loanmanagement_admin/src/pages/applications/editapplication.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/dashboard.dart';
 import 'package:netone_loanmanagement_admin/src/res/apis/loandetails.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
+import 'package:netone_loanmanagement_admin/src/res/timeline.dart';
 
 class ViewApplication extends StatefulWidget {
   final int loanRequestId;
@@ -132,10 +133,24 @@ class _ViewApplicationState extends State<ViewApplication> {
                     ),
                     IconButton(
                         onPressed: () {
+                          _showPopup(context);
+                        },
+                        icon: Icon(
+                          Icons.track_changes,
+                          size: 20,
+                          color: AppColors.neutral,
+                        )),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    IconButton(
+                        onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => EditApplication()),
+                                builder: (context) => EditApplication(
+                                      requestid: widget.loanRequestId,
+                                    )),
                           );
                         },
                         icon: Icon(
@@ -143,6 +158,9 @@ class _ViewApplicationState extends State<ViewApplication> {
                           size: 20,
                           color: AppColors.neutral,
                         )),
+                    SizedBox(
+                      width: 10,
+                    ),
                     IconButton(
                         onPressed: () {},
                         icon: Icon(
@@ -166,68 +184,80 @@ class _ViewApplicationState extends State<ViewApplication> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          CustomText(
-                            text: 'Form ID: NR 20231157',
-                            color: AppColors.neutral,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          CustomText(
-                            text: 'Customer Name',
-                            color: AppColors.neutral,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ],
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            CustomText(
+                              text: 'Form ID: ${loanDetail.id}',
+                              color: AppColors.neutral,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            CustomText(
+                              text: 'Assigned to: ${loanDetail.agent.name}',
+                              color: AppColors.neutral,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ],
+                        ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          CustomText(
-                            text: 'Current Status: Bank Approval',
-                            color: AppColors.neutral,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          CustomText(
-                            text: 'Assigned to: Agent Name',
-                            color: AppColors.neutral,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ],
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomText(
+                              text:
+                                  'Applicant: ${loanDetail.applicants[loanDetail.applicants.keys.first]!.surname}',
+                              color: AppColors.neutral,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            CustomText(
+                              text:
+                                  'Joint Application: ${loanDetail.applicantCount > 1 ? 'Yes : ${loanDetail.applicantCount}' : 'No'}',
+                              color: AppColors.neutral,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ],
+                        ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          CustomText(
-                            text: 'Date: 12 Auguest 2023',
-                            color: AppColors.neutral,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          CustomText(
-                            text: 'Time: 05:49PM',
-                            color: AppColors.neutral,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ],
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            CustomText(
+                              text: 'Date: ${formatDate(loanDetail.createdAt)}',
+                              color: AppColors.neutral,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            CustomText(
+                              text:
+                                  'Last Updated: ${formatDate(loanDetail.updatedAt)}',
+                              color: AppColors.neutral,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ],
+                        ),
                       )
                     ],
                   ),
@@ -309,6 +339,12 @@ class _ViewApplicationState extends State<ViewApplication> {
               color: AppColors.mainColor,
             )),
           );
+  }
+
+  String formatDate(String dateString) {
+    DateTime dateTime = DateTime.parse(dateString);
+    String formattedDate = DateFormat('dd MMM yy, hh:mma').format(dateTime);
+    return formattedDate;
   }
 
   Container applicantDetails(String applicantkey, int i) {
@@ -794,10 +830,10 @@ class _ViewApplicationState extends State<ViewApplication> {
 
       // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
       String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAyNjYwNzk3fQ.aNgcnhSk31oF3CP_72Aiy38hKiNYIuhrNrxcGk6jp7Y';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
 
       final response = await dio.get(
-        'https://loan-managment.onrender.com/loan_requests/20',
+        'https://loan-managment.onrender.com/loan_requests/$loanRequestId',
         options: Options(
           headers: {
             'Authorization': 'Bearer $bearerToken',
@@ -825,5 +861,125 @@ class _ViewApplicationState extends State<ViewApplication> {
       // Handle Dio errors or network errors
       print('Dio error: $error');
     }
+  }
+
+  Future<void> _showPopup(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // Use the AlertDialog widget for the popup
+        return AlertDialog(
+          backgroundColor: AppColors.mainbackground,
+          title: CustomText(
+            text: 'Loan Application Tracking',
+            color: AppColors.neutral,
+          ),
+          content: SingleChildScrollView(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * .5,
+              height: MediaQuery.of(context).size.height * .7,
+              child: Timeline(
+                indicators: List<Widget>.generate(5, (index) {
+                  return Icon(
+                    Icons.circle,
+                    color: AppColors.mainColor,
+                    size: 12,
+                  );
+                }),
+                children: <Widget>[
+                  timelinecontent(
+                    'Agent Status',
+                    'Assigned Agent: ${loanDetail.agent.name}',
+                    'Assigned Date: ${loanDetail.assignedAt}',
+                    '',
+                  ),
+                  timelinecontent(
+                      'Netone',
+                      'Netone Status: ${loanDetail.requestSystemStatus}',
+                      'Last Update: ${loanDetail.requestSystemUpdateDate}',
+                      'Rejection Reason: ${loanDetail.systemRejectionReason}'),
+                  timelinecontent(
+                      'Bank ',
+                      'Bank Status: ${loanDetail.requestBankStatus}',
+                      'Last Update: ${loanDetail.requestBankUpdateDate}',
+                      'Rejection Reason: ${loanDetail.bankRejectionReason}'),
+                  timelinecontent(
+                      'Order Confirmed',
+                      'Order Confirmed Status: ${loanDetail.requestOrderStatus}',
+                      'Last Update: ${loanDetail.requestOrderUpdateDate}',
+                      ''),
+                  timelinecontent(
+                      'Order Delivered',
+                      'Order Delivered Status: ${loanDetail.requestOrderStatus}',
+                      'Last Update: ${loanDetail.requestOrderUpdateDate}',
+                      ''),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(AppColors.mainColor),
+                    padding: MaterialStateProperty.all(EdgeInsets.all(15))),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: CustomText(
+                  text: 'Close',
+                  color: AppColors.neutral,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                )),
+          ],
+        );
+      },
+    );
+  }
+
+  Container timelinecontent(
+      String title, String oneone, String onetwo, String twoone) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(
+              text: title,
+              fontSize: 15,
+              color: AppColors.neutral,
+              fontWeight: FontWeight.w500),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CustomText(
+                  text: oneone,
+                  fontSize: 13,
+                  color: AppColors.neutral,
+                  fontWeight: FontWeight.w300),
+              CustomText(
+                  text: onetwo,
+                  fontSize: 13,
+                  color: AppColors.neutral,
+                  fontWeight: FontWeight.w300)
+            ],
+          ),
+          if (twoone != '')
+            SizedBox(
+              height: 10,
+            ),
+          if (twoone != '')
+            CustomText(
+                text: twoone,
+                fontSize: 13,
+                color: AppColors.neutral,
+                fontWeight: FontWeight.w300),
+        ],
+      ),
+    );
   }
 }

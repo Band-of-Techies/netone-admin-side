@@ -31,9 +31,7 @@ class App extends StatelessWidget {
             if (snapshot.data == true) {
               return DashboardScreen();
             } else {
-              return ViewApplication(
-                loanRequestId: 20,
-              );
+              return DashboardScreen();
             }
           } else {
             // You can return a loading indicator if needed

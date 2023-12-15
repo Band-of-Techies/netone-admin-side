@@ -2,12 +2,16 @@
 
 import 'dart:io';
 
+import 'package:dio/dio.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:netone_loanmanagement_admin/src/application/datas/loandetails.dart';
+import 'package:netone_loanmanagement_admin/src/application/datas/products.dart';
 import 'package:netone_loanmanagement_admin/src/pages/applications/editapplication.dart';
+import 'package:netone_loanmanagement_admin/src/res/apis/loandetails.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:netone_loanmanagement_admin/src/res/textfield.dart';
@@ -17,15 +21,18 @@ class SectionThree extends StatefulWidget {
   final MyTabController myTabController;
   late TabController _tabController;
 
-  SectionThree(this.myTabController, this._tabController);
+  int? id;
+  SectionThree(this.myTabController, this._tabController, this.id);
 
   @override
   State<SectionThree> createState() => _SectionThreeState();
 }
 
-class _SectionThreeState extends State<SectionThree> {
+class _SectionThreeState extends State<SectionThree>
+    with SingleTickerProviderStateMixin {
   LoanDetails loadndetails = LoanDetails();
   final _formKey = GlobalKey<FormState>();
+  late LoanRequestDetails loanDetail;
   bool canAgreePersonOne = false;
   bool canAgreePersonTwo = false;
   bool canAgreePersonThree = false;
@@ -34,136 +41,194 @@ class _SectionThreeState extends State<SectionThree> {
   XFile? pickedImageTwo;
   XFile? pickedImageThree;
   XFile? pickedImageFour;
+  List<ProductList> products = [];
+  String? productapplied;
   final ImagePicker _imagePicker = ImagePicker();
+  List<String> tenureOptions = [
+    '3 months',
+    '6 months',
+    '12 months',
+    '18 months',
+    '24 months',
+    '36 months',
+    '48 months',
+    '60 months',
+    '72 months',
+  ];
+  List<String>? applicantKeys;
   @override
   Widget build(BuildContext context) {
     final myTabController = Provider.of<MyTabController>(context);
+    loadndetails = myTabController.loanDetails;
     return Scaffold(
       backgroundColor: AppColors.mainbackground,
-      body: Padding(
-        padding: EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              Container(
-                margin: EdgeInsets.only(bottom: 30),
-                padding: EdgeInsets.fromLTRB(20, 25, 20, 25),
-                child: Column(
+      body: products.isEmpty || products == null
+          ? Center(
+              child: CircularProgressIndicator(color: AppColors.mainColor),
+            )
+          : Padding(
+              padding: EdgeInsets.all(20),
+              child: Form(
+                key: _formKey,
+                child: ListView(
                   children: [
-                    section3A(),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    loandetails(),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Text(
-                      'Affirmations',
-                      style: GoogleFonts.dmSans(
-                          color: AppColors.neutral,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700),
-                    ),
-                    SizedBox(height: 20),
-                    affirmationsection(canAgreePersonOne, pickedImageOne,
-                        'For First Applicant'),
-                    if (widget.myTabController.numberOfPersons > 1)
-                      affirmationsection(canAgreePersonTwo, pickedImageTwo,
-                          'For Second Applicant'),
-                    if (widget.myTabController.numberOfPersons > 2)
-                      affirmationsection(canAgreePersonThree, pickedImageThree,
-                          'For Third Applicant'),
-                    if (widget.myTabController.numberOfPersons > 3)
-                      affirmationsection(canAgreePersonFour, pickedImageFour,
-                          'For Fourth Applicant'),
-                    SizedBox(height: 40),
-                    /*  Text(
+                    Container(
+                      margin: EdgeInsets.only(bottom: 30),
+                      padding: EdgeInsets.fromLTRB(20, 25, 20, 25),
+                      child: Column(
+                        children: [
+                          section3A(),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          loandetails(),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Text(
+                            'Affirmations',
+                            style: GoogleFonts.dmSans(
+                                color: AppColors.neutral,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700),
+                          ),
+                          SizedBox(height: 20),
+                          affirmationsection(canAgreePersonOne, pickedImageOne,
+                              'For First Applicant'),
+                          if (widget.myTabController.numberOfPersons > 1)
+                            affirmationsection(canAgreePersonTwo,
+                                pickedImageTwo, 'For Second Applicant'),
+                          if (widget.myTabController.numberOfPersons > 2)
+                            affirmationsection(canAgreePersonThree,
+                                pickedImageThree, 'For Third Applicant'),
+                          if (widget.myTabController.numberOfPersons > 3)
+                            affirmationsection(canAgreePersonFour,
+                                pickedImageFour, 'For Fourth Applicant'),
+                          SizedBox(height: 40),
+                          /*  Text(
                   'Supporting Documentation Submitted, loadndetails are advised to attach the following documents',
                   style: GoogleFonts.dmSans(
                       color: AppColors.neutral,
                       fontSize: 14,
                       fontWeight: FontWeight.w500),
                 ),*/
-                    //DocumentTable(),
+                          // DocumentTable(),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  AppColors.mainColor),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.all(15))),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              myTabController.loanDetails = loadndetails;
+                              //printApplicantDetails();
+                              print('update');
+                            }
+
+                            //widget.myTabController.updateNumberOfPersons(numberOfPersons);
+                            //  DefaultTabController.of(context)?.animateTo(1);
+                            // if (_formKey.currentState!.validate()) {
+                            //   // Form is valid, move to the next section
+
+                            // }
+                          },
+                          child: CustomText(
+                            text: 'Update',
+                            color: AppColors.neutral,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          )),
+                    ),
                   ],
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * .48,
-                    child: ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                                AppColors.sidebarbackground),
-                            padding:
-                                MaterialStateProperty.all(EdgeInsets.all(15))),
-                        onPressed: () {
-                          myTabController.loanDetails = loadndetails;
-                          //printApplicantDetails();
-                          if (widget._tabController.index <
-                              widget._tabController.length - 1) {
-                            widget._tabController
-                                .animateTo(widget._tabController.index + 1);
-                          } else {
-                            // Handle the case when the last tab is reached
-                          }
-                          //widget.myTabController.updateNumberOfPersons(numberOfPersons);
-                          //  DefaultTabController.of(context)?.animateTo(1);
-                          // if (_formKey.currentState!.validate()) {
-                          //   // Form is valid, move to the next section
-
-                          // }
-                        },
-                        child: CustomText(
-                          text: 'Previous',
-                          color: AppColors.neutral,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        )),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * .48,
-                    child: ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(AppColors.mainColor),
-                            padding:
-                                MaterialStateProperty.all(EdgeInsets.all(15))),
-                        onPressed: () {
-                          myTabController.loanDetails = loadndetails;
-                          //printApplicantDetails();
-                          if (widget._tabController.index <
-                              widget._tabController.length - 1) {
-                            widget._tabController
-                                .animateTo(widget._tabController.index + 1);
-                          } else {
-                            // Handle the case when the last tab is reached
-                          }
-                          //widget.myTabController.updateNumberOfPersons(numberOfPersons);
-                          //  DefaultTabController.of(context)?.animateTo(1);
-                          // if (_formKey.currentState!.validate()) {
-                          //   // Form is valid, move to the next section
-
-                          // }
-                        },
-                        child: CustomText(
-                          text: 'Next',
-                          color: AppColors.neutral,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        )),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProducts();
+    fetchData(widget.id);
+  }
+
+  void fetchProducts() async {
+    final String apiUrl = 'https://loan-managment.onrender.com/products';
+
+    try {
+      final dio = Dio();
+      final response = await dio.get(
+        apiUrl,
+        options: Options(),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> responseData = response.data;
+
+        setState(() {
+          products =
+              responseData.map((data) => ProductList.fromJson(data)).toList();
+        });
+        ;
+      } else {
+        // Handle error, show a message, or perform other actions on failure
+        print('Failed to fetch products. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle exceptions
+      print('Error during API call: $error');
+    }
+  }
+
+  Future<void> fetchData(int? requestId) async {
+    try {
+      Dio dio = Dio();
+
+      // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
+      String bearertoken =
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
+      dio.options.headers['Authorization'] = 'Bearer $bearertoken';
+
+      final response = await dio.get(
+        'https://loan-managment.onrender.com/loan_requests/$requestId',
+        // Add headers or parameters as needed
+      );
+
+      if (response.statusCode == 200) {
+        final loanDetail = LoanRequestDetails.fromJson(response.data);
+
+        //print(response.data);
+
+        setState(() {
+          // Move this block here
+          this.loanDetail = loanDetail;
+          for (String key in loanDetail.applicants.keys) {
+            applicantKeys = loanDetail.applicants.keys.toList();
+          }
+          for (int i = 0; i < loanDetail.applicantCount; i++) {
+            loadndetails.costofasset.text = loanDetail.costOfAsset;
+            loadndetails.insurancecost.text = loanDetail.insuranceCost;
+            loadndetails.advancepayment.text = loanDetail.advancePayment;
+            loadndetails.loanamaountapplied.text = loanDetail.loanAmount;
+            loadndetails.tenure = loanDetail.loanTenure;
+            loadndetails.descriptionController.text = loanDetail.description;
+            productapplied = response.data['product']['name'];
+          }
+        });
+      } else {
+        // Handle error response
+        print('eeee: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle network or other errors
+      print('Errrrror: $error');
+    }
   }
 
   Column affirmationsection(bool canagree, XFile? pickedImage, String message) {
@@ -230,21 +295,15 @@ class _SectionThreeState extends State<SectionThree> {
         SizedBox(height: 40),
         Row(
           children: [
-            Theme(
-              data: ThemeData(
-                unselectedWidgetColor:
-                    AppColors.neutral, // Set your desired border color
-              ),
-              child: Checkbox(
-                value: canagree,
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      canagree = value;
-                    });
-                  }
-                },
-              ),
+            Checkbox(
+              value: canagree,
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    canagree = value;
+                  });
+                }
+              },
             ),
             Text(
               'I agree to all the information provided',
@@ -330,15 +389,73 @@ class _SectionThreeState extends State<SectionThree> {
               SizedBox(
                 height: 30,
               ),
-              FormTextField(
-                controller: loadndetails.tenure,
-                labelText: 'Tenure',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter tenure';
-                  }
-                  return null;
+              DropdownButtonFormField2<String>(
+                isExpanded: true,
+                decoration: InputDecoration(
+                  labelText: 'Loan Tenure',
+                  labelStyle: GoogleFonts.dmSans(
+                    color: Colors.black,
+                    height: 0.5,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  focusColor: AppColors.neutral,
+                  enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: AppColors.neutral, width: .5)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: AppColors.neutral, width: .5)),
+                  // Add Horizontal padding using menuItemStyleData.padding so it matches
+                  // the menu padding when button's width is not specified.
+                  contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.neutral,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  // Add more decoration..
+                ),
+                hint: Text(
+                  loadndetails.tenure == null
+                      ? 'Loan Tenure'
+                      : loadndetails.tenure.toString(),
+                  style: GoogleFonts.dmSans(
+                      fontSize: 14,
+                      color: AppColors.neutral,
+                      fontWeight: FontWeight.w500),
+                ),
+                items: tenureOptions.map((letter) {
+                  return DropdownMenuItem(
+                    value: letter,
+                    child: Text(
+                      letter,
+                      style: GoogleFonts.dmSans(color: AppColors.neutral),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    loadndetails.tenure = value.toString();
+                  });
                 },
+                buttonStyleData: const ButtonStyleData(
+                  padding: EdgeInsets.only(right: 8),
+                ),
+                iconStyleData: IconStyleData(
+                  icon: Icon(Icons.arrow_drop_down, color: AppColors.neutral),
+                  iconSize: 24,
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                menuItemStyleData: const MenuItemStyleData(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                ),
               ),
             ],
           ),
@@ -377,7 +494,8 @@ class _SectionThreeState extends State<SectionThree> {
                 controller: loadndetails.thirdapplicant,
                 labelText: 'Third Applicant (Agric Asset ONLY)',
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if ((value == null || value.isEmpty) &&
+                      widget.myTabController.numberOfPersons > 2) {
                     return 'Please enter third applicant';
                   }
                   return null;
@@ -403,7 +521,8 @@ class _SectionThreeState extends State<SectionThree> {
                 controller: loadndetails.thirdapplicantpropotion,
                 labelText: 'Third Applicant Proportion of loan (%))',
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if ((value == null || value.isEmpty) &&
+                      widget.myTabController.numberOfPersons > 2) {
                     return 'Third Applicant Proportion of loan (%)';
                   }
                   return null;
@@ -433,7 +552,8 @@ class _SectionThreeState extends State<SectionThree> {
                 controller: loadndetails.secondapplicant,
                 labelText: 'Second Applicant',
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if ((value == null || value.isEmpty) &&
+                      widget.myTabController.numberOfPersons > 1) {
                     return 'Second Applicant';
                   }
                   return null;
@@ -446,7 +566,8 @@ class _SectionThreeState extends State<SectionThree> {
                 controller: loadndetails.fourthapplicant,
                 labelText: 'Fourth Applicant (Agric Asset ONLY)',
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if ((value == null || value.isEmpty) &&
+                      widget.myTabController.numberOfPersons > 3) {
                     return 'Fourth Applicant (Agric Asset ONLY)';
                   }
                   return null;
@@ -459,7 +580,8 @@ class _SectionThreeState extends State<SectionThree> {
                 controller: loadndetails.secondapplicantpropotion,
                 labelText: 'Second Applicant Proportion of loan (%)',
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if ((value == null || value.isEmpty) &&
+                      widget.myTabController.numberOfPersons > 1) {
                     return 'Second Applicant Proportion of loan (%)';
                   }
                   return null;
@@ -470,9 +592,10 @@ class _SectionThreeState extends State<SectionThree> {
               ),
               FormTextField(
                 controller: loadndetails.fourthapplicantpropotion,
-                labelText: 'SFourth Applicant Proportion of loan (%)',
+                labelText: 'Fourth Applicant Proportion of loan (%)',
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if ((value == null || value.isEmpty) &&
+                      widget.myTabController.numberOfPersons > 3) {
                     return 'Fourth Applicant Proportion of loan (%)';
                   }
                   return null;
@@ -489,12 +612,28 @@ class _SectionThreeState extends State<SectionThree> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Loan Product Apllied for (Tick only one)',
-          style: GoogleFonts.dmSans(
-              color: AppColors.neutral,
-              fontSize: 14,
-              fontWeight: FontWeight.w700),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              'Loan Product Apllied for (Tick only one)',
+              style: GoogleFonts.dmSans(
+                  color: AppColors.neutral,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700),
+            ),
+            SizedBox(
+              width: 30,
+            ),
+            if (productapplied != null)
+              Text(
+                productapplied!,
+                style: GoogleFonts.dmSans(
+                    color: AppColors.mainColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700),
+              ),
+          ],
         ),
         SizedBox(
           height: 20,
@@ -503,11 +642,8 @@ class _SectionThreeState extends State<SectionThree> {
           spacing: 8.0, // Adjust the spacing between items
           runSpacing: 8.0, // Adjust the spacing between lines
           children: [
-            buildCheckBox('Motor Vehicle Loan'),
-            buildCheckBox('Agricultural Asset Loan'),
-            buildCheckBox('Furniture Loan'),
-            buildCheckBox('Building Materials Loan'),
-            buildCheckBox('Bring your Own Device Loan'),
+            for (int i = 0; i < products.length; i++)
+              buildCheckBox(products[i].id, products[i].name, i),
           ],
         ),
         SizedBox(
@@ -529,8 +665,7 @@ class _SectionThreeState extends State<SectionThree> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(4),
-              borderSide:
-                  BorderSide(color: AppColors.mainbackground, width: 1.0),
+              borderSide: BorderSide(color: AppColors.mainColor, width: 1.0),
             ),
           ),
           style: GoogleFonts.dmSans(
@@ -545,25 +680,26 @@ class _SectionThreeState extends State<SectionThree> {
     );
   }
 
-  Widget buildCheckBox(String option) {
+  Widget buildCheckBox(int id, String title, int i) {
     return InkWell(
       onTap: () {
         setState(() {
-          loadndetails.selectedLoanOption = option;
+          loadndetails.selectedLoanOption = id;
+          loadndetails.costofasset.text = products[i].price.toString();
         });
       },
       child: Chip(
         padding: EdgeInsets.all(12),
         label: Text(
-          option,
+          title,
           style: GoogleFonts.dmSans(
-              color: loadndetails.selectedLoanOption == option
+              color: loadndetails.selectedLoanOption == id
                   ? AppColors.neutral
                   : AppColors.neutral,
               fontSize: 14,
               fontWeight: FontWeight.w700),
         ),
-        backgroundColor: loadndetails.selectedLoanOption == option
+        backgroundColor: loadndetails.selectedLoanOption == id
             ? AppColors.mainColor // Change the color when selected
             : AppColors.sidebarbackground,
       ),

@@ -22,6 +22,7 @@ class LoanRequest {
   final String telephone;
   final String mobile;
   final String gender;
+  final AgentDetails agent;
   final String nrc;
 
   LoanRequest({
@@ -49,10 +50,12 @@ class LoanRequest {
     required this.mobile,
     required this.gender,
     required this.nrc,
+    required this.agent,
   });
 
   factory LoanRequest.fromJson(Map<String, dynamic> json) {
     return LoanRequest(
+      agent: AgentDetails.fromJson(json['assign_to'] ?? "NA"),
       applicantCount: json['applicant_count'] ?? 0,
       id: json['id'] ?? 0,
       createdAt: json['created_at'] ?? "NA",
@@ -77,6 +80,22 @@ class LoanRequest {
       mobile: json['mobile'] ?? "NA",
       gender: json['gender'] ?? "NA",
       nrc: json['nrc'] ?? "NA",
+    );
+  }
+}
+
+class AgentDetails {
+  final dynamic id;
+  final String name;
+
+  AgentDetails({
+    required this.id,
+    required this.name,
+  });
+  factory AgentDetails.fromJson(Map<String, dynamic> json) {
+    return AgentDetails(
+      id: json['id'] ?? "NA",
+      name: json['name'] ?? "NA",
     );
   }
 }

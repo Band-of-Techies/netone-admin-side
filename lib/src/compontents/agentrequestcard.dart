@@ -8,15 +8,15 @@ import 'package:netone_loanmanagement_admin/src/pages/applications/viewapplicati
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 
-class RequestItem extends StatefulWidget {
+class AgentRequestItem extends StatefulWidget {
   final String requestId;
   final VoidCallback updateDataCallback;
   final String customerName;
   final String date;
   final bool isChecked;
   final Function(bool?) onCheckboxChanged;
-  final List<Map<String, dynamic>> agents;
-  final String selectedAgent;
+  final List<String> agents;
+  final int status;
   final int applicantCount;
   final VoidCallback onConfirm;
   final VoidCallback onVerticalMenuPressed;
@@ -26,7 +26,8 @@ class RequestItem extends StatefulWidget {
   final String agent;
   final int loanid;
 
-  RequestItem({
+  AgentRequestItem({
+    required this.status,
     required this.updateDataCallback,
     required this.applicantCount,
     required this.loanid,
@@ -38,7 +39,6 @@ class RequestItem extends StatefulWidget {
     required this.isChecked,
     required this.onCheckboxChanged,
     required this.agents,
-    required this.selectedAgent,
     required this.onConfirm,
     required this.onVerticalMenuPressed,
     required this.amount,
@@ -46,10 +46,10 @@ class RequestItem extends StatefulWidget {
   });
 
   @override
-  _RequestItemState createState() => _RequestItemState();
+  _AgentRequestItemState createState() => _AgentRequestItemState();
 }
 
-class _RequestItemState extends State<RequestItem> {
+class _AgentRequestItemState extends State<AgentRequestItem> {
   String? seletedagent;
   @override
   Widget build(BuildContext context) {
@@ -179,11 +179,11 @@ class _RequestItemState extends State<RequestItem> {
                     ),
                     items: widget.agents.map((agent) {
                       return DropdownMenuItem<String>(
-                        value: agent['id'].toString(),
+                        value: agent.toString(),
                         child: CustomText(
                           fontSize: 14,
                           color: AppColors.neutral,
-                          text: agent['name'].toString(),
+                          text: agent.toString(),
                         ),
                       );
                     }).toList(),
@@ -309,8 +309,7 @@ class _RequestItemState extends State<RequestItem> {
   Future<void> _submitAssignment(int id, String seletedagent) async {
     if (seletedagent != null) {
       // Replace with your actual API endpoint
-      String apiUrl =
-          "https://loan-managment.onrender.com/loan_requests/$id/assign_to_agent";
+      String apiUrl = "https://loan-managment.onrender.com/loan_requests/$id";
       // Replace 'yourAccessToken' with the actual token
       String accessToken =
           'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
@@ -323,24 +322,23 @@ class _RequestItemState extends State<RequestItem> {
 
       // Create the request body
       Map<String, dynamic> requestBody = {
-        'user_id': seletedagent,
+        "request_system_status": seletedagent,
       };
-      print(seletedagent);
-      print(id);
+      print(requestBody);
       try {
-        Response response = await dio.post(apiUrl, data: requestBody);
-        if (response.statusCode == 201 || response.statusCode == 200) {
-          // Successfully created assignment (status code 201 for POST)
-          print('Assignment created successfully');
+        Response response = await dio.patch(apiUrl, data: requestBody);
+        if (response.statusCode == 200) {
+          // Successfully updated the request system status (status code 200 for PATCH)
+          print('Request system status updated successfully');
           widget.updateDataCallback();
         } else {
           // Handle error
           print(
-              'Failed to create assignment. Status code: ${response.statusCode}');
+              'Failed to update request system status. Status code: ${response.statusCode}');
         }
       } catch (error) {
         // Handle error
-        print('Error during POST request: $error');
+        print('Error during PATCH request: $error');
       }
     }
   }
