@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:netone_loanmanagement_admin/src/pages/applications/viewapplication.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
+import 'package:netone_loanmanagement_admin/src/res/serchTextFiled.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
+import 'package:netone_loanmanagement_admin/src/res/textfield.dart';
 
 class AgentRequestItem extends StatefulWidget {
   final String requestId;
@@ -51,6 +53,7 @@ class AgentRequestItem extends StatefulWidget {
 
 class _AgentRequestItemState extends State<AgentRequestItem> {
   String? seletedagent;
+  TextEditingController rejectionController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -68,25 +71,6 @@ class _AgentRequestItemState extends State<AgentRequestItem> {
               children: [
                 Row(
                   children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * .02,
-                      child: Checkbox(
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                            color:
-                                Colors.white, // Set the border color to white
-                            width: 1.0, // Set the border width
-                          ),
-                          borderRadius: BorderRadius.circular(
-                              4.0), // Adjust the border radius as needed
-                        ),
-                        checkColor: Colors.white,
-                        focusColor: Colors.white,
-                        activeColor: AppColors.mainColor,
-                        value: widget.isChecked,
-                        onChanged: widget.onCheckboxChanged,
-                      ),
-                    ),
                     SizedBox(width: 12),
                     SizedBox(
                         width: MediaQuery.of(context).size.width * .05,
@@ -236,7 +220,88 @@ class _AgentRequestItemState extends State<AgentRequestItem> {
                         backgroundColor:
                             MaterialStateProperty.all(AppColors.mainColor)),
                     onPressed: () {
-                      _submitAssignment(widget.loanid, seletedagent!);
+                      if ((widget.status == 1 || widget.status == 2) &&
+                          seletedagent == 'rejected') {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor: AppColors.sidebarbackground,
+                              title: SizedBox(
+                                width: MediaQuery.of(context).size.width * .4,
+                                child: CustomText(
+                                  text: 'Request Rejection',
+                                  fontSize: 20,
+                                ),
+                              ),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextFormField(
+                                    maxLines: 5,
+                                    controller: rejectionController,
+                                    decoration: InputDecoration(
+                                      labelText: 'Rejection Reason',
+                                      labelStyle: GoogleFonts.dmSans(
+                                        color: AppColors.neutral,
+                                        height: 0.5,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(4.0),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey, width: 1.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                        borderSide: BorderSide(
+                                            color: AppColors.neutral,
+                                            width: 1.0),
+                                      ),
+                                    ),
+                                    style: GoogleFonts.dmSans(
+                                      color: AppColors.neutral,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  ElevatedButton(
+                                    style: ButtonStyle(
+                                        padding: MaterialStateProperty.all(
+                                            EdgeInsets.fromLTRB(20, 5, 20, 5)),
+                                        shape: MaterialStateProperty.all(
+                                          RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                8.0), // Adjust the border radius as needed
+                                          ),
+                                        ),
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                AppColors.mainColor)),
+                                    onPressed: () {
+                                      // Handle rejection button click
+                                      Navigator.of(context)
+                                          .pop(); // Close the dialog
+                                      _submitAssignment(
+                                          widget.loanid,
+                                          seletedagent!,
+                                          rejectionController.text);
+                                    },
+                                    child: CustomText(
+                                      text: 'Submit Rejection',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        _submitAssignment(widget.loanid, seletedagent!, '');
+                      }
                     },
                     child: CustomText(
                       fontSize: 14,
@@ -306,11 +371,14 @@ class _AgentRequestItemState extends State<AgentRequestItem> {
     );
   }
 
-  Future<void> _submitAssignment(int id, String seletedagent) async {
+  Future<void> _submitAssignment(
+      int id, String seletedagent, String reason) async {
     if (seletedagent != null) {
+      print(seletedagent);
       // Replace with your actual API endpoint
       String apiUrl = "https://loan-managment.onrender.com/loan_requests/$id";
       // Replace 'yourAccessToken' with the actual token
+      print(apiUrl);
       String accessToken =
           'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
 
@@ -319,22 +387,48 @@ class _AgentRequestItemState extends State<AgentRequestItem> {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $accessToken',
       };
-
+      Map<String, dynamic> requestBody = {};
       // Create the request body
-      Map<String, dynamic> requestBody = {
-        "request_system_status": seletedagent,
-      };
-      print(requestBody);
+      if (widget.status == 1) {
+        requestBody = {
+          "loan_request": {
+            "request_system_status": seletedagent,
+            "system_rejection_reason": reason
+          }
+        };
+      }
+      if (widget.status == 2) {
+        requestBody = {
+          "loan_request": {
+            "request_bank_status": seletedagent,
+            "bank_rejection_reason": reason
+          }
+        };
+      }
+      if (widget.status == 3) {
+        requestBody = {
+          "loan_request": {
+            "request_order_status": seletedagent,
+          }
+        };
+      }
+      if (widget.status == 4) {
+        requestBody = {
+          "loan_request": {
+            "request_order_status": seletedagent,
+          }
+        };
+      }
       try {
         Response response = await dio.patch(apiUrl, data: requestBody);
         if (response.statusCode == 200) {
           // Successfully updated the request system status (status code 200 for PATCH)
-          print('Request system status updated successfully');
+          print('Request bank status updated successfully');
           widget.updateDataCallback();
         } else {
           // Handle error
           print(
-              'Failed to update request system status. Status code: ${response.statusCode}');
+              'Failed to update request bank status. Status code: ${response.statusCode}');
         }
       } catch (error) {
         // Handle error

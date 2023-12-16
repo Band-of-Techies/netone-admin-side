@@ -17,25 +17,11 @@ class NetoneStatusSection extends StatefulWidget {
 class _NetoneStatusSectionState extends State<NetoneStatusSection> {
   TextEditingController search = TextEditingController();
   // Mock data for demonstration purposes
-  List<String> netonestatuslist = ['Approve', 'Reject'];
+  List<String> netonestatuslist = ['approved', 'rejected'];
   final Dio dio = Dio();
   bool isloading = true;
   List<LoanRequest>? loanRequests;
   String selectedStatus = '';
-  List<RequestData> requestList = List.generate(
-    10,
-    (index) => RequestData(
-      selectedStatus: '',
-      functionstring: 'Netone Status',
-      productname: 'Mobile Phone',
-      amount: '10,000',
-      requestId: 'NR23344',
-      customerName: 'John Doe',
-      date: '12 Nov 2023',
-      isChecked: false,
-      selectedAgent: 'Name Here',
-    ),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -144,28 +130,4 @@ class _NetoneStatusSectionState extends State<NetoneStatusSection> {
       print('Error: $error');
     }
   }
-}
-
-class RequestData {
-  final String productname;
-  final String amount;
-  final String requestId;
-  final String customerName;
-  final String functionstring;
-  final String date;
-  bool isChecked;
-  String selectedAgent;
-  String selectedStatus;
-
-  RequestData({
-    required this.selectedStatus,
-    required this.functionstring,
-    required this.amount,
-    required this.productname,
-    required this.requestId,
-    required this.customerName,
-    required this.date,
-    required this.isChecked,
-    required this.selectedAgent,
-  });
 }

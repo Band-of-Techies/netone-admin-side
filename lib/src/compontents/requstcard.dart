@@ -68,25 +68,6 @@ class _RequestItemState extends State<RequestItem> {
               children: [
                 Row(
                   children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * .02,
-                      child: Checkbox(
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                            color:
-                                Colors.white, // Set the border color to white
-                            width: 1.0, // Set the border width
-                          ),
-                          borderRadius: BorderRadius.circular(
-                              4.0), // Adjust the border radius as needed
-                        ),
-                        checkColor: Colors.white,
-                        focusColor: Colors.white,
-                        activeColor: AppColors.mainColor,
-                        value: widget.isChecked,
-                        onChanged: widget.onCheckboxChanged,
-                      ),
-                    ),
                     SizedBox(width: 12),
                     SizedBox(
                         width: MediaQuery.of(context).size.width * .05,

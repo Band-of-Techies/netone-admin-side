@@ -259,6 +259,24 @@ class _SearchStatusState extends State<SearchStatus> {
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            textTheme: TextTheme(
+              subtitle1: GoogleFonts.dmSans(color: AppColors.neutral),
+              button: GoogleFonts.dmSans(color: AppColors.neutral),
+            ),
+            colorScheme: ColorScheme.light(
+                primary: AppColors.mainColor,
+                surface: AppColors.sidebarbackground,
+                onSurface: AppColors.neutral,
+                secondary: AppColors.neutral),
+            dialogBackgroundColor: Colors.white,
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.normal),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null && picked != DateTime.now()) {
@@ -276,6 +294,24 @@ class _SearchStatusState extends State<SearchStatus> {
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            textTheme: TextTheme(
+              subtitle1: GoogleFonts.dmSans(color: AppColors.neutral),
+              button: GoogleFonts.dmSans(color: AppColors.neutral),
+            ),
+            colorScheme: ColorScheme.light(
+                primary: AppColors.mainColor,
+                surface: AppColors.sidebarbackground,
+                onSurface: AppColors.neutral,
+                secondary: AppColors.neutral),
+            dialogBackgroundColor: Colors.white,
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.normal),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null && picked != DateTime.now()) {

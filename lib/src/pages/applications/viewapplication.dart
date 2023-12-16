@@ -879,7 +879,7 @@ class _ViewApplicationState extends State<ViewApplication> {
               width: MediaQuery.of(context).size.width * .5,
               height: MediaQuery.of(context).size.height * .7,
               child: Timeline(
-                indicators: List<Widget>.generate(5, (index) {
+                indicators: List<Widget>.generate(4, (index) {
                   return Icon(
                     Icons.circle,
                     color: AppColors.mainColor,
@@ -897,20 +897,19 @@ class _ViewApplicationState extends State<ViewApplication> {
                       'Netone',
                       'Netone Status: ${loanDetail.requestSystemStatus}',
                       'Last Update: ${loanDetail.requestSystemUpdateDate}',
-                      'Rejection Reason: ${loanDetail.systemRejectionReason}'),
+                      loanDetail.systemRejectionReason != ''
+                          ? 'Rejection Reason: ${loanDetail.systemRejectionReason}'
+                          : ''),
                   timelinecontent(
                       'Bank ',
                       'Bank Status: ${loanDetail.requestBankStatus}',
                       'Last Update: ${loanDetail.requestBankUpdateDate}',
-                      'Rejection Reason: ${loanDetail.bankRejectionReason}'),
+                      loanDetail.bankRejectionReason != ''
+                          ? 'Rejection Reason: ${loanDetail.bankRejectionReason}'
+                          : ''),
                   timelinecontent(
-                      'Order Confirmed',
-                      'Order Confirmed Status: ${loanDetail.requestOrderStatus}',
-                      'Last Update: ${loanDetail.requestOrderUpdateDate}',
-                      ''),
-                  timelinecontent(
-                      'Order Delivered',
-                      'Order Delivered Status: ${loanDetail.requestOrderStatus}',
+                      'Order',
+                      'Order Status: ${loanDetail.requestOrderStatus}',
                       'Last Update: ${loanDetail.requestOrderUpdateDate}',
                       ''),
                 ],
