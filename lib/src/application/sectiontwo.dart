@@ -9,7 +9,6 @@ import 'package:netone_loanmanagement_admin/src/application/datas/applicationdet
 import 'package:netone_loanmanagement_admin/src/pages/applications/editapplication.dart';
 import 'package:netone_loanmanagement_admin/src/res/apis/loandetails.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
-import 'package:netone_loanmanagement_admin/src/res/serchTextFiled.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:netone_loanmanagement_admin/src/res/textfield.dart';
 
@@ -33,8 +32,7 @@ class _SectionTwoState extends State<SectionTwo>
       List.generate(61, (index) => (DateTime.now().year + index).toString());
   List<EmployemntandKlinDetails> applicantDetailsLists = [];
   String? selectedLetter;
-  List<String> employemnttypelist = ['Permanent', 'Contract'];
-  List<String>? applicantKeys;
+  List<String> employemnttypelist = ['permanent', 'contract'];
   List<String> letters = List.generate(
       26, (index) => String.fromCharCode('A'.codeUnitAt(0) + index));
   List<String> provinces = [
@@ -1124,7 +1122,7 @@ class _SectionTwoState extends State<SectionTwo>
 
       // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
       String bearertoken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
       dio.options.headers['Authorization'] = 'Bearer $bearertoken';
 
       final response = await dio.get(
@@ -1139,58 +1137,49 @@ class _SectionTwoState extends State<SectionTwo>
         setState(() {
           // Move this block here
           this.loanDetail = loanDetail;
-          for (String key in loanDetail.applicants.keys) {
-            applicantKeys = loanDetail.applicants.keys.toList();
-          }
-          for (int i = 0; i < loanDetail.applicantCount; i++) {
-            print(
-                loanDetail.applicants[applicantKeys![i]]!.occupation.jobTitle);
-            applicantDetailsLists[i].jobTitleController.text =
-                loanDetail.applicants[applicantKeys![i]]!.occupation.jobTitle;
-            applicantDetailsLists[i].ministryController.text =
-                loanDetail.applicants[applicantKeys![i]]!.occupation.ministry;
-            applicantDetailsLists[i].physicalAddressControlleremployment.text =
-                loanDetail
-                    .applicants[applicantKeys![i]]!.occupation.physicalAddress;
-            applicantDetailsLists[i].postalAddressControllerEmployment.text =
-                loanDetail
-                    .applicants[applicantKeys![i]]!.occupation.postalAddress;
-            applicantDetailsLists[i].provinceController =
-                loanDetail.applicants[applicantKeys![i]]!.occupation.province;
-            applicantDetailsLists[i].townController =
-                loanDetail.applicants[applicantKeys![i]]!.occupation.town;
-            applicantDetailsLists[i].grossSalaryController.text = loanDetail
-                .applicants[applicantKeys![i]]!.occupation.grossSalary;
-            applicantDetailsLists[i].currentNetSalaryController.text =
-                loanDetail
-                    .applicants[applicantKeys![i]]!.occupation.currentNetSalary;
-            applicantDetailsLists[i].salaryScaleController = loanDetail
-                .applicants[applicantKeys![i]]!.occupation.salaryScale;
-            applicantDetailsLists[i].preferredYearOfRetirementController =
-                loanDetail.applicants[applicantKeys![i]]!.occupation
-                    .preferredRetirementYear;
-            applicantDetailsLists[i].employeeNumberController.text = loanDetail
-                .applicants[applicantKeys![i]]!.occupation.employerNumber;
-            applicantDetailsLists[i].yearsInEmploymentController = loanDetail
-                .applicants[applicantKeys![i]]!.occupation.yearsOfService;
-            applicantDetailsLists[i].nameController.text = loanDetail
-                .applicants[applicantKeys![i]]!.occupation.employerName;
-            applicantDetailsLists[i].otherNamesController.text = loanDetail
-                .applicants[applicantKeys![i]]!.occupation.employerOtherNames;
-            applicantDetailsLists[i].physicalAddressControllernextofkin.text =
-                loanDetail
-                    .applicants[applicantKeys![i]]!.occupation.physicalAddress;
 
-            applicantDetailsLists[i].employmentType = loanDetail
-                .applicants[applicantKeys![i]]!.occupation.employmentType;
+          for (int i = 0; i < loanDetail.applicantCount; i++) {
+            print(loanDetail.applicants[i].occupation.jobTitle);
+            applicantDetailsLists[i].jobTitleController.text =
+                loanDetail.applicants[i].occupation.jobTitle;
+            applicantDetailsLists[i].ministryController.text =
+                loanDetail.applicants[i].occupation.ministry;
+            applicantDetailsLists[i].physicalAddressControlleremployment.text =
+                loanDetail.applicants[i].occupation.physicalAddress;
+            applicantDetailsLists[i].postalAddressControllerEmployment.text =
+                loanDetail.applicants[i].occupation.postalAddress;
+            applicantDetailsLists[i].provinceController =
+                loanDetail.applicants[i].occupation.province;
+            applicantDetailsLists[i].townController =
+                loanDetail.applicants[i].occupation.town;
+            applicantDetailsLists[i].grossSalaryController.text =
+                loanDetail.applicants[i].occupation.grossSalary;
+            applicantDetailsLists[i].currentNetSalaryController.text =
+                loanDetail.applicants[i].occupation.currentNetSalary;
+            applicantDetailsLists[i].salaryScaleController =
+                loanDetail.applicants[i].occupation.salaryScale;
+            applicantDetailsLists[i].preferredYearOfRetirementController =
+                loanDetail.applicants[i].occupation.preferredRetirementYear;
+            applicantDetailsLists[i].employeeNumberController.text =
+                loanDetail.applicants[i].occupation.employerNumber;
+            applicantDetailsLists[i].yearsInEmploymentController =
+                loanDetail.applicants[i].occupation.yearsOfService;
+            applicantDetailsLists[i].nameController.text =
+                loanDetail.applicants[i].kin.name;
+            applicantDetailsLists[i].otherNamesController.text =
+                loanDetail.applicants[i].kin.otherNames;
+            applicantDetailsLists[i].physicalAddressControllernextofkin.text =
+                loanDetail.applicants[i].occupation.physicalAddress;
+
+            applicantDetailsLists[i].employmentType =
+                loanDetail.applicants[i].occupation.employmentType;
 
             applicantDetailsLists[i].postalAddressControllerforKline.text =
-                loanDetail
-                    .applicants[applicantKeys![i]]!.occupation.postalAddress;
-            applicantDetailsLists[i].cellNumberController.text = loanDetail
-                .applicants[applicantKeys![i]]!.occupation.employerCellNumber;
-            applicantDetailsLists[i].emailAddressController.text = loanDetail
-                .applicants[applicantKeys![i]]!.occupation.employerEmail;
+                loanDetail.applicants[i].occupation.postalAddress;
+            applicantDetailsLists[i].cellNumberController.text =
+                loanDetail.applicants[i].kin.phoneNumber;
+            applicantDetailsLists[i].emailAddressController.text =
+                loanDetail.applicants[i].kin.email;
           }
         });
       } else {

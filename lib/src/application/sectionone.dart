@@ -29,9 +29,9 @@ class _SectionOneState extends State<SectionOne>
   late LoanRequestDetails loanDetail;
   // Controllers for text fields
   List<ApplicantDetails> applicants = [];
-  List<String> ownedorlease = ['Owned', 'Lease'];
+  List<String> ownedorlease = ['owned', 'rented'];
   List<String> genders = ['Male', 'Female'];
-  bool isJointApplication = false;
+
   int numberOfPersons = 1;
   List<String> provinces = [
     'Central',
@@ -206,96 +206,6 @@ class _SectionOneState extends State<SectionOne>
                 applicantDetails(3, applicants[2]),
               if (widget.myTabController.numberOfPersons > 3)
                 applicantDetails(4, applicants[3]),
-              Row(
-                children: [
-                  CustomText(
-                    text: 'Joint Application:',
-                    color: AppColors.neutral,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Switch(
-                    activeColor: AppColors.mainColor,
-                    value: widget.myTabController.numberOfPersons < 2
-                        ? isJointApplication
-                        : true,
-                    onChanged: (value) {
-                      setState(() {
-                        isJointApplication = value;
-                      });
-                    },
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  isJointApplication ||
-                          widget.myTabController.numberOfPersons > 1
-                      ? Expanded(
-                          child: DropdownButtonFormField(
-                            focusColor: AppColors.neutral,
-                            dropdownColor: AppColors.mainbackground,
-                            value: numberOfPersons,
-                            iconEnabledColor: AppColors.mainColor,
-                            items: [1, 2, 3, 4].map((int value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text('$value'),
-                              );
-                            }).toList(),
-                            onChanged: (int? value) {
-                              setState(() {
-                                int previousNumberOfPersons = numberOfPersons;
-                                numberOfPersons = value!;
-
-                                if (numberOfPersons > previousNumberOfPersons) {
-                                  // Generate new applicants only for the additional persons
-                                  applicants.addAll(List.generate(
-                                    numberOfPersons - previousNumberOfPersons,
-                                    (index) => ApplicantDetails(),
-                                  ));
-                                } else {
-                                  // Trim the list if the number of persons is reduced
-                                  applicants.removeRange(
-                                      numberOfPersons, applicants.length);
-                                }
-                                print(numberOfPersons);
-                                widget.myTabController
-                                    .updateNumberOfPersons(value);
-                                widget.myTabController.numberOfPersons = value;
-                              });
-                            },
-                            style: GoogleFonts.dmSans(
-                              color: AppColors.neutral,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(4.0),
-                                borderSide:
-                                    BorderSide(color: Colors.grey, width: 1.0),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(4),
-                                borderSide: BorderSide(
-                                    color: AppColors.mainColor, width: 1.0),
-                              ),
-                              labelText: 'Number of Persons',
-                              labelStyle: GoogleFonts.dmSans(
-                                color: AppColors.neutral,
-                                height: 0.5,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        )
-                      : SizedBox.shrink(),
-                ],
-              ),
               SizedBox(
                 height: 20,
               ),
@@ -307,15 +217,8 @@ class _SectionOneState extends State<SectionOne>
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       // Form is valid, move to the next section
-                      if (validateGender(applicants) &&
-                          validateOwnership(applicants)) {
-                        //printApplicantDetails();
-                        updateData(widget.id!);
-                        print('update');
-                      } else {
-                        warning('Complete Gender and Ownership');
-                        // Handle the case when the last tab is reached
-                      }
+
+                      sendPatchRequest(widget.id!);
                     }
                   },
                   child: CustomText(
@@ -933,7 +836,7 @@ class _SectionOneState extends State<SectionOne>
 
       // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
       String bearertoken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
       dio.options.headers['Authorization'] = 'Bearer $bearertoken';
 
       final response = await dio.get(
@@ -948,45 +851,42 @@ class _SectionOneState extends State<SectionOne>
         setState(() {
           // Move this block here
           this.loanDetail = loanDetail;
-          for (String key in loanDetail.applicants.keys) {
-            applicantKeys = loanDetail.applicants.keys.toList();
-          }
+
           for (int i = 0; i < loanDetail.applicantCount; i++) {
             applicants[i].surnameController.text =
-                loanDetail.applicants[applicantKeys![i]]!.surname;
+                loanDetail.applicants[i].surname;
             applicants[i].middleNameController.text =
-                loanDetail.applicants[applicantKeys![i]]!.middleName;
+                loanDetail.applicants[i].middleName;
             applicants[i].firstNameController.text =
-                loanDetail.applicants[applicantKeys![i]]!.firstName;
-            applicants[i].dobController.text =
-                loanDetail.applicants[applicantKeys![i]]!.dob;
-            applicants[i].nrcController.text =
-                loanDetail.applicants[applicantKeys![i]]!.nrc;
+                loanDetail.applicants[i].firstName;
+            applicants[i].dobController.text = loanDetail.applicants[i].dob;
+            applicants[i].nrcController.text = loanDetail.applicants[i].nrc;
             applicants[i].telephoneController.text =
-                loanDetail.applicants[applicantKeys![i]]!.telephone;
+                loanDetail.applicants[i].telephone;
             applicants[i].mobileController.text =
-                loanDetail.applicants[applicantKeys![i]]!.mobile;
-            applicants[i].emailController.text =
-                loanDetail.applicants[applicantKeys![i]]!.email;
+                loanDetail.applicants[i].mobile;
+            applicants[i].emailController.text = loanDetail.applicants[i].email;
             applicants[i].licenseNumberController.text =
-                loanDetail.applicants[applicantKeys![i]]!.licenseNumber;
+                loanDetail.applicants[i].licenseNumber;
             applicants[i].licenseExpiryController.text =
-                loanDetail.applicants[applicantKeys![i]]!.licenseExpiry;
+                loanDetail.applicants[i].licenseExpiry;
             applicants[i].residentialAddressController.text =
-                loanDetail.applicants[applicantKeys![i]]!.residentialAddress;
+                loanDetail.applicants[i].residentialAddress;
             applicants[i].postalAddressController.text =
-                loanDetail.applicants[applicantKeys![i]]!.postalAddress;
-            applicants[i].howlongthisplaceController.text = '10 Years';
+                loanDetail.applicants[i].postalAddress;
+            applicants[i].howlongthisplaceController.text =
+                loanDetail.applicants[i].howlongthisplace;
 
             applicants[i].provinceController =
-                loanDetail.applicants[applicantKeys![i]]!.province;
-            applicants[i].townController =
-                loanDetail.applicants[applicantKeys![i]]!.town;
+                loanDetail.applicants[i].province;
+            applicants[i].townController = loanDetail.applicants[i].town;
 
-            applicants[i].gender = 'Male';
-            applicants[i].ownership = 'Owned';
+            applicants[i].gender = loanDetail.applicants[i].gender;
+            applicants[i].ownership = loanDetail.applicants[i].ownership;
           }
         });
+        widget.myTabController.updateApplicants(applicants);
+        widget.myTabController.notifyListeners();
       } else {
         // Handle error response
         print('eeee: ${response.statusCode}');
@@ -997,37 +897,64 @@ class _SectionOneState extends State<SectionOne>
     }
   }
 
-  Future<void> updateData(int? id) async {
-    print(id);
-    Dio dio = Dio();
-    String token =
-        'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
+  void sendPatchRequest(int id) async {
+    // Replace 'your_api_endpoint' with the actual endpoint you want to patch
+    var apiUrl = 'https://loan-managment.onrender.com/loan_requests/$id';
+
+    // Replace 'your_bearer_token' with the actual Bearer token you need
+    var bearerToken =
+        'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
+
+    // Replace the following map with the data you want to send in the patch request
+
+    var patchData = <String, dynamic>{};
+
+    for (int i = 1; i <= loanDetail.applicantCount; i++) {
+      patchData['applicants_attributes'] = {
+        'surname': applicants[i].surnameController.text,
+        'middleName': applicants[i].middleNameController.text,
+        'firstName': applicants[i].firstNameController.text,
+        'dob': applicants[i].dobController.text,
+        'nrc': applicants[i].nrcController.text,
+        'telephone': applicants[i].telephoneController.text,
+        'mobile': applicants[i].mobileController.text,
+        'email': applicants[i].emailController.text,
+        'licenseNumber': applicants[i].licenseNumberController.text,
+        'licenseExpiry': applicants[i].licenseExpiryController.text,
+        'residentialAddress': applicants[i].residentialAddressController.text,
+        'postalAddress': applicants[i].postalAddressController.text,
+        'howLongThisPlace': applicants[i].howlongthisplaceController.text,
+        'town': applicants[i].selectedtown,
+        'province': applicants[i].selectedprovince,
+        'gender': applicants[i].gender,
+        'ownership': applicants[i].ownership,
+      };
+    }
+    print(patchData);
     try {
-      final response = await dio.patch(
-        'https://loan-managment.onrender.com/loan_requests/$id',
-        data: {
-          "loan_amount": '2000000',
-          // Add your request payload here if needed
-        },
+      var dio = Dio();
+
+      var response = await dio.patch(
+        apiUrl,
+        data: patchData,
         options: Options(
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
+            'Authorization': 'Bearer $bearerToken',
           },
         ),
       );
 
       if (response.statusCode == 200) {
-        // Handle a successful response here
-        print(response.data);
-        print('Update successful');
+        print('PATCH request successful');
+        print('Response: ${response.data}');
       } else {
-        // Handle other status codes here
-        print('Update failed with status code: ${response.statusCode}');
+        print(
+            'Failed to send PATCH request. Status code: ${response.statusCode}');
+        print('Response: ${response.data}');
       }
     } catch (error) {
-      // Handle errors here
-      print('Error updating data: $error');
+      print('Error sending PATCH request: $error');
     }
   }
 }

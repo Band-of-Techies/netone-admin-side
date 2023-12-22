@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 class ApplicantDetails {
@@ -20,6 +22,8 @@ class ApplicantDetails {
   String? ownership;
   String? selectedtown;
   String? selectedprovince;
+  List<Uint8List> selectedFiles = [];
+  List<String> selectedFilesnames = [];
 
   void dispose() {
     surnameController.dispose();

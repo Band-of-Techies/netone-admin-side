@@ -182,7 +182,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
       print(productId);
       Dio dio = Dio();
       dio.options.headers['Authorization'] =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
       final response = await dio
           .delete('https://loan-managment.onrender.com/products/$productId');
 
@@ -335,7 +335,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
     try {
       // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
       String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
 
       final response = await Dio().get(
         'https://loan-managment.onrender.com/products',
@@ -377,7 +377,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
 
       // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
       String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
       print('here');
       // Perform the POST request using Dio
       Response response = await Dio().post(
@@ -432,7 +432,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
 
       // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
       String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
 
       // Perform the POST request using Dio
       Response response = await Dio().put(

@@ -1,5 +1,6 @@
 class LoanRequestDetails {
   final int id;
+  final String requestnumber;
   final String createdAt;
   final String updatedAt;
   final String description;
@@ -18,12 +19,14 @@ class LoanRequestDetails {
   final String requestSystemUpdateDate;
   final String requestOrderUpdateDate;
   final Product product;
-  final Map<String, Applicant> applicants;
+  final List<Applicant> applicants;
   final int applicantCount;
-  final int otherRequestCount;
   final AgentDetails agent;
+  final List<Document> documents;
 
   LoanRequestDetails({
+    required this.requestnumber,
+    required this.documents,
     required this.id,
     required this.createdAt,
     required this.updatedAt,
@@ -45,13 +48,17 @@ class LoanRequestDetails {
     required this.product,
     required this.applicants,
     required this.applicantCount,
-    required this.otherRequestCount,
     required this.agent,
   });
 
   factory LoanRequestDetails.fromJson(Map<String, dynamic> json) {
+    List<Document> documents = (json['documents'] as List<dynamic>)
+        .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+        .toList();
     return LoanRequestDetails(
+      documents: documents,
       id: json['id'] ?? "NA",
+      requestnumber: json['request_number'] ?? "NA",
       createdAt: json['created_at'] ?? "NA",
       updatedAt: json['updated_at'] ?? "NA",
       description: json['description'] ?? "NA",
@@ -71,11 +78,13 @@ class LoanRequestDetails {
       requestOrderUpdateDate: (json['request_order_update_date'] ?? "NA"),
       agent: AgentDetails.fromJson(json['assign_to'] ?? "NA"),
       product: Product.fromJson(json['product'] ?? "NA"),
-      applicants: (json['applicants'] as Map<String, dynamic>).map(
-        (key, value) => MapEntry(key, Applicant.fromJson(value)),
-      ),
+      applicants: (json['applicants'] as List<dynamic>)
+          .map(
+            (applicant) =>
+                Applicant.fromJson(applicant as Map<String, dynamic>),
+          )
+          .toList(),
       applicantCount: json['applicant_count'] ?? "NA",
-      otherRequestCount: json['other_request_count'] ?? "NA",
     );
   }
 }
@@ -123,6 +132,7 @@ class Product {
 }
 
 class Applicant {
+  final String exisitngstatus;
   final int id;
   final String createdAt;
   final String updatedAt;
@@ -140,9 +150,24 @@ class Applicant {
   final String postalAddress;
   final String province;
   final String town;
+  final String gender;
+  final String ownership;
+  final String howlongthisplace;
+  final String loansharename;
+  final String loansharepercent;
   final Occupation occupation;
+  final List<Document> documents;
+  final Kin kin;
 
   Applicant({
+    required this.kin,
+    required this.ownership,
+    required this.howlongthisplace,
+    required this.documents,
+    required this.loansharename,
+    required this.loansharepercent,
+    required this.gender,
+    required this.exisitngstatus,
     required this.id,
     required this.createdAt,
     required this.updatedAt,
@@ -164,33 +189,47 @@ class Applicant {
   });
 
   factory Applicant.fromJson(Map<String, dynamic> json) {
+    List<Document> documents = (json['documents'] as List<dynamic>)
+        .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+        .toList();
     return Applicant(
-      id: json['id'] ?? "NA",
-      createdAt: json['created_at'] ?? "NA",
-      updatedAt: json['updated_at'] ?? "NA",
-      surname: json['surname'] ?? "NA",
-      firstName: json['first_name'] ?? "NA",
-      middleName: json['middle_name'] ?? "NA",
-      email: json['email'] ?? "NA",
-      dob: json['dob'] ?? "NA",
-      nrc: json['nrc'] ?? "NA",
-      telephone: json['telephone'] ?? "NA",
-      mobile: json['mobile'] ?? "NA",
-      licenseNumber: json['license_number'] ?? "NA",
-      licenseExpiry: json['license_expiry'] ?? "NA",
-      residentialAddress: json['residential_address'] ?? "NA",
-      postalAddress: json['postal_address'] ?? "NA",
-      province: json['province'] ?? "NA",
-      town: json['town'] ?? "NA",
-      occupation: Occupation.fromJson(json['occupation'] ?? "NA"),
-    );
+        id: json['id'] ?? "NA",
+        ownership: json['ownership'] ?? "NA",
+        howlongthisplace: json['ownership_how_long'] ?? "NA",
+        loansharename: json['loan_share_name'] ?? "NA",
+        loansharepercent: json['loan_share_percent'] ?? "NA",
+        gender: json['gender'] ?? "NA",
+        exisitngstatus: json['existing_loan_request_status'] ?? "NA",
+        createdAt: json['created_at'] ?? "NA",
+        updatedAt: json['updated_at'] ?? "NA",
+        surname: json['surname'] ?? "NA",
+        firstName: json['first_name'] ?? "NA",
+        middleName: json['middle_name'] ?? "NA",
+        email: json['email'] ?? "NA",
+        dob: json['dob'] ?? "NA",
+        nrc: json['nrc'] ?? "NA",
+        telephone: json['telephone'] ?? "NA",
+        mobile: json['mobile'] ?? "NA",
+        licenseNumber: json['license_number'] ?? "NA",
+        licenseExpiry: json['license_expiry'] ?? "NA",
+        residentialAddress: json['residential_address'] ?? "NA",
+        postalAddress: json['postal_address'] ?? "NA",
+        province: json['province'] ?? "NA",
+        town: json['town'] ?? "NA",
+        documents: documents,
+        occupation: Occupation.fromJson(
+          json['occupation'] ?? "NA",
+        ),
+        kin: Kin.fromJson(
+          json['kin'] ?? "NA",
+        ));
   }
 }
 
 class Occupation {
   final int id;
   final String createdAt;
-  final String updated_at;
+  final String updatedAt;
   final String jobTitle;
   final String ministry;
   final String physicalAddress;
@@ -205,10 +244,6 @@ class Occupation {
   final String yearsOfService;
   final String employmentType;
   final String expiryDate;
-  final String employerEmail;
-  final String employerName;
-  final String employerOtherNames;
-  final String employerCellNumber;
   final String currentNetSalary;
   final String tempExpiryDate;
   final String preferredRetirementYear;
@@ -216,7 +251,7 @@ class Occupation {
   Occupation({
     required this.id,
     required this.createdAt,
-    required this.updated_at,
+    required this.updatedAt,
     required this.jobTitle,
     required this.ministry,
     required this.physicalAddress,
@@ -231,10 +266,6 @@ class Occupation {
     required this.yearsOfService,
     required this.employmentType,
     required this.expiryDate,
-    required this.employerEmail,
-    required this.employerName,
-    required this.employerOtherNames,
-    required this.employerCellNumber,
     required this.currentNetSalary,
     required this.tempExpiryDate,
     required this.preferredRetirementYear,
@@ -244,7 +275,7 @@ class Occupation {
     return Occupation(
       id: json['id'] ?? "NA",
       createdAt: json['created_at'] ?? "NA",
-      updated_at: json['updated_at'] ?? "NA",
+      updatedAt: json['updated_at'] ?? "NA",
       jobTitle: json['job_title'] ?? "NA",
       ministry: json['ministry'] ?? "NA",
       physicalAddress: json['physical_address'] ?? "NA",
@@ -259,13 +290,61 @@ class Occupation {
       yearsOfService: json['years_of_service'] ?? "NA",
       employmentType: json['employment_type'] ?? "NA",
       expiryDate: json['expiry_date'] ?? "NA",
-      employerEmail: json['employer_email'] ?? "NA",
-      employerName: json['employer_name'] ?? "NA",
-      employerOtherNames: json['employer_other_names'] ?? "NA",
-      employerCellNumber: json['employer_cell_number'] ?? "NA",
       currentNetSalary: json['current_net_salary'] ?? "NA",
       tempExpiryDate: json['temp_expiry_date'] ?? "NA",
       preferredRetirementYear: json['preferred_retirement_year'] ?? "NA",
+    );
+  }
+}
+
+class Kin {
+  final int id;
+  final String name;
+  final String otherNames;
+  final String physicalAddress;
+  final String postalAddress;
+  final String phoneNumber;
+  final String email;
+
+  Kin({
+    required this.id,
+    required this.name,
+    required this.otherNames,
+    required this.physicalAddress,
+    required this.postalAddress,
+    required this.phoneNumber,
+    required this.email,
+  });
+
+  factory Kin.fromJson(Map<String, dynamic> json) {
+    return Kin(
+      id: json['id'] ?? "NA",
+      name: json['name'] ?? "NA",
+      otherNames: json['other_names'] ?? "NA",
+      physicalAddress: json['physical_address'] ?? "NA",
+      postalAddress: json['postal_address'] ?? "NA",
+      phoneNumber: json['phone_number'] ?? "NA",
+      email: json['email'] ?? "NA",
+    );
+  }
+}
+
+class Document {
+  final int id;
+  final String contentType;
+  final String url;
+
+  Document({
+    required this.id,
+    required this.contentType,
+    required this.url,
+  });
+
+  factory Document.fromJson(Map<String, dynamic> json) {
+    return Document(
+      id: json['id'] ?? "NA",
+      contentType: json['content_type'] ?? "NA",
+      url: json['url'] ?? "NA",
     );
   }
 }

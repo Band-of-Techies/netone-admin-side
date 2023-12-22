@@ -11,6 +11,7 @@ import 'package:netone_loanmanagement_admin/src/res/apis/loandetails.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:netone_loanmanagement_admin/src/res/timeline.dart';
+import 'dart:js' as js;
 
 class ViewApplication extends StatefulWidget {
   final int loanRequestId;
@@ -25,7 +26,6 @@ class _ViewApplicationState extends State<ViewApplication> {
   late LoanRequestDetails loanDetail;
   List<String> currentstatusList = ['Approve', 'Reject'];
   String selectedstatus = '';
-  List<String>? applicantKeys;
   bool isloading = true;
   @override
   Widget build(BuildContext context) {
@@ -43,6 +43,11 @@ class _ViewApplicationState extends State<ViewApplication> {
                     MaterialPageRoute(builder: (context) => DashboardScreen()),
                   );
                 },
+              ),
+              title: Text(
+                loanDetail.requestnumber,
+                style:
+                    GoogleFonts.dmSans(fontSize: 14, color: AppColors.neutral),
               ),
               actions: [
                 Row(
@@ -216,7 +221,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                           children: [
                             CustomText(
                               text:
-                                  'Applicant: ${loanDetail.applicants[loanDetail.applicants.keys.first]!.surname}',
+                                  'Applicant: ${loanDetail.applicants[0].surname}',
                               color: AppColors.neutral,
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -282,8 +287,8 @@ class _ViewApplicationState extends State<ViewApplication> {
                   SizedBox(
                     height: 20,
                   ),
-                  for (int i = 0; i < applicantKeys!.length; i++)
-                    applicantDetails(applicantKeys![i], i),
+                  for (int i = 0; i < loanDetail.applicants.length; i++)
+                    applicantDetails(i, i),
 
                   // Display other details as needed
 
@@ -306,9 +311,10 @@ class _ViewApplicationState extends State<ViewApplication> {
                   SizedBox(
                     height: 20,
                   ),
-                  for (int i = 0; i < applicantKeys!.length; i++)
-                    employmentDetals(applicantKeys![i], i),
-
+                  for (int i = 0; i < loanDetail.applicants.length; i++)
+                    employmentDetals(i, i),
+                  for (int i = 0; i < loanDetail.applicants.length; i++)
+                    employmentKinDetals(i, i),
                   CustomText(
                     text: 'Part 3',
                     color: AppColors.neutral,
@@ -328,6 +334,12 @@ class _ViewApplicationState extends State<ViewApplication> {
                     height: 20,
                   ),
                   loanDetails(),
+                  SizedBox(
+                    height: 20,
+                  ),
+
+                  for (int i = 0; i < loanDetail.applicants.length; i++)
+                    applicantDocuments(i, i),
                 ],
               ),
             ),
@@ -347,7 +359,169 @@ class _ViewApplicationState extends State<ViewApplication> {
     return formattedDate;
   }
 
-  Container applicantDetails(String applicantkey, int i) {
+  Container applicantDocuments(int applicantkey, int i) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      padding: EdgeInsets.fromLTRB(20, 25, 20, 15),
+      decoration: BoxDecoration(
+          color: AppColors.sidebarbackground,
+          borderRadius: BorderRadius.circular(20)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(
+            text: 'Applicant ${i + 1}',
+            fontWeight: FontWeight.w700,
+            fontSize: 15,
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Wrap(
+            children: List.generate(
+              loanDetail.applicants[applicantkey].documents.length,
+              (index) {
+                return Container(
+                  margin: EdgeInsets.all(10),
+                  width: 300,
+                  height: 90,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Display Image for image files
+                      isImage(loanDetail.applicants[applicantkey]
+                              .documents[index].contentType)
+                          ? GestureDetector(
+                              onTap: () {
+                                String imageUrl = loanDetail
+                                    .applicants[applicantkey]
+                                    .documents[index]
+                                    .url;
+                                js.context.callMethod('open', [imageUrl]);
+                              },
+                              child: Container(
+                                width: 300,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: AppColors.mainbackground),
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: AppColors.neutral,
+                                ),
+                                child: Image.network(
+                                  loanDetail.applicants[applicantkey]
+                                      .documents[index].url,
+                                  width:
+                                      300, // Set the width of the image as per your requirement
+                                  height:
+                                      50, // Set the height of the image as per your requirement
+                                  fit: BoxFit
+                                      .cover, // Adjust this based on your image requirements
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 300,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: AppColors.neutral),
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: AppColors.neutral,
+                                      ),
+                                      child: Center(
+                                        child: Text('Image Not Found'),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            )
+                          : loanDetail.applicants[applicantkey].documents[index]
+                                  .contentType
+                                  .contains('pdf')
+                              ? GestureDetector(
+                                  onTap: () {
+                                    String pdfUrl = loanDetail
+                                        .applicants[applicantkey]
+                                        .documents[index]
+                                        .url;
+                                    js.context.callMethod('open', [pdfUrl]);
+                                  },
+                                  child: Container(
+                                    width: 300,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: AppColors.neutral),
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: AppColors.neutral,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Icon(
+                                          Icons.picture_as_pdf,
+                                          color: Colors.red,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  width: 300,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: AppColors.neutral),
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppColors.neutral,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      Icon(
+                                        Icons.enhanced_encryption,
+                                        color: Colors.red,
+                                      ),
+                                      CustomText(text: 'Unreadable Format')
+                                    ],
+                                  ),
+                                ),
+
+                      SizedBox(
+                          height: 8.0), // Add spacing between image and text
+
+                      // Display file name with overflow handling
+                      Flexible(
+                        child: Text(
+                          'Document  ${index + 1}',
+
+                          // Adjust the maximum lines based on your UI requirements
+                          style: GoogleFonts.dmSans(
+                            color: AppColors.neutral,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container applicantDetails(int applicantkey, int i) {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
       padding: EdgeInsets.fromLTRB(20, 25, 20, 25),
@@ -358,10 +532,38 @@ class _ViewApplicationState extends State<ViewApplication> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomText(
-            text: 'Applicant ${i + 1}',
-            fontWeight: FontWeight.w700,
-            fontSize: 15,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CustomText(
+                text: 'Applicant ${i + 1}',
+                fontWeight: FontWeight.w700,
+                fontSize: 15,
+              ),
+              if (loanDetail.applicants[applicantkey].exisitngstatus == 'new')
+                CustomText(
+                  text: 'New Customer',
+                  color: Colors.green,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                ),
+              if (loanDetail.applicants[applicantkey].exisitngstatus ==
+                  'existing')
+                CustomText(
+                  text: 'Other requests that are not rejected',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                  color: Colors.orange,
+                ),
+              if (loanDetail.applicants[applicantkey].exisitngstatus ==
+                  'rejected')
+                CustomText(
+                  text: 'Has requests that are rejected',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                  color: Colors.red,
+                ),
+            ],
           ),
           SizedBox(
             height: 40,
@@ -370,8 +572,7 @@ class _ViewApplicationState extends State<ViewApplication> {
             children: [
               CustomText(
                 fontSize: 15,
-                text:
-                    'Surname: ${loanDetail.applicants[applicantkey]!.surname}',
+                text: 'Surname: ${loanDetail.applicants[applicantkey].surname}',
               ),
               SizedBox(
                 width: 50,
@@ -379,7 +580,7 @@ class _ViewApplicationState extends State<ViewApplication> {
               CustomText(
                 fontSize: 15,
                 text:
-                    'Middle Name: ${loanDetail.applicants[applicantkey]!.middleName}',
+                    'Middle Name: ${loanDetail.applicants[applicantkey].middleName}',
               ),
               SizedBox(
                 width: 50,
@@ -387,7 +588,7 @@ class _ViewApplicationState extends State<ViewApplication> {
               CustomText(
                 fontSize: 15,
                 text:
-                    'First Name: First Name ${loanDetail.applicants[applicantkey]!.firstName}',
+                    'First Name: First Name ${loanDetail.applicants[applicantkey].firstName}',
               )
             ],
           ),
@@ -398,8 +599,7 @@ class _ViewApplicationState extends State<ViewApplication> {
             children: [
               CustomText(
                 fontSize: 15,
-                text:
-                    'Gender: ${loanDetail.applicants[applicantkey]!.residentialAddress}',
+                text: 'Gender: ${loanDetail.applicants[applicantkey].gender}',
               ),
               SizedBox(
                 width: 50,
@@ -407,14 +607,14 @@ class _ViewApplicationState extends State<ViewApplication> {
               CustomText(
                 fontSize: 15,
                 text:
-                    'Date of Birth: ${loanDetail.applicants[applicantkey]!.dob}',
+                    'Date of Birth: ${loanDetail.applicants[applicantkey].dob}',
               ),
               SizedBox(
                 width: 50,
               ),
               CustomText(
                 fontSize: 15,
-                text: 'NRC Number: ${loanDetail.applicants[applicantkey]!.nrc}',
+                text: 'NRC Number: ${loanDetail.applicants[applicantkey].nrc}',
               ),
             ],
           ),
@@ -426,21 +626,21 @@ class _ViewApplicationState extends State<ViewApplication> {
               CustomText(
                 fontSize: 15,
                 text:
-                    'Telephone: ${loanDetail.applicants[applicantkey]!.telephone}',
+                    'Telephone: ${loanDetail.applicants[applicantkey].telephone}',
               ),
               SizedBox(
                 width: 50,
               ),
               CustomText(
                 fontSize: 15,
-                text: 'Mobile: ${loanDetail.applicants[applicantkey]!.mobile}',
+                text: 'Mobile: ${loanDetail.applicants[applicantkey].mobile}',
               ),
               SizedBox(
                 width: 50,
               ),
               CustomText(
                 fontSize: 15,
-                text: 'Email: ${loanDetail.applicants[applicantkey]!.email}',
+                text: 'Email: ${loanDetail.applicants[applicantkey].email}',
               ),
             ],
           ),
@@ -452,7 +652,7 @@ class _ViewApplicationState extends State<ViewApplication> {
               CustomText(
                 fontSize: 15,
                 text:
-                    'Driving Licnese Number: ${loanDetail.applicants[applicantkey]!.licenseNumber}',
+                    'Driving Licnese Number: ${loanDetail.applicants[applicantkey].licenseNumber}',
               ),
               SizedBox(
                 width: 50,
@@ -460,7 +660,7 @@ class _ViewApplicationState extends State<ViewApplication> {
               CustomText(
                 fontSize: 15,
                 text:
-                    'Licnese Exp Date: ${loanDetail.applicants[applicantkey]!.licenseExpiry}',
+                    'Licnese Exp Date: ${loanDetail.applicants[applicantkey].licenseExpiry}',
               ),
             ],
           ),
@@ -472,7 +672,7 @@ class _ViewApplicationState extends State<ViewApplication> {
               CustomText(
                 fontSize: 15,
                 text:
-                    'Resedential Address: ${loanDetail.applicants[applicantkey]!.residentialAddress}',
+                    'Resedential Address: ${loanDetail.applicants[applicantkey].residentialAddress}',
               ),
               SizedBox(
                 width: 50,
@@ -480,7 +680,7 @@ class _ViewApplicationState extends State<ViewApplication> {
               CustomText(
                 fontSize: 15,
                 text:
-                    'Ownership:  ${loanDetail.applicants[applicantkey]!.residentialAddress}',
+                    'Ownership:  ${loanDetail.applicants[applicantkey].residentialAddress}',
               ),
               SizedBox(
                 width: 50,
@@ -488,7 +688,7 @@ class _ViewApplicationState extends State<ViewApplication> {
               CustomText(
                 fontSize: 15,
                 text:
-                    'How long this place:  ${loanDetail.applicants[applicantkey]!.residentialAddress}',
+                    'How long this place:  ${loanDetail.applicants[applicantkey].residentialAddress}',
               ),
             ],
           ),
@@ -500,14 +700,14 @@ class _ViewApplicationState extends State<ViewApplication> {
               CustomText(
                 fontSize: 15,
                 text:
-                    'Postal Address:  ${loanDetail.applicants[applicantkey]!.postalAddress}',
+                    'Postal Address:  ${loanDetail.applicants[applicantkey].postalAddress}',
               ),
               SizedBox(
                 width: 50,
               ),
               CustomText(
                 fontSize: 15,
-                text: 'Town:  ${loanDetail.applicants[applicantkey]!.town}',
+                text: 'Town:  ${loanDetail.applicants[applicantkey].town}',
               ),
               SizedBox(
                 width: 50,
@@ -515,7 +715,7 @@ class _ViewApplicationState extends State<ViewApplication> {
               CustomText(
                 fontSize: 15,
                 text:
-                    'Province:  ${loanDetail.applicants[applicantkey]!.province}',
+                    'Province:  ${loanDetail.applicants[applicantkey].province}',
               ),
             ],
           ),
@@ -524,7 +724,14 @@ class _ViewApplicationState extends State<ViewApplication> {
     );
   }
 
-  Container employmentDetals(String applicantkey, int i) {
+  bool isImage(String contentType) {
+    return contentType.contains('jpeg') ||
+        contentType.contains('jpg') ||
+        contentType.contains('webp') ||
+        contentType.contains('png');
+  }
+
+  Container employmentDetals(int applicantkey, int i) {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
       padding: EdgeInsets.fromLTRB(20, 25, 20, 25),
@@ -548,7 +755,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 CustomText(
                   fontSize: 15,
                   text:
-                      'Job Title: ${loanDetail.applicants[applicantkey]!.occupation.jobTitle}',
+                      'Job Title: ${loanDetail.applicants[applicantkey].occupation.jobTitle}',
                 ),
                 SizedBox(
                   width: 50,
@@ -556,7 +763,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 CustomText(
                   fontSize: 15,
                   text:
-                      'Ministry: ${loanDetail.applicants[applicantkey]!.occupation.ministry}',
+                      'Ministry: ${loanDetail.applicants[applicantkey].occupation.ministry}',
                 ),
               ],
             ),
@@ -568,7 +775,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 CustomText(
                   fontSize: 15,
                   text:
-                      'Physical Address: ${loanDetail.applicants[applicantkey]!.occupation.physicalAddress}',
+                      'Physical Address: ${loanDetail.applicants[applicantkey].occupation.physicalAddress}',
                 ),
                 SizedBox(
                   width: 50,
@@ -576,7 +783,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 CustomText(
                   fontSize: 15,
                   text:
-                      'Postal Address: ${loanDetail.applicants[applicantkey]!.occupation.postalAddress}',
+                      'Postal Address: ${loanDetail.applicants[applicantkey].occupation.postalAddress}',
                 ),
               ],
             ),
@@ -588,7 +795,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 CustomText(
                   fontSize: 15,
                   text:
-                      'Town: ${loanDetail.applicants[applicantkey]!.occupation.town}',
+                      'Town: ${loanDetail.applicants[applicantkey].occupation.town}',
                 ),
                 SizedBox(
                   width: 50,
@@ -596,7 +803,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 CustomText(
                   fontSize: 15,
                   text:
-                      'Province: ${loanDetail.applicants[applicantkey]!.occupation.province}',
+                      'Province: ${loanDetail.applicants[applicantkey].occupation.province}',
                 ),
               ],
             ),
@@ -608,7 +815,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 CustomText(
                   fontSize: 15,
                   text:
-                      'Gross Salary: ${loanDetail.applicants[applicantkey]!.occupation.grossSalary}',
+                      'Gross Salary: ${loanDetail.applicants[applicantkey].occupation.grossSalary}',
                 ),
                 SizedBox(
                   width: 50,
@@ -616,7 +823,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 CustomText(
                   fontSize: 15,
                   text:
-                      'Current Net Salary: ${loanDetail.applicants[applicantkey]!.occupation.netSalary}',
+                      'Current Net Salary: ${loanDetail.applicants[applicantkey].occupation.netSalary}',
                 ),
                 SizedBox(
                   width: 50,
@@ -624,7 +831,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 CustomText(
                   fontSize: 15,
                   text:
-                      'Salary Scale: ${loanDetail.applicants[applicantkey]!.occupation.salaryScale}',
+                      'Salary Scale: ${loanDetail.applicants[applicantkey].occupation.salaryScale}',
                 ),
               ],
             ),
@@ -636,7 +843,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 CustomText(
                   fontSize: 15,
                   text:
-                      'Preferred Year of Retirement: ${loanDetail.applicants[applicantkey]!.occupation.preferredRetirementYear}',
+                      'Preferred Year of Retirement: ${loanDetail.applicants[applicantkey].occupation.preferredRetirementYear}',
                 ),
                 SizedBox(
                   width: 50,
@@ -644,7 +851,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 CustomText(
                   fontSize: 15,
                   text:
-                      'Employee Number: ${loanDetail.applicants[applicantkey]!.occupation.employerNumber}',
+                      'Employee Number: ${loanDetail.applicants[applicantkey].occupation.employerNumber}',
                 ),
                 SizedBox(
                   width: 50,
@@ -652,7 +859,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 CustomText(
                   fontSize: 15,
                   text:
-                      'Years in Employemnt: ${loanDetail.applicants[applicantkey]!.occupation.yearsOfService}',
+                      'Years in Employemnt: ${loanDetail.applicants[applicantkey].occupation.yearsOfService}',
                 ),
               ],
             ),
@@ -664,7 +871,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 CustomText(
                   fontSize: 15,
                   text:
-                      'Employemnt Type: ${loanDetail.applicants[applicantkey]!.occupation.employmentType}',
+                      'Employemnt Type: ${loanDetail.applicants[applicantkey].occupation.employmentType}',
                 ),
                 SizedBox(
                   width: 50,
@@ -672,12 +879,102 @@ class _ViewApplicationState extends State<ViewApplication> {
                 CustomText(
                   fontSize: 15,
                   text:
-                      'Expiry Date: ${loanDetail.applicants[applicantkey]!.occupation.tempExpiryDate}',
+                      'Expiry Date: ${loanDetail.applicants[applicantkey].occupation.tempExpiryDate}',
                 ),
               ],
             ),
           ]),
     );
+  }
+
+  Container employmentKinDetals(int applicantkey, int i) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      padding: EdgeInsets.fromLTRB(20, 25, 20, 25),
+      decoration: BoxDecoration(
+          color: AppColors.sidebarbackground,
+          borderRadius: BorderRadius.circular(20)),
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            CustomText(
+              fontSize: 15,
+              text: 'Kin Details Applicant: ${i + 1}',
+              fontWeight: FontWeight.w700,
+            ),
+            SizedBox(
+              height: 40,
+            ),
+            Wrap(
+              children: [
+                CustomText(
+                  fontSize: 15,
+                  text: 'Name: ${loanDetail.applicants[applicantkey].kin.name}',
+                ),
+                SizedBox(
+                  width: 50,
+                ),
+                CustomText(
+                  fontSize: 15,
+                  text:
+                      'Other Name: ${loanDetail.applicants[applicantkey].kin.otherNames}',
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 40,
+            ),
+            Wrap(
+              children: [
+                CustomText(
+                  fontSize: 15,
+                  text:
+                      'Physical Address: ${loanDetail.applicants[applicantkey].kin.physicalAddress}',
+                ),
+                SizedBox(
+                  width: 50,
+                ),
+                CustomText(
+                  fontSize: 15,
+                  text:
+                      'Postal Address: ${loanDetail.applicants[applicantkey].kin.postalAddress}',
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 40,
+            ),
+            Wrap(
+              children: [
+                CustomText(
+                  fontSize: 15,
+                  text:
+                      'Phone: ${loanDetail.applicants[applicantkey].kin.phoneNumber}',
+                ),
+                SizedBox(
+                  width: 50,
+                ),
+                CustomText(
+                  fontSize: 15,
+                  text:
+                      'Email: ${loanDetail.applicants[applicantkey].kin.email}',
+                ),
+              ],
+            ),
+          ]),
+    );
+  }
+
+  String formatDateString(String dateString) {
+    try {
+      DateTime dateTime = DateTime.parse(dateString);
+      return DateFormat('dd MMMM yyyy').format(dateTime);
+    } catch (e) {
+      // Handle parsing errors, e.g., if the input string is not a valid date
+      print('Error formatting date: $e');
+      return 'Invalid Date';
+    }
   }
 
   Container loanDetails() {
@@ -693,7 +990,7 @@ class _ViewApplicationState extends State<ViewApplication> {
         children: [
           CustomText(
             fontSize: 15,
-            text: 'Loan Product Applied for: ${loanDetail.product}',
+            text: 'Loan Product Applied for: ${loanDetail.product.name}',
           ),
           SizedBox(
             height: 40,
@@ -755,29 +1052,35 @@ class _ViewApplicationState extends State<ViewApplication> {
             children: [
               CustomText(
                 fontSize: 15,
-                text: 'First Applicant: ',
+                text:
+                    'First Applicant: ${loanDetail.applicants[0].loansharename}',
               ),
               SizedBox(
                 width: 30,
               ),
               CustomText(
                 fontSize: 15,
-                text: 'First Applicant Loan Propotion: Propotion Here',
+                text:
+                    'First Applicant Loan Propotion: ${loanDetail.applicants[0].loansharepercent}',
               ),
               SizedBox(
                 width: 30,
               ),
-              CustomText(
-                fontSize: 15,
-                text: 'Second Applicant: Second Name Here',
-              ),
+              if (loanDetail.applicantCount > 1)
+                CustomText(
+                  fontSize: 15,
+                  text:
+                      'Second Applicant: ${loanDetail.applicants[1].loansharename}',
+                ),
               SizedBox(
                 width: 30,
               ),
-              CustomText(
-                fontSize: 15,
-                text: 'Second Applicant Loan Propotion: Loadn ',
-              ),
+              if (loanDetail.applicantCount > 1)
+                CustomText(
+                  fontSize: 15,
+                  text:
+                      'Second Applicant Loan Propotion: ${loanDetail.applicants[1].loansharepercent}',
+                ),
             ],
           ),
           SizedBox(
@@ -785,31 +1088,39 @@ class _ViewApplicationState extends State<ViewApplication> {
           ),
           Wrap(
             children: [
-              CustomText(
-                fontSize: 15,
-                text: 'Third Applicant: Third Applicant',
-              ),
+              if (loanDetail.applicantCount > 2)
+                CustomText(
+                  fontSize: 15,
+                  text:
+                      'Third Applicant: ${loanDetail.applicants[2].loansharename}',
+                ),
               SizedBox(
                 width: 30,
               ),
-              CustomText(
-                fontSize: 15,
-                text: 'Third Applicant Loan Propotion: Third Loan Propotion',
-              ),
+              if (loanDetail.applicantCount > 2)
+                CustomText(
+                  fontSize: 15,
+                  text:
+                      'Third Applicant Loan Propotion: ${loanDetail.applicants[2].loansharepercent}',
+                ),
               SizedBox(
                 width: 30,
               ),
-              CustomText(
-                fontSize: 15,
-                text: 'Fourth Applicant: Fourth Applicant',
-              ),
+              if (loanDetail.applicantCount > 3)
+                CustomText(
+                  fontSize: 15,
+                  text:
+                      'Fourth Applicant: ${loanDetail.applicants[3].loansharename}',
+                ),
               SizedBox(
                 width: 30,
               ),
-              CustomText(
-                fontSize: 15,
-                text: 'Fourth Applicant Loan Propotion: Loan Propotion',
-              ),
+              if (loanDetail.applicantCount > 3)
+                CustomText(
+                  fontSize: 15,
+                  text:
+                      'Fourth Applicant Loan Propotion: ${loanDetail.applicants[3].loansharepercent}',
+                ),
             ],
           ),
         ],
@@ -830,7 +1141,7 @@ class _ViewApplicationState extends State<ViewApplication> {
 
       // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
       String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
 
       final response = await dio.get(
         'https://loan-managment.onrender.com/loan_requests/$loanRequestId',
@@ -845,9 +1156,7 @@ class _ViewApplicationState extends State<ViewApplication> {
       if (response.statusCode == 200) {
         setState(() {
           loanDetail = LoanRequestDetails.fromJson(response.data);
-          for (String key in loanDetail.applicants.keys) {
-            applicantKeys = loanDetail.applicants.keys.toList();
-          }
+
           isloading = false;
         });
 

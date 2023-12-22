@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, use_key_in_widget_constructors, sort_child_properties_last
 
 import 'dart:io';
-
+import 'dart:js' as js;
+import 'dart:typed_data';
+import 'dart:html' as html;
 import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
@@ -33,10 +35,6 @@ class _SectionThreeState extends State<SectionThree>
   LoanDetails loadndetails = LoanDetails();
   final _formKey = GlobalKey<FormState>();
   late LoanRequestDetails loanDetail;
-  bool canAgreePersonOne = false;
-  bool canAgreePersonTwo = false;
-  bool canAgreePersonThree = false;
-  bool canAgreePersonFour = false;
   XFile? pickedImageOne;
   XFile? pickedImageTwo;
   XFile? pickedImageThree;
@@ -93,17 +91,13 @@ class _SectionThreeState extends State<SectionThree>
                                 fontWeight: FontWeight.w700),
                           ),
                           SizedBox(height: 20),
-                          affirmationsection(canAgreePersonOne, pickedImageOne,
-                              'For First Applicant'),
+                          affirmationsection(0, 0),
                           if (widget.myTabController.numberOfPersons > 1)
-                            affirmationsection(canAgreePersonTwo,
-                                pickedImageTwo, 'For Second Applicant'),
+                            affirmationsection(1, 1),
                           if (widget.myTabController.numberOfPersons > 2)
-                            affirmationsection(canAgreePersonThree,
-                                pickedImageThree, 'For Third Applicant'),
+                            affirmationsection(2, 2),
                           if (widget.myTabController.numberOfPersons > 3)
-                            affirmationsection(canAgreePersonFour,
-                                pickedImageFour, 'For Fourth Applicant'),
+                            affirmationsection(3, 3),
                           SizedBox(height: 40),
                           /*  Text(
                   'Supporting Documentation Submitted, loadndetails are advised to attach the following documents',
@@ -126,16 +120,7 @@ class _SectionThreeState extends State<SectionThree>
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               myTabController.loanDetails = loadndetails;
-                              //printApplicantDetails();
-                              print('update');
                             }
-
-                            //widget.myTabController.updateNumberOfPersons(numberOfPersons);
-                            //  DefaultTabController.of(context)?.animateTo(1);
-                            // if (_formKey.currentState!.validate()) {
-                            //   // Form is valid, move to the next section
-
-                            // }
                           },
                           child: CustomText(
                             text: 'Update',
@@ -192,7 +177,7 @@ class _SectionThreeState extends State<SectionThree>
 
       // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
       String bearertoken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
       dio.options.headers['Authorization'] = 'Bearer $bearertoken';
 
       final response = await dio.get(
@@ -208,9 +193,7 @@ class _SectionThreeState extends State<SectionThree>
         setState(() {
           // Move this block here
           this.loanDetail = loanDetail;
-          for (String key in loanDetail.applicants.keys) {
-            applicantKeys = loanDetail.applicants.keys.toList();
-          }
+
           for (int i = 0; i < loanDetail.applicantCount; i++) {
             loadndetails.costofasset.text = loanDetail.costOfAsset;
             loadndetails.insurancecost.text = loanDetail.insuranceCost;
@@ -231,89 +214,233 @@ class _SectionThreeState extends State<SectionThree>
     }
   }
 
-  Column affirmationsection(bool canagree, XFile? pickedImage, String message) {
+  Column affirmationsection(int applicantkey, int i) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          message,
-          style: GoogleFonts.dmSans(
-              color: AppColors.neutral,
-              fontSize: 14,
-              fontWeight: FontWeight.w700),
-        ),
+        if (loanDetail.applicants.length > applicantkey &&
+            loanDetail.applicants[applicantkey].documents.isNotEmpty)
+          applicantDocuments(applicantkey, i),
         SizedBox(
-          height: 20,
+          height: 10,
         ),
-        Text(
-          '''I (full name) hereby confirm that the information provided by me in this loan application, including my source of funds put forward for partial/full finance of asset is true and correct and I have the capacity to repay the loan. I understand that this Loan Application may be declined at any stage should any information contained herein be found to be incorrect or misleading in any material way. I consent to PSMFC making enquiries regarding my credit history with any Credit Reference Bureau or Credit Rating Agency and for PSMFC to share my payment behaviour with any Credit Reference Bureau or Credit Reference Agency and any other institution that it may require to do so in order to assess my application or by applicable laws or regulation. I consent to PSMFC reporting the conclusion of any credit agreement in compliance with the Zambian legislation.''',
-          style: GoogleFonts.dmSans(
-              color: AppColors.neutral,
-              fontSize: 14,
-              fontWeight: FontWeight.w500),
-        ),
-        SizedBox(height: 10),
+        if (widget.myTabController.applicants[i].selectedFiles.isNotEmpty)
+          Container(
+              width: MediaQuery.of(context).size.width * .7,
+              height: 120,
+              child: Row(
+                children: List.generate(
+                  widget.myTabController.applicants[i].selectedFiles.length,
+                  (index) {
+                    var fileBytes = widget
+                        .myTabController.applicants[i].selectedFiles[index];
+                    var fileName = widget.myTabController.applicants[i]
+                        .selectedFilesnames[index];
+                    String fileExtension =
+                        fileName.split('.').last.toLowerCase();
+
+                    return Container(
+                      margin: EdgeInsets.all(10),
+                      width: 300,
+                      height: 80,
+                      child: Stack(
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Display Image for image files
+
+                              (fileExtension != 'pdf')
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        // Open image in a new tab
+                                        final blob =
+                                            html.Blob([fileBytes], 'image/*');
+                                        final url =
+                                            html.Url.createObjectUrlFromBlob(
+                                                blob);
+                                        html.window.open(url, '_blank');
+                                      },
+                                      child: Container(
+                                        width: 300,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: AppColors.neutral),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          color: AppColors.neutral,
+                                        ),
+                                        child: Image.memory(
+                                          fileBytes,
+                                          width:
+                                              300, // Set the width of the image as per your requirement
+                                          height:
+                                              50, // Set the height of the image as per your requirement
+                                          fit: BoxFit
+                                              .cover, // Adjust this based on your image requirements
+                                        ),
+                                      ),
+                                    )
+                                  : GestureDetector(
+                                      onTap: () {
+                                        // Open PDF in a new tab
+                                        final blob = html.Blob(
+                                            [Uint8List.fromList(fileBytes)],
+                                            'application/pdf');
+                                        final url =
+                                            html.Url.createObjectUrlFromBlob(
+                                                blob);
+                                        html.window.open(url, '_blank');
+                                      },
+                                      child: Container(
+                                        width: 300,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: AppColors.mainColor),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          color: AppColors.neutral,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            Icon(
+                                              Icons.picture_as_pdf,
+                                              color: Colors.red,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                              SizedBox(
+                                  height:
+                                      8.0), // Add spacing between image and text
+
+                              // Display file name with overflow handling
+                              Flexible(
+                                child: Text(
+                                  fileName,
+                                  overflow: TextOverflow.ellipsis,
+                                  // Adjust the maximum lines based on your UI requirements
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 14,
+                                    color: AppColors.neutral,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Positioned(
+                            top: 12,
+                            right: 5,
+                            child: GestureDetector(
+                              onTap: () {
+                                // Handle the close icon tap
+                                setState(() {
+                                  widget.myTabController.applicants[i]
+                                      .selectedFiles
+                                      .removeAt(index);
+                                  widget.myTabController.applicants[i]
+                                      .selectedFilesnames
+                                      .removeAt(index);
+                                });
+                              },
+                              child: CircleAvatar(
+                                radius: 12,
+                                backgroundColor: AppColors.mainColor,
+                                child: Icon(
+                                  Icons.close,
+                                  size: 15,
+                                  color: AppColors.neutral,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              )),
+        SizedBox(height: 20),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              'Upload Image',
+              'Add Files More Applicant ${i + 1}',
               style: GoogleFonts.dmSans(
                   color: AppColors.neutral,
                   fontSize: 14,
                   fontWeight: FontWeight.w700),
             ),
             SizedBox(width: 30),
-            pickedImage == null
-                ? ElevatedButton(
+            if (widget.myTabController.applicants[i].selectedFiles.length < 3)
+              Row(
+                children: [
+                  ElevatedButton(
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(AppColors.mainColor),
                         padding: MaterialStateProperty.all(EdgeInsets.all(15))),
                     onPressed: () async {
-                      final XFile? image = await _imagePicker.pickImage(
-                          source: ImageSource.gallery);
+                      FilePickerResult? result =
+                          await FilePicker.platform.pickFiles(
+                        allowMultiple: false,
+                        type: FileType.custom,
+                        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+                      );
 
-                      if (image != null) {
-                        setState(() {
-                          pickedImage = image;
-                        });
+                      if (result != null) {
+                        if (result.files.first.size > 1024 * 1024) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('The file size exceeds limit'),
+                            ),
+                          );
+                        } else {
+                          setState(() {
+                            widget.myTabController.applicants[i].selectedFiles
+                                .addAll(
+                                    result.files.map((file) => file.bytes!));
+                            widget.myTabController.applicants[i]
+                                .selectedFilesnames
+                                .addAll(result.files.map((file) => file.name));
+                          });
+                        }
                       }
                     },
                     child: Text(
-                      'Pick Image',
+                      'Pick Files',
                       style: GoogleFonts.dmSans(
                           color: AppColors.neutral,
                           fontSize: 14,
                           fontWeight: FontWeight.w500),
                     ),
-                  )
-                : Image.file(File(pickedImage!.path)),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text(
+                    '** Supported format: PDF or JPEG/PNG, (Max Size: 1MB per File)',
+                    style: GoogleFonts.dmSans(
+                        color: AppColors.neutral,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
           ],
         ),
-        SizedBox(height: 40),
-        Row(
-          children: [
-            Checkbox(
-              value: canagree,
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    canagree = value;
-                  });
-                }
-              },
-            ),
-            Text(
-              'I agree to all the information provided',
-              style: GoogleFonts.dmSans(
-                  color: AppColors.neutral,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
+        SizedBox(
+          height: 30,
+        )
       ],
     );
   }
@@ -394,7 +521,7 @@ class _SectionThreeState extends State<SectionThree>
                 decoration: InputDecoration(
                   labelText: 'Loan Tenure',
                   labelStyle: GoogleFonts.dmSans(
-                    color: Colors.black,
+                    color: AppColors.neutral,
                     height: 0.5,
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
@@ -490,20 +617,22 @@ class _SectionThreeState extends State<SectionThree>
               SizedBox(
                 height: 30,
               ),
-              FormTextField(
-                controller: loadndetails.thirdapplicant,
-                labelText: 'Third Applicant (Agric Asset ONLY)',
-                validator: (value) {
-                  if ((value == null || value.isEmpty) &&
-                      widget.myTabController.numberOfPersons > 2) {
-                    return 'Please enter third applicant';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 30,
-              ),
+              if (widget.myTabController.numberOfPersons > 2)
+                FormTextField(
+                  controller: loadndetails.thirdapplicant,
+                  labelText: 'Third Applicant (Agric Asset ONLY)',
+                  validator: (value) {
+                    if ((value == null || value.isEmpty) &&
+                        widget.myTabController.numberOfPersons > 2) {
+                      return 'Please enter third applicant';
+                    }
+                    return null;
+                  },
+                ),
+              if (widget.myTabController.numberOfPersons > 2)
+                SizedBox(
+                  height: 30,
+                ),
               FormTextField(
                 controller: loadndetails.firstapplicantproportion,
                 labelText: 'First Applicant Proportion of loan (%)',
@@ -517,17 +646,18 @@ class _SectionThreeState extends State<SectionThree>
               SizedBox(
                 height: 30,
               ),
-              FormTextField(
-                controller: loadndetails.thirdapplicantpropotion,
-                labelText: 'Third Applicant Proportion of loan (%))',
-                validator: (value) {
-                  if ((value == null || value.isEmpty) &&
-                      widget.myTabController.numberOfPersons > 2) {
-                    return 'Third Applicant Proportion of loan (%)';
-                  }
-                  return null;
-                },
-              ),
+              if (widget.myTabController.numberOfPersons > 2)
+                FormTextField(
+                  controller: loadndetails.thirdapplicantpropotion,
+                  labelText: 'Third Applicant Proportion of loan (%))',
+                  validator: (value) {
+                    if ((value == null || value.isEmpty) &&
+                        widget.myTabController.numberOfPersons > 2) {
+                      return 'Third Applicant Proportion of loan (%)';
+                    }
+                    return null;
+                  },
+                ),
             ],
           ),
         ),
@@ -548,63 +678,234 @@ class _SectionThreeState extends State<SectionThree>
               SizedBox(
                 height: 20,
               ),
-              FormTextField(
-                controller: loadndetails.secondapplicant,
-                labelText: 'Second Applicant',
-                validator: (value) {
-                  if ((value == null || value.isEmpty) &&
-                      widget.myTabController.numberOfPersons > 1) {
-                    return 'Second Applicant';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              FormTextField(
-                controller: loadndetails.fourthapplicant,
-                labelText: 'Fourth Applicant (Agric Asset ONLY)',
-                validator: (value) {
-                  if ((value == null || value.isEmpty) &&
-                      widget.myTabController.numberOfPersons > 3) {
-                    return 'Fourth Applicant (Agric Asset ONLY)';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              FormTextField(
-                controller: loadndetails.secondapplicantpropotion,
-                labelText: 'Second Applicant Proportion of loan (%)',
-                validator: (value) {
-                  if ((value == null || value.isEmpty) &&
-                      widget.myTabController.numberOfPersons > 1) {
-                    return 'Second Applicant Proportion of loan (%)';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              FormTextField(
-                controller: loadndetails.fourthapplicantpropotion,
-                labelText: 'Fourth Applicant Proportion of loan (%)',
-                validator: (value) {
-                  if ((value == null || value.isEmpty) &&
-                      widget.myTabController.numberOfPersons > 3) {
-                    return 'Fourth Applicant Proportion of loan (%)';
-                  }
-                  return null;
-                },
-              ),
+              if (widget.myTabController.numberOfPersons > 1)
+                FormTextField(
+                  controller: loadndetails.secondapplicant,
+                  labelText: 'Second Applicant',
+                  validator: (value) {
+                    if ((value == null || value.isEmpty) &&
+                        widget.myTabController.numberOfPersons > 1) {
+                      return 'Second Applicant';
+                    }
+                    return null;
+                  },
+                ),
+              if (widget.myTabController.numberOfPersons > 1)
+                SizedBox(
+                  height: 30,
+                ),
+              if (widget.myTabController.numberOfPersons > 3)
+                FormTextField(
+                  controller: loadndetails.fourthapplicant,
+                  labelText: 'Fourth Applicant (Agric Asset ONLY)',
+                  validator: (value) {
+                    if ((value == null || value.isEmpty) &&
+                        widget.myTabController.numberOfPersons > 3) {
+                      return 'Fourth Applicant (Agric Asset ONLY)';
+                    }
+                    return null;
+                  },
+                ),
+              if (widget.myTabController.numberOfPersons > 3)
+                SizedBox(
+                  height: 30,
+                ),
+              if (widget.myTabController.numberOfPersons > 1)
+                FormTextField(
+                  controller: loadndetails.secondapplicantpropotion,
+                  labelText: 'Second Applicant Proportion of loan (%)',
+                  validator: (value) {
+                    if ((value == null || value.isEmpty) &&
+                        widget.myTabController.numberOfPersons > 1) {
+                      return 'Second Applicant Proportion of loan (%)';
+                    }
+                    return null;
+                  },
+                ),
+              if (widget.myTabController.numberOfPersons > 1)
+                SizedBox(
+                  height: 30,
+                ),
+              if (widget.myTabController.numberOfPersons > 3)
+                FormTextField(
+                  controller: loadndetails.fourthapplicantpropotion,
+                  labelText: 'Fourth Applicant Proportion of loan (%)',
+                  validator: (value) {
+                    if ((value == null || value.isEmpty) &&
+                        widget.myTabController.numberOfPersons > 3) {
+                      return 'Fourth Applicant Proportion of loan (%)';
+                    }
+                    return null;
+                  },
+                ),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  bool isImage(String contentType) {
+    return contentType.contains('jpeg') ||
+        contentType.contains('jpg') ||
+        contentType.contains('webp') ||
+        contentType.contains('png');
+  }
+
+  Container applicantDocuments(int applicantkey, int i) {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(
+            text: 'Applicant ${i + 1}',
+            fontWeight: FontWeight.w700,
+            fontSize: 15,
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Wrap(
+            children: List.generate(
+              loanDetail.applicants[applicantkey].documents.length,
+              (index) {
+                return Container(
+                  margin: EdgeInsets.all(10),
+                  width: 300,
+                  height: 90,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Display Image for image files
+                      isImage(loanDetail.applicants[applicantkey]
+                              .documents[index].contentType)
+                          ? GestureDetector(
+                              onTap: () {
+                                String imageUrl = loanDetail
+                                    .applicants[applicantkey]
+                                    .documents[index]
+                                    .url;
+                                js.context.callMethod('open', [imageUrl]);
+                              },
+                              child: Container(
+                                width: 300,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: AppColors.mainbackground),
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: AppColors.neutral,
+                                ),
+                                child: Image.network(
+                                  loanDetail.applicants[applicantkey]
+                                      .documents[index].url,
+                                  width:
+                                      300, // Set the width of the image as per your requirement
+                                  height:
+                                      50, // Set the height of the image as per your requirement
+                                  fit: BoxFit
+                                      .cover, // Adjust this based on your image requirements
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 300,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: AppColors.neutral),
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: AppColors.neutral,
+                                      ),
+                                      child: Center(
+                                        child: Text('Image Not Found'),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            )
+                          : loanDetail.applicants[applicantkey].documents[index]
+                                  .contentType
+                                  .contains('pdf')
+                              ? GestureDetector(
+                                  onTap: () {
+                                    String pdfUrl = loanDetail
+                                        .applicants[applicantkey]
+                                        .documents[index]
+                                        .url;
+                                    js.context.callMethod('open', [pdfUrl]);
+                                  },
+                                  child: Container(
+                                    width: 300,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: AppColors.neutral),
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: AppColors.neutral,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Icon(
+                                          Icons.picture_as_pdf,
+                                          color: Colors.red,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  width: 300,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: AppColors.neutral),
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppColors.neutral,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      Icon(
+                                        Icons.enhanced_encryption,
+                                        color: Colors.red,
+                                      ),
+                                      CustomText(text: 'Unreadable Format')
+                                    ],
+                                  ),
+                                ),
+
+                      SizedBox(
+                          height: 8.0), // Add spacing between image and text
+
+                      // Display file name with overflow handling
+                      Flexible(
+                        child: Text(
+                          'Document  ${index + 1}',
+
+                          // Adjust the maximum lines based on your UI requirements
+                          style: GoogleFonts.dmSans(
+                            color: AppColors.neutral,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -616,7 +917,7 @@ class _SectionThreeState extends State<SectionThree>
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              'Loan Product Apllied for (Tick only one)',
+              'Loan Product Apllied for :',
               style: GoogleFonts.dmSans(
                   color: AppColors.neutral,
                   fontSize: 14,

@@ -9,6 +9,7 @@ import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 
 class RequestItem extends StatefulWidget {
+  final String gender;
   final String requestId;
   final VoidCallback updateDataCallback;
   final String customerName;
@@ -27,6 +28,7 @@ class RequestItem extends StatefulWidget {
   final int loanid;
 
   RequestItem({
+    required this.gender,
     required this.updateDataCallback,
     required this.applicantCount,
     required this.loanid,
@@ -99,7 +101,9 @@ class _RequestItemState extends State<RequestItem> {
                         radius: 20,
                         backgroundImage: AssetImage(widget.applicantCount > 1
                             ? '../../assets/png/joint.png'
-                            : '../../assets/png/avatar-4.png'),
+                            : widget.gender == 'Female'
+                                ? '../../assets/png/avatar-5.png'
+                                : '../../assets/png/avatar-4.png'),
                       ),
                       SizedBox(
                         width: 15,
