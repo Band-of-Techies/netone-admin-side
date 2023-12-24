@@ -16,7 +16,7 @@ class LoanDetails {
   TextEditingController secondapplicant = TextEditingController();
   TextEditingController thirdapplicant = TextEditingController();
   TextEditingController fourthapplicant = TextEditingController();
-
+  dynamic productid;
   void dispose() {
     descriptionController.dispose();
     costofasset.dispose();

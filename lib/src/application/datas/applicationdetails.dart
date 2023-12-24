@@ -28,6 +28,9 @@ class EmployemntandKlinDetails {
   TextEditingController currentNetSalaryController = TextEditingController();
   TextEditingController temperoryexpirydate = TextEditingController();
   String? preferredYearOfRetirementController;
+  dynamic kinid;
+  dynamic occupationid;
+  dynamic applicantid;
 
   void dispose() {
     jobTitleController.dispose();

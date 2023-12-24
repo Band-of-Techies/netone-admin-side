@@ -38,6 +38,7 @@ class _RequestsSectionState extends State<RequestsSection> {
                 itemCount: loanRequests!.length,
                 itemBuilder: (context, index) {
                   return RequestItem(
+                    history: loanRequests![index].history,
                     gender: loanRequests![index].gender,
                     updateDataCallback: updateData,
                     applicantCount: loanRequests![index].applicantCount,
@@ -101,7 +102,7 @@ class _RequestsSectionState extends State<RequestsSection> {
       final String apiEndpoint =
           'https://loan-managment.onrender.com/loan_requests?filter=new';
       final String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
 
       var response = await dio.get(
         apiEndpoint,

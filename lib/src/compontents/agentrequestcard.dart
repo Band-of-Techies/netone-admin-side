@@ -12,6 +12,8 @@ import 'package:netone_loanmanagement_admin/src/res/textfield.dart';
 
 class AgentRequestItem extends StatefulWidget {
   final String requestId;
+
+  final String gender;
   final VoidCallback updateDataCallback;
   final String customerName;
   final String date;
@@ -27,8 +29,11 @@ class AgentRequestItem extends StatefulWidget {
   final String functionstring;
   final String agent;
   final int loanid;
+  final String history;
 
   AgentRequestItem({
+    required this.history,
+    required this.gender,
     required this.status,
     required this.updateDataCallback,
     required this.applicantCount,
@@ -61,311 +66,309 @@ class _AgentRequestItemState extends State<AgentRequestItem> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       elevation: 3,
       margin: EdgeInsets.all(8),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Row(
-                  children: [
-                    SizedBox(width: 12),
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width * .05,
-                        child:
-                            CustomText(fontSize: 14, text: widget.requestId)),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * .06,
-                      child: CustomText(
-                        fontSize: 13,
-                        text: widget.agent,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * .15,
-                  child: Row(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              widget.history == "new"
+                  ? AppColors.sidebarbackground
+                  : widget.history == "existing"
+                      ? Color.fromARGB(255, 254, 170, 73)
+                      : widget.history == "rejected"
+                          ? Color(0xFFFF4242)
+                          : widget.history == "closed"
+                              ? Color.fromARGB(255, 85, 175, 83)
+                              : AppColors
+                                  .sidebarbackground, // Change these colors as per your preference
+              widget.history == "new"
+                  ? AppColors.sidebarbackground
+                  : widget.history == "existing"
+                      ? AppColors.sidebarbackground
+                      : widget.history == "rejected"
+                          ? Colors.red
+                          : widget.history == "closed"
+                              ? Colors.yellow
+                              : AppColors.sidebarbackground,
+            ],
+            stops: [0.01, 0.1],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Row(
                     children: [
-                      //check male or female here, so can check and show iamges accoridngly
-
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundImage: AssetImage(widget.applicantCount > 1
-                            ? '../../assets/png/joint.png'
-                            : '../../assets/png/avatar-4.png'),
+                      SizedBox(width: 12),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * .05,
+                          child:
+                              CustomText(fontSize: 14, text: widget.requestId)),
+                      SizedBox(
+                        width: 10,
                       ),
                       SizedBox(
-                        width: 15,
-                      ),
-                      CustomText(
-                        fontSize: 15,
-                        text: widget.customerName,
-                        fontWeight: FontWeight.w700,
+                        width: MediaQuery.of(context).size.width * .06,
+                        child: CustomText(
+                          fontSize: 13,
+                          text: widget.agent,
+                          fontWeight: FontWeight.w300,
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * .1,
-              child: CustomText(
-                fontSize: 14,
-                text: widget.date,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * .05,
-              child: CustomText(
-                fontSize: 14,
-                text: widget.amount,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * .06,
-              child: CustomText(
-                fontSize: 14,
-                text: widget.productname,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            Row(
-              children: [
-                SizedBox(
-                  width: 160,
-                  child: DropdownButtonFormField2<String>(
-                    isExpanded: true,
-                    decoration: InputDecoration(
-                      // Add Horizontal padding using menuItemStyleData.padding so it matches
-                      // the menu padding when button's width is not specified.
-                      contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      // Add more decoration..
-                    ),
-                    hint: Text(
-                      widget.functionstring,
-                      style: GoogleFonts.dmSans(
-                          fontSize: 14, color: AppColors.neutral),
-                    ),
-                    items: widget.agents.map((agent) {
-                      return DropdownMenuItem<String>(
-                        value: agent.toString(),
-                        child: CustomText(
-                          fontSize: 14,
-                          color: AppColors.neutral,
-                          text: agent.toString(),
+                  SizedBox(
+                    width: 15,
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .15,
+                    child: Row(
+                      children: [
+                        //check male or female here, so can check and show iamges accoridngly
+
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundImage: AssetImage(widget.applicantCount > 1
+                              ? '../../assets/png/joint.png'
+                              : widget.gender == 'Female'
+                                  ? '../../assets/png/avatar-5.png'
+                                  : '../../assets/png/avatar-4.png'),
                         ),
-                      );
-                    }).toList(),
-                    validator: (value) {
-                      if (value == null) {
-                        return widget.functionstring;
-                      }
-                      return null;
-                    },
-                    onChanged: (agent) {
-                      setState(() {
-                        seletedagent = agent!;
-                        print(agent);
-                      });
-                    },
-                    buttonStyleData: const ButtonStyleData(
-                      padding: EdgeInsets.only(right: 8),
-                    ),
-                    iconStyleData: const IconStyleData(
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.black45,
-                      ),
-                      iconSize: 24,
-                    ),
-                    dropdownStyleData: DropdownStyleData(
-                      decoration: BoxDecoration(
-                        color: AppColors.sidebarbackground,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    menuItemStyleData: const MenuItemStyleData(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        CustomText(
+                          fontSize: 15,
+                          text: widget.customerName,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ],
                     ),
                   ),
+                ],
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * .1,
+                child: CustomText(
+                  fontSize: 14,
+                  text: widget.date,
+                  fontWeight: FontWeight.w400,
                 ),
-                SizedBox(
-                  width: 25,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * .05,
+                child: CustomText(
+                  fontSize: 14,
+                  text: widget.amount,
+                  fontWeight: FontWeight.w400,
                 ),
-                TextButton(
-                    style: ButtonStyle(
-                        padding: MaterialStateProperty.all(
-                            EdgeInsets.fromLTRB(20, 5, 20, 5)),
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                8.0), // Adjust the border radius as needed
-                          ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * .06,
+                child: CustomText(
+                  fontSize: 14,
+                  text: widget.productname,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 160,
+                    child: DropdownButtonFormField2<String>(
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        // Add Horizontal padding using menuItemStyleData.padding so it matches
+                        // the menu padding when button's width is not specified.
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 16),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        backgroundColor:
-                            MaterialStateProperty.all(AppColors.mainColor)),
-                    onPressed: () {
-                      if ((widget.status == 1 || widget.status == 2) &&
-                          seletedagent == 'rejected') {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              backgroundColor: AppColors.sidebarbackground,
-                              title: SizedBox(
-                                width: MediaQuery.of(context).size.width * .4,
-                                child: CustomText(
-                                  text: 'Request Rejection',
-                                  fontSize: 20,
+                        // Add more decoration..
+                      ),
+                      hint: Text(
+                        widget.functionstring,
+                        style: GoogleFonts.dmSans(
+                            fontSize: 14, color: AppColors.neutral),
+                      ),
+                      items: widget.agents.map((agent) {
+                        return DropdownMenuItem<String>(
+                          value: agent.toString(),
+                          child: CustomText(
+                            fontSize: 14,
+                            color: AppColors.neutral,
+                            text: agent.toString(),
+                          ),
+                        );
+                      }).toList(),
+                      validator: (value) {
+                        if (value == null) {
+                          return widget.functionstring;
+                        }
+                        return null;
+                      },
+                      onChanged: (agent) {
+                        setState(() {
+                          seletedagent = agent!;
+                          print(agent);
+                        });
+                      },
+                      buttonStyleData: const ButtonStyleData(
+                        padding: EdgeInsets.only(right: 8),
+                      ),
+                      iconStyleData: const IconStyleData(
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.black45,
+                        ),
+                        iconSize: 24,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        decoration: BoxDecoration(
+                          color: AppColors.sidebarbackground,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 25,
+                  ),
+                  TextButton(
+                      style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                              EdgeInsets.fromLTRB(20, 5, 20, 5)),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Adjust the border radius as needed
+                            ),
+                          ),
+                          backgroundColor:
+                              MaterialStateProperty.all(AppColors.mainColor)),
+                      onPressed: () {
+                        if ((widget.status == 1 || widget.status == 2) &&
+                            seletedagent == 'rejected') {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                backgroundColor: AppColors.sidebarbackground,
+                                title: SizedBox(
+                                  width: MediaQuery.of(context).size.width * .4,
+                                  child: CustomText(
+                                    text: 'Request Rejection',
+                                    fontSize: 20,
+                                  ),
                                 ),
-                              ),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  TextFormField(
-                                    maxLines: 5,
-                                    controller: rejectionController,
-                                    decoration: InputDecoration(
-                                      labelText: 'Rejection Reason',
-                                      labelStyle: GoogleFonts.dmSans(
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    TextFormField(
+                                      maxLines: 5,
+                                      controller: rejectionController,
+                                      decoration: InputDecoration(
+                                        labelText: 'Rejection Reason',
+                                        labelStyle: GoogleFonts.dmSans(
+                                          color: AppColors.neutral,
+                                          height: 0.5,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4.0),
+                                          borderSide: BorderSide(
+                                              color: Colors.grey, width: 1.0),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                          borderSide: BorderSide(
+                                              color: AppColors.neutral,
+                                              width: 1.0),
+                                        ),
+                                      ),
+                                      style: GoogleFonts.dmSans(
                                         color: AppColors.neutral,
-                                        height: 0.5,
                                         fontSize: 15,
                                         fontWeight: FontWeight.w500,
                                       ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(4.0),
-                                        borderSide: BorderSide(
-                                            color: Colors.grey, width: 1.0),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                        borderSide: BorderSide(
-                                            color: AppColors.neutral,
-                                            width: 1.0),
-                                      ),
                                     ),
-                                    style: GoogleFonts.dmSans(
-                                      color: AppColors.neutral,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  SizedBox(height: 20),
-                                  ElevatedButton(
-                                    style: ButtonStyle(
-                                        padding: MaterialStateProperty.all(
-                                            EdgeInsets.fromLTRB(20, 5, 20, 5)),
-                                        shape: MaterialStateProperty.all(
-                                          RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                8.0), // Adjust the border radius as needed
+                                    SizedBox(height: 20),
+                                    ElevatedButton(
+                                      style: ButtonStyle(
+                                          padding: MaterialStateProperty.all(
+                                              EdgeInsets.fromLTRB(
+                                                  20, 5, 20, 5)),
+                                          shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                  8.0), // Adjust the border radius as needed
+                                            ),
                                           ),
-                                        ),
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                                AppColors.mainColor)),
-                                    onPressed: () {
-                                      // Handle rejection button click
-                                      Navigator.of(context)
-                                          .pop(); // Close the dialog
-                                      _submitAssignment(
-                                          widget.loanid,
-                                          seletedagent!,
-                                          rejectionController.text);
-                                    },
-                                    child: CustomText(
-                                      text: 'Submit Rejection',
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  AppColors.mainColor)),
+                                      onPressed: () {
+                                        // Handle rejection button click
+                                        Navigator.of(context)
+                                            .pop(); // Close the dialog
+                                        _submitAssignment(
+                                            widget.loanid,
+                                            seletedagent!,
+                                            rejectionController.text);
+                                      },
+                                      child: CustomText(
+                                        text: 'Submit Rejection',
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      } else {
-                        _submitAssignment(widget.loanid, seletedagent!, '');
-                      }
-                    },
-                    child: CustomText(
-                      fontSize: 14,
-                      color: AppColors.neutral,
-                      text: 'Submit',
-                    )),
-                SizedBox(
-                  width: 10,
-                ),
-                PopupMenuButton<String>(
-                  color: AppColors.sidebarbackground,
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: AppColors.neutral,
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        } else {
+                          _submitAssignment(widget.loanid, seletedagent!, '');
+                        }
+                      },
+                      child: CustomText(
+                        fontSize: 14,
+                        color: AppColors.neutral,
+                        text: 'Submit',
+                      )),
+                  SizedBox(
+                    width: 10,
                   ),
-                  onSelected: (value) {
-                    // Handle the selected option
-                    if (value == 'edit') {
-                      // Handle edit action
-                    } else if (value == 'delete') {
-                      // Handle delete action
-                    } else if (value == 'view') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ViewApplication(
-                                  loanRequestId: widget.loanid,
-                                )),
-                      );
-                      // Handle view action
-                    }
-                  },
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      PopupMenuItem<String>(
-                        textStyle: GoogleFonts.dmSans(color: AppColors.neutral),
-                        value: 'view',
-                        child: CustomText(
-                          fontSize: 13,
-                          text: 'View',
-                        ),
-                      ),
-                      PopupMenuItem<String>(
-                          textStyle:
-                              GoogleFonts.dmSans(color: AppColors.neutral),
-                          value: 'edit',
-                          child: CustomText(
-                            fontSize: 13,
-                            text: 'Edit',
-                          )),
-                      PopupMenuItem<String>(
-                        textStyle: GoogleFonts.dmSans(color: AppColors.neutral),
-                        value: 'delete',
-                        child: CustomText(
-                          fontSize: 13,
-                          text: 'Delete',
-                        ),
-                      ),
-                    ];
-                  },
-                )
-              ],
-            )
-          ],
+                  IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ViewApplication(
+                                    loanRequestId: widget.loanid,
+                                  )),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.remove_red_eye_outlined,
+                        color: AppColors.neutral,
+                      ))
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

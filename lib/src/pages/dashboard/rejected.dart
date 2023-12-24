@@ -1,5 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:netone_loanmanagement_admin/src/compontents/agentrequestcard.dart';
 import 'package:netone_loanmanagement_admin/src/compontents/requstcard.dart';
+import 'package:netone_loanmanagement_admin/src/res/apis/request.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/serchTextFiled.dart';
 
@@ -12,23 +16,12 @@ class RejectedStatus extends StatefulWidget {
 
 class _RejectedStatusState extends State<RejectedStatus> {
   // Mock data for demonstration purposes
-  List<String> orderdeliverstatus = ['Reset'];
+  List<String> orderdeliverstatus = ['orderdeliverstatus'];
   String selectedStatus = '';
+  final Dio dio = Dio();
+  bool isloading = true;
+  List<LoanRequest>? loanRequests;
   TextEditingController search = TextEditingController();
-  List<RequestData> requestList = List.generate(
-    10,
-    (index) => RequestData(
-      selectedStatus: '',
-      functionstring: 'Rejected',
-      productname: 'Mobile Phone',
-      amount: '10,000',
-      requestId: 'NR23344',
-      customerName: 'John Doe',
-      date: '12 Nov 2023',
-      isChecked: false,
-      selectedAgent: 'Name Here',
-    ),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -44,69 +37,96 @@ class _RejectedStatusState extends State<RejectedStatus> {
           )
         ],
       ),
-      body: ListView.builder(
-        itemCount: requestList.length,
-        itemBuilder: (context, index) {
-          RequestData requestData = requestList[index];
+      body: isloading == false
+          ? ListView.builder(
+              itemCount: loanRequests!.length,
+              itemBuilder: (context, index) {
+                return AgentRequestItem(
+                  history: loanRequests![index].history,
+                  status: 2,
+                  gender: loanRequests![index].gender,
+                  updateDataCallback: () {},
+                  applicantCount: loanRequests![index].applicantCount,
+                  loanid: loanRequests![index].id,
+                  agent: loanRequests![index]
+                      .agent
+                      .name, // Replace with actual agent information from API if available
+                  functionstring: 'Select Status',
+                  productname: loanRequests![index]
+                      .product
+                      .name, // Replace with actual product name from API if available
+                  amount: loanRequests![index].loanAmount,
+                  requestId: loanRequests![index]
+                      .id
+                      .toString(), // Assuming 'id' is unique for each request
+                  customerName: loanRequests![index].firstName,
+                  date: formatDate(loanRequests![index]
+                      .createdAt), // Replace with actual date from API if available
+                  isChecked: false, // Set your own logic for isChecked
+                  onCheckboxChanged: (value) {
+                    // Handle checkbox change, if needed
+                  },
+                  agents:
+                      orderdeliverstatus, // Replace with actual agent list from API if available
+                  // Replace with actual selected agent from API if available
 
-          return SizedBox();
-          /*return RequestItem(
-            loanid: 12,
-            agent: requestData.selectedAgent,
-            functionstring: requestData.functionstring,
-            productname: requestData.productname,
-            amount: requestData.amount,
-            requestId: requestData.requestId,
-            customerName: requestData.customerName,
-            date: requestData.date,
-            isChecked: requestData.isChecked,
-            onCheckboxChanged: (value) {
-              setState(() {
-                requestData.isChecked = value!;
-              });
-              // Handle checkbox change, if needed
-            },
-            agents: orderdeliverstatus,
-            selectedAgent: requestData.selectedAgent,
-            onAgentSelected: (status) {
-              setState(() {
-                requestData.selectedStatus = status!;
-              });
-              // Handle agent selection, if needed
-            },
-            onConfirm: () {
-              // Handle confirmation
-            },
-            onVerticalMenuPressed: () {
-              // Handle vertical menu press
-            },
-          );*/
-        },
-      ),
+                  onConfirm: () {
+                    // Handle confirmation
+                  },
+                  onVerticalMenuPressed: () {
+                    // Handle vertical menu press
+                  },
+                );
+              },
+            )
+          : Center(
+              child: CircularProgressIndicator(color: AppColors.mainColor),
+            ),
     );
   }
-}
 
-class RequestData {
-  final String productname;
-  final String amount;
-  final String requestId;
-  final String customerName;
-  final String functionstring;
-  final String date;
-  bool isChecked;
-  String selectedStatus;
-  String selectedAgent;
+  String formatDate(String dateString) {
+    DateTime dateTime = DateTime.parse(dateString);
+    String formattedDate = DateFormat('dd MMM yy, hh:mma').format(dateTime);
+    return formattedDate;
+  }
 
-  RequestData({
-    required this.selectedStatus,
-    required this.functionstring,
-    required this.amount,
-    required this.productname,
-    required this.requestId,
-    required this.customerName,
-    required this.date,
-    required this.isChecked,
-    required this.selectedAgent,
-  });
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  void fetchData() async {
+    try {
+      final String apiEndpoint =
+          'https://loan-managment.onrender.com/loan_requests?filter=rejected';
+      final String bearerToken =
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+
+      var response = await dio.get(
+        apiEndpoint,
+        options: Options(
+          headers: {'Authorization': 'Bearer $bearerToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        setState(() {
+          // Convert each item in the array to a LoanRequest object
+          loanRequests = (response.data['loan_requests'] as List<dynamic>)
+              .map((json) => LoanRequest.fromJson(json))
+              .toList();
+        });
+        print(response.data);
+        setState(() {
+          isloading = false;
+        });
+      } else {
+        print('Error: ${response.statusCode} - ${response.statusMessage}');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
 }

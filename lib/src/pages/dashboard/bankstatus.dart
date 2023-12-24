@@ -39,7 +39,9 @@ class _BankStatusSectionState extends State<BankStatusSection> {
                 itemCount: loanRequests!.length,
                 itemBuilder: (context, index) {
                   return AgentRequestItem(
+                    history: loanRequests![index].history,
                     status: 2,
+                    gender: loanRequests![index].gender,
                     updateDataCallback: updateData,
                     applicantCount: loanRequests![index].applicantCount,
                     loanid: loanRequests![index].id,
@@ -102,7 +104,7 @@ class _BankStatusSectionState extends State<BankStatusSection> {
       final String apiEndpoint =
           'https://loan-managment.onrender.com/loan_requests?filter=bank';
       final String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
 
       var response = await dio.get(
         apiEndpoint,

@@ -16,8 +16,10 @@ class LoanRequest {
   final String gender;
   final AgentDetails agent;
   final String nrc;
+  final String history;
 
   LoanRequest({
+    required this.history,
     required this.applicantCount,
     required this.id,
     required this.createdAt,
@@ -36,6 +38,7 @@ class LoanRequest {
 
   factory LoanRequest.fromJson(Map<String, dynamic> json) {
     return LoanRequest(
+      history: json['loan_history'] ?? "NA",
       agent: AgentDetails.fromJson(json['assign_to'] ?? "NA"),
       applicantCount: json['applicant_count'] ?? 0,
       id: json['id'] ?? 0,

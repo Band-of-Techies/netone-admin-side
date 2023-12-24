@@ -12,6 +12,8 @@ import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:netone_loanmanagement_admin/src/res/textfield.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:html' as html;
 
 class SectionOne extends StatefulWidget {
   final MyTabController myTabController;
@@ -31,7 +33,7 @@ class _SectionOneState extends State<SectionOne>
   List<ApplicantDetails> applicants = [];
   List<String> ownedorlease = ['owned', 'rented'];
   List<String> genders = ['Male', 'Female'];
-
+  bool isloadiing = true;
   int numberOfPersons = 1;
   List<String> provinces = [
     'Central',
@@ -193,44 +195,61 @@ class _SectionOneState extends State<SectionOne>
 
     return Scaffold(
       backgroundColor: AppColors.mainbackground,
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              applicantDetails(1, applicants[0]),
-              if (widget.myTabController.numberOfPersons > 1)
-                applicantDetails(2, applicants[1]),
-              if (widget.myTabController.numberOfPersons > 2)
-                applicantDetails(3, applicants[2]),
-              if (widget.myTabController.numberOfPersons > 3)
-                applicantDetails(4, applicants[3]),
-              SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(AppColors.mainColor),
-                      padding: MaterialStateProperty.all(EdgeInsets.all(15))),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Form is valid, move to the next section
+      body: isloadiing == false
+          ? Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    applicantDetails(1, applicants[0]),
+                    if (widget.myTabController.numberOfPersons > 1)
+                      applicantDetails(2, applicants[1]),
+                    if (widget.myTabController.numberOfPersons > 2)
+                      applicantDetails(3, applicants[2]),
+                    if (widget.myTabController.numberOfPersons > 3)
+                      applicantDetails(4, applicants[3]),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(AppColors.mainColor),
+                            padding:
+                                MaterialStateProperty.all(EdgeInsets.all(15))),
+                        onPressed: () {
+                          print(myTabController
+                              .applicants[0].surnameController.text);
+                          updateData(widget.id!, myTabController,
+                              loanDetail.applicantCount);
+                          /*  if (_formKey.currentState!.validate()) {
+                            // Form is valid, move to the next section
+                            if (validateGender(applicants) &&
+                                validateOwnership(applicants)) {
+                              //printApplicantDetails();
 
-                      sendPatchRequest(widget.id!);
-                    }
-                  },
-                  child: CustomText(
-                    text: 'Update',
-                    color: AppColors.neutral,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  )),
-            ],
-          ),
-        ),
-      ),
+                               
+                              print('update');
+                            } else {
+                              warning('Complete Gender and Ownership');
+                              // Handle the case when the last tab is reached
+                            }
+                          }*/
+                        },
+                        child: CustomText(
+                          text: 'Update',
+                          color: AppColors.neutral,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        )),
+                  ],
+                ),
+              ),
+            )
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 
@@ -836,7 +855,7 @@ class _SectionOneState extends State<SectionOne>
 
       // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
       String bearertoken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
       dio.options.headers['Authorization'] = 'Bearer $bearertoken';
 
       final response = await dio.get(
@@ -876,7 +895,7 @@ class _SectionOneState extends State<SectionOne>
                 loanDetail.applicants[i].postalAddress;
             applicants[i].howlongthisplaceController.text =
                 loanDetail.applicants[i].howlongthisplace;
-
+            applicants[i].applicantid = loanDetail.applicants[i].id;
             applicants[i].provinceController =
                 loanDetail.applicants[i].province;
             applicants[i].townController = loanDetail.applicants[i].town;
@@ -885,8 +904,9 @@ class _SectionOneState extends State<SectionOne>
             applicants[i].ownership = loanDetail.applicants[i].ownership;
           }
         });
-        widget.myTabController.updateApplicants(applicants);
-        widget.myTabController.notifyListeners();
+        setState(() {
+          isloadiing = false;
+        });
       } else {
         // Handle error response
         print('eeee: ${response.statusCode}');
@@ -897,64 +917,103 @@ class _SectionOneState extends State<SectionOne>
     }
   }
 
-  void sendPatchRequest(int id) async {
-    // Replace 'your_api_endpoint' with the actual endpoint you want to patch
-    var apiUrl = 'https://loan-managment.onrender.com/loan_requests/$id';
+  Future<void> updateData(
+      int? id, MyTabController myTabController, int persons) async {
+    setState(() {
+      isloadiing = true;
+    });
+    final String apiUrl =
+        'https://loan-managment.onrender.com/loan_requests/$id';
 
-    // Replace 'your_bearer_token' with the actual Bearer token you need
-    var bearerToken =
-        'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
-
-    // Replace the following map with the data you want to send in the patch request
-
-    var patchData = <String, dynamic>{};
-
-    for (int i = 1; i <= loanDetail.applicantCount; i++) {
-      patchData['applicants_attributes'] = {
-        'surname': applicants[i].surnameController.text,
-        'middleName': applicants[i].middleNameController.text,
-        'firstName': applicants[i].firstNameController.text,
-        'dob': applicants[i].dobController.text,
-        'nrc': applicants[i].nrcController.text,
-        'telephone': applicants[i].telephoneController.text,
-        'mobile': applicants[i].mobileController.text,
-        'email': applicants[i].emailController.text,
-        'licenseNumber': applicants[i].licenseNumberController.text,
-        'licenseExpiry': applicants[i].licenseExpiryController.text,
-        'residentialAddress': applicants[i].residentialAddressController.text,
-        'postalAddress': applicants[i].postalAddressController.text,
-        'howLongThisPlace': applicants[i].howlongthisplaceController.text,
-        'town': applicants[i].selectedtown,
-        'province': applicants[i].selectedprovince,
-        'gender': applicants[i].gender,
-        'ownership': applicants[i].ownership,
-      };
-    }
-    print(patchData);
     try {
-      var dio = Dio();
+      var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
+      String accessToken =
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      request.headers['Authorization'] = 'Bearer $accessToken';
+      for (int i = 0; i < persons; i++) {
+        // Add other applicant data to the request
+        request.fields['loan_request[applicants_attributes][$i][id]'] =
+            myTabController.applicants[i].applicantid.toString();
+        request.fields['loan_request[applicants_attributes][$i][surname]'] =
+            myTabController.applicants[i].surnameController.text;
+        request.fields['loan_request[applicants_attributes][$i][first_name]'] =
+            myTabController.applicants[i].firstNameController.text;
+        // Replace with actual first name
+        request.fields['loan_request[applicants_attributes][$i][middle_name]'] =
+            myTabController.applicants[i].middleNameController.text;
 
-      var response = await dio.patch(
-        apiUrl,
-        data: patchData,
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $bearerToken',
-          },
-        ),
-      );
+        request.fields['loan_request[applicants_attributes][$i][email]'] =
+            myTabController.applicants[i].emailController.text;
 
-      if (response.statusCode == 200) {
-        print('PATCH request successful');
-        print('Response: ${response.data}');
-      } else {
-        print(
-            'Failed to send PATCH request. Status code: ${response.statusCode}');
-        print('Response: ${response.data}');
+        request.fields['loan_request[applicants_attributes][$i][dob]'] =
+            myTabController.applicants[i].dobController.text;
+
+        request.fields['loan_request[applicants_attributes][$i][nrc]'] =
+            myTabController.applicants[i].nrcController.text;
+
+        request.fields['loan_request[applicants_attributes][$i][telephone]'] =
+            myTabController.applicants[i].telephoneController.text;
+
+        request.fields['loan_request[applicants_attributes][$i][mobile]'] =
+            myTabController.applicants[i].mobileController.text;
+
+        request.fields[
+                'loan_request[applicants_attributes][$i][license_number]'] =
+            myTabController.applicants[i].licenseNumberController.text;
+
+        request.fields[
+                'loan_request[applicants_attributes][$i][license_expiry]'] =
+            myTabController.applicants[i].licenseExpiryController.text;
+
+        request.fields[
+                'loan_request[applicants_attributes][$i][residential_address]'] =
+            myTabController.applicants[i].residentialAddressController.text;
+
+        request.fields[
+                'loan_request[applicants_attributes][$i][postal_address]'] =
+            myTabController.applicants[i].postalAddressController.text;
+
+        request.fields['loan_request[applicants_attributes][$i][province]'] =
+            myTabController.applicants[i].provinceController.toString();
+
+        request.fields['loan_request[applicants_attributes][$i][town]'] =
+            myTabController.applicants[i].townController.toString();
+
+        request.fields['loan_request[applicants_attributes][$i][gender]'] =
+            myTabController.applicants[i].gender.toString();
+
+        request.fields['loan_request[applicants_attributes][$i][ownership]'] =
+            myTabController.applicants[i].ownership.toString();
+
+        request.fields[
+                'loan_request[applicants_attributes][$i][ownership_how_long]'] =
+            myTabController.applicants[i].ownership.toString();
+
+        // Add other applicant details as needed
       }
-    } catch (error) {
-      print('Error sending PATCH request: $error');
+      print(request.fields);
+      var response = await request.send();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Request was successful
+        print('Form submitted successfully');
+        setState(() {
+          isloadiing = false;
+        });
+        warning('Form Submitted');
+        fetchData(widget.id);
+        //  clearAllFields();
+      } else {
+        // Request failed
+        print('Form submission failed with status: ${response.statusCode}');
+        setState(() {
+          isloadiing = false;
+        });
+        warning('Error: Cannot Submit Form');
+      }
+    } catch (e) {
+      print("Error: $e");
+      warning('Error: Cannot Submit Form');
     }
   }
 }

@@ -26,8 +26,10 @@ class RequestItem extends StatefulWidget {
   final String functionstring;
   final String agent;
   final int loanid;
+  final String history;
 
   RequestItem({
+    required this.history,
     required this.gender,
     required this.updateDataCallback,
     required this.applicantCount,
@@ -56,236 +58,229 @@ class _RequestItemState extends State<RequestItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: AppColors.sidebarbackground,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       elevation: 3,
       margin: EdgeInsets.all(8),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Row(
-                  children: [
-                    SizedBox(width: 12),
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width * .05,
-                        child:
-                            CustomText(fontSize: 14, text: widget.requestId)),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * .06,
-                      child: CustomText(
-                        fontSize: 13,
-                        text: widget.agent,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * .15,
-                  child: Row(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              widget.history == "new"
+                  ? AppColors.sidebarbackground
+                  : widget.history == "existing"
+                      ? Color.fromARGB(255, 250, 197, 138)
+                      : widget.history == "rejected"
+                          ? Color.fromARGB(255, 251, 149, 149)
+                          : widget.history == "closed"
+                              ? Color.fromARGB(255, 153, 244, 152)
+                              : AppColors
+                                  .sidebarbackground, // Change these colors as per your preference
+              widget.history == "new"
+                  ? AppColors.sidebarbackground
+                  : widget.history == "existing"
+                      ? AppColors.sidebarbackground
+                      : widget.history == "rejected"
+                          ? Colors.red
+                          : widget.history == "closed"
+                              ? Colors.yellow
+                              : AppColors.sidebarbackground,
+            ],
+            stops: [0.01, 0.1],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Row(
                     children: [
-                      //check male or female here, so can check and show iamges accoridngly
-
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundImage: AssetImage(widget.applicantCount > 1
-                            ? '../../assets/png/joint.png'
-                            : widget.gender == 'Female'
-                                ? '../../assets/png/avatar-5.png'
-                                : '../../assets/png/avatar-4.png'),
+                      SizedBox(width: 12),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * .05,
+                          child:
+                              CustomText(fontSize: 14, text: widget.requestId)),
+                      SizedBox(
+                        width: 10,
                       ),
                       SizedBox(
-                        width: 15,
-                      ),
-                      CustomText(
-                        fontSize: 15,
-                        text: widget.customerName,
-                        fontWeight: FontWeight.w700,
+                        width: MediaQuery.of(context).size.width * .06,
+                        child: CustomText(
+                          fontSize: 13,
+                          text: widget.agent,
+                          fontWeight: FontWeight.w300,
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * .1,
-              child: CustomText(
-                fontSize: 14,
-                text: widget.date,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * .05,
-              child: CustomText(
-                fontSize: 14,
-                text: widget.amount,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * .06,
-              child: CustomText(
-                fontSize: 14,
-                text: widget.productname,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            Row(
-              children: [
-                SizedBox(
-                  width: 160,
-                  child: DropdownButtonFormField2<String>(
-                    isExpanded: true,
-                    decoration: InputDecoration(
-                      // Add Horizontal padding using menuItemStyleData.padding so it matches
-                      // the menu padding when button's width is not specified.
-                      contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      // Add more decoration..
-                    ),
-                    hint: Text(
-                      widget.functionstring,
-                      style: GoogleFonts.dmSans(
-                          fontSize: 14, color: AppColors.neutral),
-                    ),
-                    items: widget.agents.map((agent) {
-                      return DropdownMenuItem<String>(
-                        value: agent['id'].toString(),
-                        child: CustomText(
-                          fontSize: 14,
-                          color: AppColors.neutral,
-                          text: agent['name'].toString(),
+                  SizedBox(
+                    width: 15,
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .15,
+                    child: Row(
+                      children: [
+                        //check male or female here, so can check and show iamges accoridngly
+
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundImage: AssetImage(widget.applicantCount > 1
+                              ? '../../assets/png/joint.png'
+                              : widget.gender == 'Female'
+                                  ? '../../assets/png/avatar-5.png'
+                                  : '../../assets/png/avatar-4.png'),
                         ),
-                      );
-                    }).toList(),
-                    validator: (value) {
-                      if (value == null) {
-                        return widget.functionstring;
-                      }
-                      return null;
-                    },
-                    onChanged: (agent) {
-                      setState(() {
-                        seletedagent = agent!;
-                        print(agent);
-                      });
-                    },
-                    buttonStyleData: const ButtonStyleData(
-                      padding: EdgeInsets.only(right: 8),
-                    ),
-                    iconStyleData: const IconStyleData(
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.black45,
-                      ),
-                      iconSize: 24,
-                    ),
-                    dropdownStyleData: DropdownStyleData(
-                      decoration: BoxDecoration(
-                        color: AppColors.sidebarbackground,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    menuItemStyleData: const MenuItemStyleData(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        CustomText(
+                          fontSize: 15,
+                          text: widget.customerName,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ],
                     ),
                   ),
+                ],
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * .1,
+                child: CustomText(
+                  fontSize: 14,
+                  text: widget.date,
+                  fontWeight: FontWeight.w400,
                 ),
-                SizedBox(
-                  width: 25,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * .05,
+                child: CustomText(
+                  fontSize: 14,
+                  text: widget.amount,
+                  fontWeight: FontWeight.w400,
                 ),
-                TextButton(
-                    style: ButtonStyle(
-                        padding: MaterialStateProperty.all(
-                            EdgeInsets.fromLTRB(20, 5, 20, 5)),
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                8.0), // Adjust the border radius as needed
-                          ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * .06,
+                child: CustomText(
+                  fontSize: 14,
+                  text: widget.productname,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 160,
+                    child: DropdownButtonFormField2<String>(
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        // Add Horizontal padding using menuItemStyleData.padding so it matches
+                        // the menu padding when button's width is not specified.
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 16),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        backgroundColor:
-                            MaterialStateProperty.all(AppColors.mainColor)),
-                    onPressed: () {
-                      _submitAssignment(widget.loanid, seletedagent!);
-                    },
-                    child: CustomText(
-                      fontSize: 14,
-                      color: AppColors.neutral,
-                      text: 'Submit',
-                    )),
-                SizedBox(
-                  width: 10,
-                ),
-                PopupMenuButton<String>(
-                  color: AppColors.sidebarbackground,
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: AppColors.neutral,
-                  ),
-                  onSelected: (value) {
-                    // Handle the selected option
-                    if (value == 'edit') {
-                      // Handle edit action
-                    } else if (value == 'delete') {
-                      // Handle delete action
-                    } else if (value == 'view') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ViewApplication(
-                                  loanRequestId: widget.loanid,
-                                )),
-                      );
-                      // Handle view action
-                    }
-                  },
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      PopupMenuItem<String>(
-                        textStyle: GoogleFonts.dmSans(color: AppColors.neutral),
-                        value: 'view',
-                        child: CustomText(
-                          fontSize: 13,
-                          text: 'View',
-                        ),
+                        // Add more decoration..
                       ),
-                      PopupMenuItem<String>(
-                          textStyle:
-                              GoogleFonts.dmSans(color: AppColors.neutral),
-                          value: 'edit',
+                      hint: Text(
+                        widget.functionstring,
+                        style: GoogleFonts.dmSans(
+                            fontSize: 14, color: AppColors.neutral),
+                      ),
+                      items: widget.agents.map((agent) {
+                        return DropdownMenuItem<String>(
+                          value: agent['id'].toString(),
                           child: CustomText(
-                            fontSize: 13,
-                            text: 'Edit',
-                          )),
-                      PopupMenuItem<String>(
-                        textStyle: GoogleFonts.dmSans(color: AppColors.neutral),
-                        value: 'delete',
-                        child: CustomText(
-                          fontSize: 13,
-                          text: 'Delete',
+                            fontSize: 14,
+                            color: AppColors.neutral,
+                            text: agent['name'].toString(),
+                          ),
+                        );
+                      }).toList(),
+                      validator: (value) {
+                        if (value == null) {
+                          return widget.functionstring;
+                        }
+                        return null;
+                      },
+                      onChanged: (agent) {
+                        setState(() {
+                          seletedagent = agent!;
+                          print(agent);
+                        });
+                      },
+                      buttonStyleData: const ButtonStyleData(
+                        padding: EdgeInsets.only(right: 8),
+                      ),
+                      iconStyleData: const IconStyleData(
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.black45,
+                        ),
+                        iconSize: 24,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        decoration: BoxDecoration(
+                          color: AppColors.sidebarbackground,
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                    ];
-                  },
-                )
-              ],
-            )
-          ],
+                      menuItemStyleData: const MenuItemStyleData(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 25,
+                  ),
+                  TextButton(
+                      style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                              EdgeInsets.fromLTRB(20, 5, 20, 5)),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Adjust the border radius as needed
+                            ),
+                          ),
+                          backgroundColor:
+                              MaterialStateProperty.all(AppColors.mainColor)),
+                      onPressed: () {
+                        _submitAssignment(widget.loanid, seletedagent!);
+                      },
+                      child: CustomText(
+                        fontSize: 14,
+                        color: AppColors.neutral,
+                        text: 'Submit',
+                      )),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ViewApplication(
+                                    loanRequestId: widget.loanid,
+                                  )),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.remove_red_eye_outlined,
+                        color: AppColors.neutral,
+                      ))
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -298,7 +293,7 @@ class _RequestItemState extends State<RequestItem> {
           "https://loan-managment.onrender.com/loan_requests/$id/assign_to_agent";
       // Replace 'yourAccessToken' with the actual token
       String accessToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzMjY3NDQ4fQ.l7Hd1TdjcUTHdUmpRYhHVQQzVaDMb17dTNb566XlF3E';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
 
       Dio dio = Dio();
       dio.options.headers = {

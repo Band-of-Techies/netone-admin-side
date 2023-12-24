@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 class ApplicantDetails {
+  dynamic? applicantid;
   TextEditingController surnameController = TextEditingController();
   TextEditingController middleNameController = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
@@ -24,8 +25,11 @@ class ApplicantDetails {
   String? selectedprovince;
   List<Uint8List> selectedFiles = [];
   List<String> selectedFilesnames = [];
-
+  TextEditingController loanapplicantname = TextEditingController();
+  TextEditingController loanapplicantpercentage = TextEditingController();
   void dispose() {
+    loanapplicantname.dispose();
+    loanapplicantpercentage.dispose();
     surnameController.dispose();
     middleNameController.dispose();
     firstNameController.dispose();

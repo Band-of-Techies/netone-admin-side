@@ -4,12 +4,14 @@ import 'dart:io';
 import 'dart:js' as js;
 import 'dart:typed_data';
 import 'dart:html' as html;
+import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:netone_loanmanagement_admin/src/application/datas/applicant.dart';
 import 'package:netone_loanmanagement_admin/src/application/datas/loandetails.dart';
 import 'package:netone_loanmanagement_admin/src/application/datas/products.dart';
 import 'package:netone_loanmanagement_admin/src/pages/applications/editapplication.dart';
@@ -18,6 +20,7 @@ import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:netone_loanmanagement_admin/src/res/textfield.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class SectionThree extends StatefulWidget {
   final MyTabController myTabController;
@@ -32,16 +35,15 @@ class SectionThree extends StatefulWidget {
 
 class _SectionThreeState extends State<SectionThree>
     with SingleTickerProviderStateMixin {
+  bool isloadiing = true;
   LoanDetails loadndetails = LoanDetails();
+  List<ApplicantDetails> applicants = [];
   final _formKey = GlobalKey<FormState>();
   late LoanRequestDetails loanDetail;
-  XFile? pickedImageOne;
-  XFile? pickedImageTwo;
-  XFile? pickedImageThree;
-  XFile? pickedImageFour;
+  String? prodicutid;
   List<ProductList> products = [];
+
   String? productapplied;
-  final ImagePicker _imagePicker = ImagePicker();
   List<String> tenureOptions = [
     '3 months',
     '6 months',
@@ -58,9 +60,10 @@ class _SectionThreeState extends State<SectionThree>
   Widget build(BuildContext context) {
     final myTabController = Provider.of<MyTabController>(context);
     loadndetails = myTabController.loanDetails;
+    applicants = myTabController.applicants;
     return Scaffold(
       backgroundColor: AppColors.mainbackground,
-      body: products.isEmpty || products == null
+      body: (products.isEmpty || products == null) && isloadiing == false
           ? Center(
               child: CircularProgressIndicator(color: AppColors.mainColor),
             )
@@ -83,21 +86,15 @@ class _SectionThreeState extends State<SectionThree>
                           SizedBox(
                             height: 30,
                           ),
-                          Text(
-                            'Affirmations',
-                            style: GoogleFonts.dmSans(
-                                color: AppColors.neutral,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700),
-                          ),
+
                           SizedBox(height: 20),
-                          affirmationsection(0, 0),
+                          affirmationsection(0, 0, myTabController),
                           if (widget.myTabController.numberOfPersons > 1)
-                            affirmationsection(1, 1),
+                            affirmationsection(1, 1, myTabController),
                           if (widget.myTabController.numberOfPersons > 2)
-                            affirmationsection(2, 2),
+                            affirmationsection(2, 2, myTabController),
                           if (widget.myTabController.numberOfPersons > 3)
-                            affirmationsection(3, 3),
+                            affirmationsection(3, 3, myTabController),
                           SizedBox(height: 40),
                           /*  Text(
                   'Supporting Documentation Submitted, loadndetails are advised to attach the following documents',
@@ -118,6 +115,8 @@ class _SectionThreeState extends State<SectionThree>
                               padding: MaterialStateProperty.all(
                                   EdgeInsets.all(15))),
                           onPressed: () {
+                            updateData(widget.id!, myTabController,
+                                loanDetail.applicantCount);
                             if (_formKey.currentState!.validate()) {
                               myTabController.loanDetails = loadndetails;
                             }
@@ -177,7 +176,7 @@ class _SectionThreeState extends State<SectionThree>
 
       // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
       String bearertoken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
       dio.options.headers['Authorization'] = 'Bearer $bearertoken';
 
       final response = await dio.get(
@@ -201,6 +200,12 @@ class _SectionThreeState extends State<SectionThree>
             loadndetails.loanamaountapplied.text = loanDetail.loanAmount;
             loadndetails.tenure = loanDetail.loanTenure;
             loadndetails.descriptionController.text = loanDetail.description;
+
+            applicants[i].applicantid = loanDetail.applicants[i].id;
+            applicants[i].loanapplicantname.text =
+                loanDetail.applicants[i].loansharename;
+            applicants[i].loanapplicantpercentage.text =
+                loanDetail.applicants[i].loansharepercent;
             productapplied = response.data['product']['name'];
           }
         });
@@ -214,7 +219,8 @@ class _SectionThreeState extends State<SectionThree>
     }
   }
 
-  Column affirmationsection(int applicantkey, int i) {
+  Column affirmationsection(
+      int applicantkey, int i, MyTabController myTabController) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -434,6 +440,28 @@ class _SectionThreeState extends State<SectionThree>
                         fontSize: 14,
                         fontWeight: FontWeight.w500),
                   ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  /* if (widget
+                      .myTabController.applicants[i].selectedFiles.isNotEmpty)
+                    SizedBox(
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  AppColors.mainColor),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.all(15))),
+                          onPressed: () {
+                            // updateFiles(widget.id, myTabController, i);
+                          },
+                          child: CustomText(
+                            text: 'Add Files',
+                            color: AppColors.neutral,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          )),
+                    ),*/
                 ],
               ),
           ],
@@ -605,7 +633,7 @@ class _SectionThreeState extends State<SectionThree>
                 height: 20,
               ),
               FormTextField(
-                controller: loadndetails.firstapplicant,
+                controller: applicants[0].loanapplicantname,
                 labelText: 'First Applicant',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -619,7 +647,7 @@ class _SectionThreeState extends State<SectionThree>
               ),
               if (widget.myTabController.numberOfPersons > 2)
                 FormTextField(
-                  controller: loadndetails.thirdapplicant,
+                  controller: applicants[2].loanapplicantname,
                   labelText: 'Third Applicant (Agric Asset ONLY)',
                   validator: (value) {
                     if ((value == null || value.isEmpty) &&
@@ -634,7 +662,7 @@ class _SectionThreeState extends State<SectionThree>
                   height: 30,
                 ),
               FormTextField(
-                controller: loadndetails.firstapplicantproportion,
+                controller: applicants[0].loanapplicantpercentage,
                 labelText: 'First Applicant Proportion of loan (%)',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -648,7 +676,7 @@ class _SectionThreeState extends State<SectionThree>
               ),
               if (widget.myTabController.numberOfPersons > 2)
                 FormTextField(
-                  controller: loadndetails.thirdapplicantpropotion,
+                  controller: applicants[2].loanapplicantpercentage,
                   labelText: 'Third Applicant Proportion of loan (%))',
                   validator: (value) {
                     if ((value == null || value.isEmpty) &&
@@ -680,7 +708,7 @@ class _SectionThreeState extends State<SectionThree>
               ),
               if (widget.myTabController.numberOfPersons > 1)
                 FormTextField(
-                  controller: loadndetails.secondapplicant,
+                  controller: applicants[1].loanapplicantname,
                   labelText: 'Second Applicant',
                   validator: (value) {
                     if ((value == null || value.isEmpty) &&
@@ -696,7 +724,7 @@ class _SectionThreeState extends State<SectionThree>
                 ),
               if (widget.myTabController.numberOfPersons > 3)
                 FormTextField(
-                  controller: loadndetails.fourthapplicant,
+                  controller: applicants[3].loanapplicantname,
                   labelText: 'Fourth Applicant (Agric Asset ONLY)',
                   validator: (value) {
                     if ((value == null || value.isEmpty) &&
@@ -712,7 +740,7 @@ class _SectionThreeState extends State<SectionThree>
                 ),
               if (widget.myTabController.numberOfPersons > 1)
                 FormTextField(
-                  controller: loadndetails.secondapplicantpropotion,
+                  controller: applicants[1].loanapplicantpercentage,
                   labelText: 'Second Applicant Proportion of loan (%)',
                   validator: (value) {
                     if ((value == null || value.isEmpty) &&
@@ -728,7 +756,7 @@ class _SectionThreeState extends State<SectionThree>
                 ),
               if (widget.myTabController.numberOfPersons > 3)
                 FormTextField(
-                  controller: loadndetails.fourthapplicantpropotion,
+                  controller: applicants[3].loanapplicantpercentage,
                   labelText: 'Fourth Applicant Proportion of loan (%)',
                   validator: (value) {
                     if ((value == null || value.isEmpty) &&
@@ -917,7 +945,7 @@ class _SectionThreeState extends State<SectionThree>
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              'Loan Product Apllied for :',
+              'Loan Product Applied for :',
               style: GoogleFonts.dmSans(
                   color: AppColors.neutral,
                   fontSize: 14,
@@ -947,6 +975,26 @@ class _SectionThreeState extends State<SectionThree>
               buildCheckBox(products[i].id, products[i].name, i),
           ],
         ),
+        SizedBox(
+          height: 40,
+        ),
+        if (prodicutid != null)
+          SizedBox(
+            child: ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(AppColors.mainColor),
+                    padding: MaterialStateProperty.all(EdgeInsets.all(15))),
+                onPressed: () {
+                  updateProduct(prodicutid!);
+                },
+                child: CustomText(
+                  text: 'Update',
+                  color: AppColors.neutral,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                )),
+          ),
         SizedBox(
           height: 40,
         ),
@@ -987,6 +1035,7 @@ class _SectionThreeState extends State<SectionThree>
         setState(() {
           loadndetails.selectedLoanOption = id;
           loadndetails.costofasset.text = products[i].price.toString();
+          prodicutid = id.toString();
         });
       },
       child: Chip(
@@ -1005,6 +1054,135 @@ class _SectionThreeState extends State<SectionThree>
             : AppColors.sidebarbackground,
       ),
     );
+  }
+
+  warning(String message) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        width: MediaQuery.of(context).size.width * .7,
+        backgroundColor: AppColors.neutral,
+        duration: Duration(seconds: 3),
+        shape: StadiumBorder(),
+        behavior: SnackBarBehavior.floating,
+        content: Center(
+          child: CustomText(
+              text: message,
+              fontSize: 13,
+              color: AppColors.mainColor,
+              fontWeight: FontWeight.w500),
+        )));
+  }
+
+  Future<void> updateData(
+      int? id, MyTabController myTabController, int persons) async {
+    setState(() {
+      isloadiing = true;
+    });
+    final String apiUrl =
+        'https://loan-managment.onrender.com/loan_requests/$id';
+
+    try {
+      var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
+      String accessToken =
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      request.headers['Authorization'] = 'Bearer $accessToken';
+      request.fields['loan_request[description]'] =
+          myTabController.loanDetails.descriptionController.text;
+      request.fields['loan_request[cost_of_asset]'] =
+          myTabController.loanDetails.costofasset.text;
+      request.fields['loan_request[insurance_cost]'] =
+          myTabController.loanDetails.insurancecost.text;
+      request.fields['loan_request[advance_payment]'] =
+          myTabController.loanDetails.advancepayment.text;
+      request.fields['loan_request[loan_tenure]'] =
+          myTabController.loanDetails.tenure.toString();
+      request.fields['loan_request[loan_amount]'] =
+          myTabController.loanDetails.loanamaountapplied.text;
+
+      for (int i = 0; i < persons; i++) {
+        // Add other applicant data to the request
+        request.fields['loan_request[applicants_attributes][$i][id]'] =
+            myTabController.applicants[i].applicantid.toString();
+        request.fields[
+                'loan_request[applicants_attributes][$i][loan_share_name]'] =
+            myTabController.applicants[i].loanapplicantname.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][loan_share_percent]'] =
+            myTabController.applicants[i].loanapplicantpercentage.text;
+        if (widget.myTabController.applicants[i].selectedFiles.isNotEmpty) {
+          for (var file in widget.myTabController.applicants[i].selectedFiles) {
+            request.files.add(http.MultipartFile(
+              'loan_request[applicants_attributes][$i][documents][]',
+              http.ByteStream.fromBytes(file),
+              file.length,
+              filename:
+                  'file${loanDetail.applicants[i].documents.length + i}.jpg', // Provide a filename here
+              contentType: MediaType('application', 'octet-stream'),
+            ));
+          }
+        }
+      }
+      var response = await request.send();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Request was successful
+        print('Form submitted successfully');
+        setState(() {
+          isloadiing = false;
+        });
+        warning('Form Submitted');
+        fetchData(widget.id);
+        //  clearAllFields();
+      } else {
+        // Request failed
+        print('Form submission failed with status: ${response.statusCode}');
+        setState(() {
+          isloadiing = false;
+        });
+        warning('Error: Cannot Submit Form');
+      }
+    } catch (e) {
+      print("Error: $e");
+      warning('Error: Cannot Submit Form');
+    }
+  }
+
+  Future<void> updateProduct(String id) async {
+    setState(() {
+      isloadiing = true;
+    });
+    final String apiUrl =
+        'https://loan-managment.onrender.com/loan_requests/${widget.id}';
+
+    try {
+      var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
+      String accessToken =
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      request.headers['Authorization'] = 'Bearer $accessToken';
+      request.fields['loan_request[product_id]'] = id;
+
+      var response = await request.send();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Request was successful
+        print('Form submitted successfully');
+        setState(() {
+          isloadiing = false;
+        });
+        warning('Form Submitted');
+        fetchData(widget.id);
+        //  clearAllFields();
+      } else {
+        // Request failed
+        print('Form submission failed with status: ${response.statusCode}');
+        setState(() {
+          isloadiing = false;
+        });
+        warning('Error: Cannot Submit Form');
+      }
+    } catch (e) {
+      print("Error: $e");
+      warning('Error: Cannot Submit Form');
+    }
   }
 }
 

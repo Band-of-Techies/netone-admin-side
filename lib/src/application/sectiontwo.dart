@@ -11,7 +11,8 @@ import 'package:netone_loanmanagement_admin/src/res/apis/loandetails.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:netone_loanmanagement_admin/src/res/textfield.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:html' as html;
 import 'package:provider/provider.dart';
 
 class SectionTwo extends StatefulWidget {
@@ -28,6 +29,7 @@ class _SectionTwoState extends State<SectionTwo>
     with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   late LoanRequestDetails loanDetail;
+  bool isloadiing = true;
   List<String> prefyearsList =
       List.generate(61, (index) => (DateTime.now().year + index).toString());
   List<EmployemntandKlinDetails> applicantDetailsLists = [];
@@ -193,77 +195,86 @@ class _SectionTwoState extends State<SectionTwo>
     applicantDetailsLists = myTabController.employmentDetailsList;
     return Scaffold(
       backgroundColor: AppColors.mainbackground,
-      body: Padding(
-        padding: EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              CustomText(
-                text: 'Employment Details',
-                color: AppColors.mainbackground,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              employmentDetails('Applicant 1', applicantDetailsLists[0]),
-              if (numberOfPersons > 1)
-                employmentDetails('Applicant 2', applicantDetailsLists[1]),
-              if (numberOfPersons > 2)
-                employmentDetails('Applicant 3', applicantDetailsLists[2]),
-              if (numberOfPersons > 3)
-                employmentDetails('Applicant 4', applicantDetailsLists[3]),
-              SizedBox(
-                height: 20,
-              ),
-              CustomText(
-                text: 'Next of Kin Information',
-                color: AppColors.neutral,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              kinInformation('Applicant 1', applicantDetailsLists[0]),
-              if (numberOfPersons > 1)
-                kinInformation('Applicant 2', applicantDetailsLists[1]),
-              if (numberOfPersons > 2)
-                kinInformation('Applicant 3', applicantDetailsLists[2]),
-              if (numberOfPersons > 3)
-                kinInformation('Applicant 4', applicantDetailsLists[3]),
-              SizedBox(
-                child: ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(AppColors.mainColor),
-                        padding: MaterialStateProperty.all(EdgeInsets.all(15))),
-                    onPressed: () {
-                      //widget.myTabController.updateNumberOfPersons(numberOfPersons);
-                      //  DefaultTabController.of(context)?.animateTo(1);
-                      if (_formKey.currentState!.validate()) {
-                        // Form is valid, move to the next section
-                        myTabController.employmentDetailsList =
-                            applicantDetailsLists;
-                        myTabController
-                            .updateEMplymentandKlin(applicantDetailsLists);
-                        // printApplicantDetails();
-                        print('update');
-                      }
-                    },
-                    child: CustomText(
-                      text: 'Update',
+      body: isloadiing == false
+          ? Padding(
+              padding: EdgeInsets.all(20),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    CustomText(
+                      text: 'Employment Details',
+                      color: AppColors.mainbackground,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    employmentDetails('Applicant 1', applicantDetailsLists[0]),
+                    if (numberOfPersons > 1)
+                      employmentDetails(
+                          'Applicant 2', applicantDetailsLists[1]),
+                    if (numberOfPersons > 2)
+                      employmentDetails(
+                          'Applicant 3', applicantDetailsLists[2]),
+                    if (numberOfPersons > 3)
+                      employmentDetails(
+                          'Applicant 4', applicantDetailsLists[3]),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    CustomText(
+                      text: 'Next of Kin Information',
                       color: AppColors.neutral,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    )),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    kinInformation('Applicant 1', applicantDetailsLists[0]),
+                    if (numberOfPersons > 1)
+                      kinInformation('Applicant 2', applicantDetailsLists[1]),
+                    if (numberOfPersons > 2)
+                      kinInformation('Applicant 3', applicantDetailsLists[2]),
+                    if (numberOfPersons > 3)
+                      kinInformation('Applicant 4', applicantDetailsLists[3]),
+                    SizedBox(
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  AppColors.mainColor),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.all(15))),
+                          onPressed: () {
+                            updateData(widget.id!, myTabController,
+                                loanDetail.applicantCount);
+                            //widget.myTabController.updateNumberOfPersons(numberOfPersons);
+                            //  DefaultTabController.of(context)?.animateTo(1);
+                            if (_formKey.currentState!.validate()) {
+                              // Form is valid, move to the next section
+                              myTabController.employmentDetailsList =
+                                  applicantDetailsLists;
+                              myTabController.updateEMplymentandKlin(
+                                  applicantDetailsLists);
+                              // printApplicantDetails();
+                            }
+                          },
+                          child: CustomText(
+                            text: 'Update',
+                            color: AppColors.neutral,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          )),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            )
+          : Center(
+              child: CircularProgressIndicator(color: AppColors.neutral),
+            ),
     );
   }
 
@@ -1122,7 +1133,7 @@ class _SectionTwoState extends State<SectionTwo>
 
       // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
       String bearertoken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
       dio.options.headers['Authorization'] = 'Bearer $bearertoken';
 
       final response = await dio.get(
@@ -1139,7 +1150,10 @@ class _SectionTwoState extends State<SectionTwo>
           this.loanDetail = loanDetail;
 
           for (int i = 0; i < loanDetail.applicantCount; i++) {
-            print(loanDetail.applicants[i].occupation.jobTitle);
+            applicantDetailsLists[i].applicantid = loanDetail.applicants[i].id;
+            applicantDetailsLists[i].occupationid =
+                loanDetail.applicants[i].occupation.id;
+            applicantDetailsLists[i].kinid = loanDetail.applicants[i].kin.id;
             applicantDetailsLists[i].jobTitleController.text =
                 loanDetail.applicants[i].occupation.jobTitle;
             applicantDetailsLists[i].ministryController.text =
@@ -1170,7 +1184,8 @@ class _SectionTwoState extends State<SectionTwo>
                 loanDetail.applicants[i].kin.otherNames;
             applicantDetailsLists[i].physicalAddressControllernextofkin.text =
                 loanDetail.applicants[i].occupation.physicalAddress;
-
+            applicantDetailsLists[i].netSalaryController.text =
+                loanDetail.applicants[i].occupation.netSalary;
             applicantDetailsLists[i].employmentType =
                 loanDetail.applicants[i].occupation.employmentType;
 
@@ -1180,7 +1195,22 @@ class _SectionTwoState extends State<SectionTwo>
                 loanDetail.applicants[i].kin.phoneNumber;
             applicantDetailsLists[i].emailAddressController.text =
                 loanDetail.applicants[i].kin.email;
+
+            applicantDetailsLists[i].retirementYearController.text =
+                loanDetail.applicants[i].occupation.retirementYear;
+
+            applicantDetailsLists[i].expiryDateController.text =
+                loanDetail.applicants[i].occupation.expiryDate;
+
+            applicantDetailsLists[i].temperoryexpirydate.text =
+                loanDetail.applicants[i].occupation.tempExpiryDate;
+
+            applicantDetailsLists[i].preferredYearOfRetirementController =
+                loanDetail.applicants[i].occupation.preferredRetirementYear;
           }
+        });
+        setState(() {
+          isloadiing = false;
         });
       } else {
         // Handle error response
@@ -1190,5 +1220,156 @@ class _SectionTwoState extends State<SectionTwo>
       // Handle network or other errors
       print('Errrrror: $error');
     }
+  }
+
+  Future<void> updateData(
+      int? id, MyTabController myTabController, int persons) async {
+    setState(() {
+      isloadiing = true;
+    });
+    final String apiUrl =
+        'https://loan-managment.onrender.com/loan_requests/$id';
+
+    try {
+      var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
+      String accessToken =
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      request.headers['Authorization'] = 'Bearer $accessToken';
+      for (int i = 0; i < persons; i++) {
+        // Add other applicant data to the request
+        request.fields['loan_request[applicants_attributes][$i][id]'] =
+            myTabController.employmentDetailsList[i].applicantid.toString();
+        request.fields[
+                'loan_request[applicants_attributes][$i][kin_attributes][id]'] =
+            myTabController.employmentDetailsList[i].kinid.toString();
+
+        request.fields[
+                'loan_request[applicants_attributes][$i][kin_attributes][name]'] =
+            myTabController.employmentDetailsList[i].nameController.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][kin_attributes][other_names]'] =
+            myTabController.employmentDetailsList[i].otherNamesController.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][kin_attributes][physical_address]'] =
+            myTabController.employmentDetailsList[i]
+                .physicalAddressControllernextofkin.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][kin_attributes][postal_address]'] =
+            myTabController
+                .employmentDetailsList[i].postalAddressControllerforKline.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][kin_attributes][phone_number]'] =
+            myTabController.employmentDetailsList[i].cellNumberController.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][kin_attributes][email]'] =
+            myTabController
+                .employmentDetailsList[i].emailAddressController.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][id]'] =
+            myTabController.employmentDetailsList[i].occupationid.toString();
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][job_title]'] =
+            myTabController.employmentDetailsList[i].jobTitleController.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][ministry]'] =
+            myTabController.employmentDetailsList[i].ministryController.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][physical_address]'] =
+            myTabController.employmentDetailsList[i]
+                .physicalAddressControlleremployment.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][postal_address]'] =
+            myTabController.employmentDetailsList[i]
+                .postalAddressControllerEmployment.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][town]'] =
+            myTabController.employmentDetailsList[i].townController.toString();
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][province]'] =
+            myTabController.employmentDetailsList[i].provinceController
+                .toString();
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][gross_salary]'] =
+            myTabController.employmentDetailsList[i].grossSalaryController.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][net_salary]'] =
+            myTabController.employmentDetailsList[i].netSalaryController.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][salary_scale]'] =
+            myTabController.employmentDetailsList[i].salaryScaleController
+                .toString();
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][retirement_year]'] =
+            myTabController
+                .employmentDetailsList[i].retirementYearController.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][employer_number]'] =
+            myTabController
+                .employmentDetailsList[i].employeeNumberController.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][years_of_service]'] =
+            myTabController.employmentDetailsList[i].yearsInEmploymentController
+                .toString();
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][employment_type]'] =
+            myTabController.employmentDetailsList[i].employmentType.toString();
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][expiry_date]'] =
+            myTabController.employmentDetailsList[i].expiryDateController.text;
+
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][current_net_salary]'] =
+            myTabController
+                .employmentDetailsList[i].currentNetSalaryController.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][temp_expiry_date]'] =
+            myTabController.employmentDetailsList[i].temperoryexpirydate.text;
+        request.fields[
+                'loan_request[applicants_attributes][$i][occupation_attributes][preferred_retirement_year]'] =
+            myTabController
+                .employmentDetailsList[i].retirementYearController.text;
+
+        // Add other applicant details as needed
+      }
+      print(request.fields);
+      var response = await request.send();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Request was successful
+        print('Form submitted successfully');
+        setState(() {
+          isloadiing = false;
+        });
+        warning('Form Submitted');
+        fetchData(widget.id);
+        //  clearAllFields();
+      } else {
+        // Request failed
+        print('Form submission failed with status: ${response.statusCode}');
+        setState(() {
+          isloadiing = false;
+        });
+        warning('Error: Cannot Submit Form');
+      }
+    } catch (e) {
+      print("Error: $e");
+      warning('Error: Cannot Submit Form');
+    }
+  }
+
+  warning(String message) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        width: MediaQuery.of(context).size.width * .7,
+        backgroundColor: AppColors.neutral,
+        duration: Duration(seconds: 3),
+        shape: StadiumBorder(),
+        behavior: SnackBarBehavior.floating,
+        content: Center(
+          child: CustomText(
+              text: message,
+              fontSize: 13,
+              color: AppColors.mainColor,
+              fontWeight: FontWeight.w500),
+        )));
   }
 }

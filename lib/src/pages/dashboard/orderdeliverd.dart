@@ -41,6 +41,8 @@ class _OrderDeliverdStatusState extends State<OrderDeliverdStatus> {
                 itemBuilder: (context, index) {
                   return AgentRequestItem(
                     status: 4,
+                    history: loanRequests![index].history,
+                    gender: loanRequests![index].gender,
                     updateDataCallback: updateData,
                     applicantCount: loanRequests![index].applicantCount,
                     loanid: loanRequests![index].id,
@@ -103,7 +105,7 @@ class _OrderDeliverdStatusState extends State<OrderDeliverdStatus> {
       final String apiEndpoint =
           'https://loan-managment.onrender.com/loan_requests?filter=delivered_orders';
       final String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
 
       var response = await dio.get(
         apiEndpoint,

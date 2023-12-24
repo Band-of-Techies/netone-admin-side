@@ -1,5 +1,5 @@
 class LoanRequestDetails {
-  final int id;
+  final dynamic id;
   final String requestnumber;
   final String createdAt;
   final String updatedAt;
@@ -20,7 +20,7 @@ class LoanRequestDetails {
   final String requestOrderUpdateDate;
   final Product product;
   final List<Applicant> applicants;
-  final int applicantCount;
+  final dynamic applicantCount;
   final AgentDetails agent;
   final List<Document> documents;
 
@@ -106,7 +106,7 @@ class AgentDetails {
 }
 
 class Product {
-  final int id;
+  final dynamic id;
   final String createdAt;
   final String updatedAt;
   final String name;
@@ -133,7 +133,7 @@ class Product {
 
 class Applicant {
   final String exisitngstatus;
-  final int id;
+  final dynamic id;
   final String createdAt;
   final String updatedAt;
   final String surname;
@@ -227,7 +227,7 @@ class Applicant {
 }
 
 class Occupation {
-  final int id;
+  final dynamic id;
   final String createdAt;
   final String updatedAt;
   final String jobTitle;
@@ -298,7 +298,7 @@ class Occupation {
 }
 
 class Kin {
-  final int id;
+  final dynamic id;
   final String name;
   final String otherNames;
   final String physicalAddress;
@@ -330,7 +330,7 @@ class Kin {
 }
 
 class Document {
-  final int id;
+  final dynamic id;
   final String contentType;
   final String url;
 

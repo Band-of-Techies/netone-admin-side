@@ -12,6 +12,7 @@ import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:netone_loanmanagement_admin/src/res/timeline.dart';
 import 'dart:js' as js;
+import 'package:http/http.dart' as http;
 
 class ViewApplication extends StatefulWidget {
   final int loanRequestId;
@@ -167,7 +168,9 @@ class _ViewApplicationState extends State<ViewApplication> {
                       width: 10,
                     ),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showDeleteConfirmationDialog(context);
+                        },
                         icon: Icon(
                           Icons.delete,
                           size: 20,
@@ -351,6 +354,83 @@ class _ViewApplicationState extends State<ViewApplication> {
               color: AppColors.mainColor,
             )),
           );
+  }
+
+  Future<void> showDeleteConfirmationDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.sidebarbackground,
+          title: CustomText(
+            text: 'Confirm Deletion',
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: AppColors.mainColor,
+          ),
+          content: CustomText(
+            text: 'Are you sure you want to delete this item?',
+            color: AppColors.neutral,
+          ),
+          actions: [
+            // Cancel Button
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: CustomText(
+                text: 'Cancel',
+                color: AppColors.neutral,
+              ),
+            ),
+            // Confirm Button
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                // Call deleteData when confirmed
+                deleteData(widget.loanRequestId);
+              },
+              child: CustomText(
+                text: 'Confirm',
+                color: AppColors.neutral,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> deleteData(int id) async {
+    final String apiUrl =
+        'https://loan-managment.onrender.com/loan_requests/$id';
+    final String accessToken =
+        'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+
+    try {
+      var response = await http.delete(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        // Request was successful
+        print('DELETE request for ID $id successful');
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DashboardScreen()),
+        );
+      } else {
+        // Request failed
+        print(
+            'DELETE request for ID $id failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error for ID $id: $e');
+    }
   }
 
   String formatDate(String dateString) {
@@ -1141,7 +1221,7 @@ class _ViewApplicationState extends State<ViewApplication> {
 
       // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
       String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzAzODcyMzMwfQ.iPcNkG8k85wfMowp1cleF4VmzcdP-ftuBHhZbliDcik';
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
 
       final response = await dio.get(
         'https://loan-managment.onrender.com/loan_requests/$loanRequestId',
