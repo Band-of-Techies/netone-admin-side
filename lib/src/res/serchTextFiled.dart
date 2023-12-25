@@ -17,7 +17,7 @@ class CustomTextFormField extends StatelessWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width * .3,
       child: TextFormField(
-        onFieldSubmitted: (_) => onSubmit,
+        onEditingComplete: onSubmit,
         controller: controller,
         decoration: InputDecoration(
           labelText: labeltext,

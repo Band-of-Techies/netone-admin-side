@@ -32,6 +32,7 @@ class _SearchStatusState extends State<SearchStatus> {
   List<LoanRequest> loanRequests = [];
   bool isloading = false;
   final Dio dio = Dio();
+  String? errorMessage;
   String? searchValue;
   String? searchdates;
   DateTime? endselecteddate;
@@ -229,99 +230,115 @@ class _SearchStatusState extends State<SearchStatus> {
                 SizedBox(
                   height: 50,
                 ),
-                if (isloading == true)
-                  Center(
-                    child:
-                        CircularProgressIndicator(color: AppColors.mainColor),
-                  ),
-                if (isloading == false && loanRequests.isNotEmpty)
-                  for (int index = 0; index < loanRequests.length; index++)
-                    (loanRequests[index].agent.id == "NA")
-                        ? RequestItem(
-                            history: loanRequests[index].history,
-                            gender: loanRequests[index].gender,
-                            updateDataCallback: updateData,
-                            applicantCount: loanRequests[index].applicantCount,
-                            loanid: loanRequests[index].id,
-                            agent:
-                                'Not Assigned', // Replace with actual agent information from API if available
-                            functionstring: 'Select Agent',
-                            productname: loanRequests[index]
-                                .product
-                                .name, // Replace with actual product name from API if available
-                            amount: loanRequests[index].loanAmount,
-                            requestId: loanRequests[index]
-                                .id
-                                .toString(), // Assuming 'id' is unique for each request
-                            customerName: loanRequests[index].firstName,
-                            date: formatDate(loanRequests[index]
-                                .createdAt), // Replace with actual date from API if available
-                            isChecked:
-                                false, // Set your own logic for isChecked
-                            onCheckboxChanged: (value) {
-                              // Handle checkbox change, if needed
-                            },
-                            agents:
-                                agentList, // Replace with actual agent list from API if available
-                            selectedAgent:
-                                seletedagent, // Replace with actual selected agent from API if available
+                isloading == false
+                    ? loanRequests.isNotEmpty
+                        ? Column(
+                            children: [
+                              for (int index = 0;
+                                  index < loanRequests.length;
+                                  index++)
+                                (loanRequests[index].agent.id == "NA")
+                                    ? RequestItem(
+                                        history: loanRequests[index].history,
+                                        gender: loanRequests[index].gender,
+                                        updateDataCallback: updateData,
+                                        applicantCount:
+                                            loanRequests[index].applicantCount,
+                                        loanid: loanRequests[index].id,
+                                        agent:
+                                            'Not Assigned', // Replace with actual agent information from API if available
+                                        functionstring: 'Select Agent',
+                                        productname: loanRequests[index]
+                                            .product
+                                            .name, // Replace with actual product name from API if available
+                                        amount: loanRequests[index].loanAmount,
+                                        requestId: loanRequests[index]
+                                            .id
+                                            .toString(), // Assuming 'id' is unique for each request
+                                        customerName:
+                                            loanRequests[index].firstName,
+                                        date: formatDate(loanRequests[index]
+                                            .createdAt), // Replace with actual date from API if available
+                                        isChecked:
+                                            false, // Set your own logic for isChecked
+                                        onCheckboxChanged: (value) {
+                                          // Handle checkbox change, if needed
+                                        },
+                                        agents:
+                                            agentList, // Replace with actual agent list from API if available
+                                        selectedAgent:
+                                            seletedagent, // Replace with actual selected agent from API if available
 
-                            onConfirm: () {
-                              // Handle confirmation
-                            },
-                            onVerticalMenuPressed: () {
-                              // Handle vertical menu press
-                            },
-                          )
-                        : AgentRequestItem(
-                            history: loanRequests[index].history,
-                            status: 2,
-                            gender: loanRequests[index].gender,
-                            updateDataCallback: updateData,
-                            applicantCount: loanRequests[index].applicantCount,
-                            loanid: loanRequests[index].id,
-                            agent: loanRequests[index]
-                                .agent
-                                .name, // Replace with actual agent information from API if available
-                            functionstring: 'Select Status',
-                            productname: loanRequests[index]
-                                .product
-                                .name, // Replace with actual product name from API if available
-                            amount: loanRequests[index].loanAmount,
-                            requestId: loanRequests[index]
-                                .id
-                                .toString(), // Assuming 'id' is unique for each request
-                            customerName: loanRequests[index].firstName,
-                            date: formatDate(loanRequests[index]
-                                .createdAt), // Replace with actual date from API if available
-                            isChecked:
-                                false, // Set your own logic for isChecked
-                            onCheckboxChanged: (value) {
-                              // Handle checkbox change, if needed
-                            },
-                            agents: loanRequests[index].requestSystemStatus ==
-                                    'pending'
-                                ? netonestatuslist
-                                : loanRequests[index].requestBankStatus ==
-                                        'pending'
-                                    ? bankstauslist
-                                    : loanRequests[index].requestOrderStatus ==
-                                            "pending"
-                                        ? orderstatus
-                                        : loanRequests[index]
-                                                    .requestOrderStatus ==
-                                                "delivered"
-                                            ? orderdeliverstatus
-                                            : [], // Replace with actual agent list from API if available
-                            // Replace with actual selected agent from API if available
+                                        onConfirm: () {
+                                          // Handle confirmation
+                                        },
+                                        onVerticalMenuPressed: () {
+                                          // Handle vertical menu press
+                                        },
+                                      )
+                                    : AgentRequestItem(
+                                        history: loanRequests[index].history,
+                                        status: 2,
+                                        gender: loanRequests[index].gender,
+                                        updateDataCallback: updateData,
+                                        applicantCount:
+                                            loanRequests[index].applicantCount,
+                                        loanid: loanRequests[index].id,
+                                        agent: loanRequests[index]
+                                            .agent
+                                            .name, // Replace with actual agent information from API if available
+                                        functionstring: 'Select Status',
+                                        productname: loanRequests[index]
+                                            .product
+                                            .name, // Replace with actual product name from API if available
+                                        amount: loanRequests[index].loanAmount,
+                                        requestId: loanRequests[index]
+                                            .id
+                                            .toString(), // Assuming 'id' is unique for each request
+                                        customerName:
+                                            loanRequests[index].firstName,
+                                        date: formatDate(loanRequests[index]
+                                            .createdAt), // Replace with actual date from API if available
+                                        isChecked:
+                                            false, // Set your own logic for isChecked
+                                        onCheckboxChanged: (value) {
+                                          // Handle checkbox change, if needed
+                                        },
+                                        agents: loanRequests[index]
+                                                    .requestSystemStatus ==
+                                                'pending'
+                                            ? netonestatuslist
+                                            : loanRequests[index]
+                                                        .requestBankStatus ==
+                                                    'pending'
+                                                ? bankstauslist
+                                                : loanRequests[index]
+                                                            .requestOrderStatus ==
+                                                        "pending"
+                                                    ? orderstatus
+                                                    : loanRequests[index]
+                                                                .requestOrderStatus ==
+                                                            "delivered"
+                                                        ? orderdeliverstatus
+                                                        : [], // Replace with actual agent list from API if available
+                                        // Replace with actual selected agent from API if available
 
-                            onConfirm: () {
-                              // Handle confirmation
-                            },
-                            onVerticalMenuPressed: () {
-                              // Handle vertical menu press
-                            },
+                                        onConfirm: () {
+                                          // Handle confirmation
+                                        },
+                                        onVerticalMenuPressed: () {
+                                          // Handle vertical menu press
+                                        },
+                                      )
+                            ],
                           )
+                        : const Center(
+                            child: CustomText(text: 'No Request Found'),
+                          )
+                    : const Center(
+                        child: CircularProgressIndicator(
+                        color: AppColors.mainColor,
+                      ))
               ],
             ),
           ],

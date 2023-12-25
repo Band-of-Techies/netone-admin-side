@@ -6,6 +6,7 @@ import 'package:netone_loanmanagement_admin/src/compontents/requstcard.dart';
 import 'package:netone_loanmanagement_admin/src/res/apis/request.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/serchTextFiled.dart';
+import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 
 class BankStatusSection extends StatefulWidget {
   const BankStatusSection({super.key});
@@ -17,9 +18,11 @@ class BankStatusSection extends StatefulWidget {
 class _BankStatusSectionState extends State<BankStatusSection> {
   TextEditingController search = TextEditingController();
   final Dio dio = Dio();
+  String? searchValue;
   List<String> bankstauslist = ['approved', 'rejected'];
   List<LoanRequest>? loanRequests;
-
+  String? errorMessage;
+  bool isloading = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,57 +33,65 @@ class _BankStatusSectionState extends State<BankStatusSection> {
             CustomTextFormField(
               labeltext: 'Search',
               controller: search,
-              onSubmit: () {},
+              onSubmit: () {
+                setState(() {
+                  searchValue = search.text;
+                });
+                fetchData();
+              },
             )
           ],
         ),
-        body: loanRequests != null && loanRequests!.isNotEmpty
-            ? ListView.builder(
-                itemCount: loanRequests!.length,
-                itemBuilder: (context, index) {
-                  return AgentRequestItem(
-                    history: loanRequests![index].history,
-                    status: 2,
-                    gender: loanRequests![index].gender,
-                    updateDataCallback: updateData,
-                    applicantCount: loanRequests![index].applicantCount,
-                    loanid: loanRequests![index].id,
-                    agent: loanRequests![index]
-                        .agent
-                        .name, // Replace with actual agent information from API if available
-                    functionstring: 'Select Status',
-                    productname: loanRequests![index]
-                        .product
-                        .name, // Replace with actual product name from API if available
-                    amount: loanRequests![index].loanAmount,
-                    requestId: loanRequests![index]
-                        .id
-                        .toString(), // Assuming 'id' is unique for each request
-                    customerName: loanRequests![index].firstName,
-                    date: formatDate(loanRequests![index]
-                        .createdAt), // Replace with actual date from API if available
-                    isChecked: false, // Set your own logic for isChecked
-                    onCheckboxChanged: (value) {
-                      // Handle checkbox change, if needed
-                    },
-                    agents:
-                        bankstauslist, // Replace with actual agent list from API if available
-                    // Replace with actual selected agent from API if available
+        body: isloading == false
+            ? loanRequests!.isNotEmpty
+                ? ListView.builder(
+                    itemCount: loanRequests!.length,
+                    itemBuilder: (context, index) {
+                      return AgentRequestItem(
+                        history: loanRequests![index].history,
+                        status: 2,
+                        gender: loanRequests![index].gender,
+                        updateDataCallback: updateData,
+                        applicantCount: loanRequests![index].applicantCount,
+                        loanid: loanRequests![index].id,
+                        agent: loanRequests![index]
+                            .agent
+                            .name, // Replace with actual agent information from API if available
+                        functionstring: 'Select Status',
+                        productname: loanRequests![index]
+                            .product
+                            .name, // Replace with actual product name from API if available
+                        amount: loanRequests![index].loanAmount,
+                        requestId: loanRequests![index]
+                            .id
+                            .toString(), // Assuming 'id' is unique for each request
+                        customerName: loanRequests![index].firstName,
+                        date: formatDate(loanRequests![index]
+                            .createdAt), // Replace with actual date from API if available
+                        isChecked: false, // Set your own logic for isChecked
+                        onCheckboxChanged: (value) {
+                          // Handle checkbox change, if needed
+                        },
+                        agents:
+                            bankstauslist, // Replace with actual agent list from API if available
+                        // Replace with actual selected agent from API if available
 
-                    onConfirm: () {
-                      // Handle confirmation
+                        onConfirm: () {
+                          // Handle confirmation
+                        },
+                        onVerticalMenuPressed: () {
+                          // Handle vertical menu press
+                        },
+                      );
                     },
-                    onVerticalMenuPressed: () {
-                      // Handle vertical menu press
-                    },
-                  );
-                },
-              )
+                  )
+                : const Center(
+                    child: CustomText(text: 'No Request Found'),
+                  )
             : const Center(
                 child: CircularProgressIndicator(
-                  color: AppColors.mainColor,
-                ),
-              ));
+                color: AppColors.mainColor,
+              )));
   }
 
   String formatDate(String dateString) {
@@ -100,9 +111,16 @@ class _BankStatusSectionState extends State<BankStatusSection> {
   }
 
   void fetchData() async {
+    setState(() {
+      isloading = true;
+    });
     try {
-      final String apiEndpoint =
+      String apiEndpoint =
           'https://loan-managment.onrender.com/loan_requests?filter=bank';
+      if (search.text.isNotEmpty) {
+        apiEndpoint =
+            'https://loan-managment.onrender.com/loan_requests?filter=bank&search=${search.text}';
+      }
       final String bearerToken =
           'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
 
@@ -119,11 +137,18 @@ class _BankStatusSectionState extends State<BankStatusSection> {
           loanRequests = (response.data['loan_requests'] as List<dynamic>)
               .map((json) => LoanRequest.fromJson(json))
               .toList();
+          isloading = false;
         });
       } else {
+        setState(() {
+          errorMessage = 'Error';
+        });
         print('Error: ${response.statusCode} - ${response.statusMessage}');
       }
     } catch (error) {
+      setState(() {
+        errorMessage = 'Error: 404';
+      });
       print('Error: $error');
     }
   }
