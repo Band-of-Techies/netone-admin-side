@@ -7,6 +7,7 @@ import 'package:netone_loanmanagement_admin/src/res/apis/request.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/serchTextFiled.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NetoneStatusSection extends StatefulWidget {
   const NetoneStatusSection({super.key});
@@ -25,6 +26,8 @@ class _NetoneStatusSectionState extends State<NetoneStatusSection> {
   List<LoanRequest>? loanRequests;
   String selectedStatus = '';
   String? errorMessage;
+  String? email;
+  String? token;
 
   @override
   Widget build(BuildContext context) {
@@ -114,8 +117,11 @@ class _NetoneStatusSectionState extends State<NetoneStatusSection> {
   }
 
   void fetchData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isloading = true;
+      token = prefs.getString('token');
+      email = prefs.getString('email');
     });
     try {
       String apiEndpoint =
@@ -124,8 +130,7 @@ class _NetoneStatusSectionState extends State<NetoneStatusSection> {
         apiEndpoint =
             'https://loan-managment.onrender.com/loan_requests?filter=netone&search=${search.text}';
       }
-      final String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      final String bearerToken = token!;
 
       var response = await dio.get(
         apiEndpoint,

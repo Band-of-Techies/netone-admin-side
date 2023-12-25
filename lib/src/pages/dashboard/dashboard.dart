@@ -10,7 +10,6 @@ import 'package:netone_loanmanagement_admin/src/compontents/widgets.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/agents.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/bankstatus.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/closedorders.dart';
-import 'package:netone_loanmanagement_admin/src/pages/dashboard/customers.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/products.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/searchSection.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/netonestatus.dart';
@@ -33,6 +32,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String datetimestart = DateTime.now().toString();
   String currentTime = '';
   String currentDate = '';
+  String? email;
+  String? token;
   void onTabSelected(String tab) {
     setState(() {
       selectedTab = tab;
@@ -91,7 +92,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   SizedBox(
                     width: 15,
                   ),
-                  CustomText(text: 'admin@netone.com'),
+                  CustomText(text: email!),
                   SizedBox(
                     width: 20,
                   )
@@ -236,6 +237,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     Timer.periodic(Duration(seconds: 1), (timer) {
       _updateTimeAndDate();
     });
+    gettokens();
   }
 
   void _updateTimeAndDate() {
@@ -243,6 +245,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       final now = DateTime.now();
       currentTime = DateFormat('hh:mm a').format(now);
       currentDate = DateFormat('d MMMM yyyy').format(now);
+    });
+  }
+
+  void gettokens() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+      email = prefs.getString('email');
     });
   }
 

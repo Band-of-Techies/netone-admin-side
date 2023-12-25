@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AgentStatus extends StatefulWidget {
   const AgentStatus({super.key});
@@ -22,6 +23,8 @@ class _AgentStatusState extends State<AgentStatus> {
   final GlobalKey<FormState> _formKeycreateagent = GlobalKey<FormState>();
   List<Map<String, dynamic>> agentsList = [];
   String? createddate;
+  String? emailpref;
+  String? token;
   bool isEditing = true;
   @override
   Widget build(BuildContext context) {
@@ -176,10 +179,14 @@ class _AgentStatusState extends State<AgentStatus> {
   }
 
   Future<void> fetchDataAndBuildUI() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+      emailpref = prefs.getString('email');
+    });
     try {
       // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
-      String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String bearerToken = token!;
 
       final response = await Dio().get(
         'https://loan-managment.onrender.com/users',
@@ -207,6 +214,11 @@ class _AgentStatusState extends State<AgentStatus> {
 
   Future<void> createUser(String name, String password, String confirmPassword,
       String email) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+      emailpref = prefs.getString('email');
+    });
     try {
       final response = await Dio().post(
         'https://loan-managment.onrender.com/users',
@@ -220,8 +232,7 @@ class _AgentStatusState extends State<AgentStatus> {
         },
         options: Options(
           headers: {
-            'Authorization':
-                'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y',
+            'Authorization': token!,
           },
         ),
       );
@@ -292,11 +303,15 @@ class _AgentStatusState extends State<AgentStatus> {
   }
 
   Future<void> _deleteAgent(String agentid) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+      emailpref = prefs.getString('email');
+    });
     try {
       print(agentid);
       Dio dio = Dio();
-      dio.options.headers['Authorization'] =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      dio.options.headers['Authorization'] = token!;
       final response = await dio
           .delete('https://loan-managment.onrender.com/users/$agentid');
 

@@ -14,6 +14,7 @@ import 'package:netone_loanmanagement_admin/src/res/textfield.dart';
 import 'package:http/http.dart' as http;
 import 'dart:html' as html;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SectionTwo extends StatefulWidget {
   final MyTabController myTabController;
@@ -34,6 +35,8 @@ class _SectionTwoState extends State<SectionTwo>
       List.generate(61, (index) => (DateTime.now().year + index).toString());
   List<EmployemntandKlinDetails> applicantDetailsLists = [];
   String? selectedLetter;
+  String? email;
+  String? token;
   List<String> employemnttypelist = ['permanent', 'contract'];
   List<String> letters = List.generate(
       26, (index) => String.fromCharCode('A'.codeUnitAt(0) + index));
@@ -1128,12 +1131,16 @@ class _SectionTwoState extends State<SectionTwo>
   }
 
   Future<void> fetchData(int? requestId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+      email = prefs.getString('email');
+    });
     try {
       Dio dio = Dio();
 
       // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
-      String bearertoken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String bearertoken = token!;
       dio.options.headers['Authorization'] = 'Bearer $bearertoken';
 
       final response = await dio.get(
@@ -1224,7 +1231,10 @@ class _SectionTwoState extends State<SectionTwo>
 
   Future<void> updateData(
       int? id, MyTabController myTabController, int persons) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
+      token = prefs.getString('token');
+      email = prefs.getString('email');
       isloadiing = true;
     });
     final String apiUrl =
@@ -1232,8 +1242,7 @@ class _SectionTwoState extends State<SectionTwo>
 
     try {
       var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
-      String accessToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String accessToken = token!;
       request.headers['Authorization'] = 'Bearer $accessToken';
       for (int i = 0; i < persons; i++) {
         // Add other applicant data to the request

@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductsStatus extends StatefulWidget {
   const ProductsStatus({super.key});
@@ -19,6 +20,9 @@ class _ProductsStatusState extends State<ProductsStatus> {
   TextEditingController productprice = TextEditingController();
   TextEditingController productdesc = TextEditingController();
   List<dynamic> products = []; // List to store product data
+
+  String? email;
+  String? token;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -178,11 +182,15 @@ class _ProductsStatusState extends State<ProductsStatus> {
   }
 
   Future<void> _deleteProduct(String productId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+      email = prefs.getString('email');
+    });
     try {
       print(productId);
       Dio dio = Dio();
-      dio.options.headers['Authorization'] =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      dio.options.headers['Authorization'] = token!;
       final response = await dio
           .delete('https://loan-managment.onrender.com/products/$productId');
 
@@ -332,10 +340,14 @@ class _ProductsStatusState extends State<ProductsStatus> {
   }
 
   Future<void> _fetchProducts() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+      email = prefs.getString('email');
+    });
     try {
       // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
-      String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String bearerToken = token!;
 
       final response = await Dio().get(
         'https://loan-managment.onrender.com/products',
@@ -374,10 +386,13 @@ class _ProductsStatusState extends State<ProductsStatus> {
           "description": description,
         }
       };
-
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      setState(() {
+        token = prefs.getString('token');
+        email = prefs.getString('email');
+      });
       // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
-      String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String bearerToken = token!;
       print('here');
       // Perform the POST request using Dio
       Response response = await Dio().post(
@@ -429,10 +444,13 @@ class _ProductsStatusState extends State<ProductsStatus> {
           "description": description,
         }
       };
-
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      setState(() {
+        token = prefs.getString('token');
+        email = prefs.getString('email');
+      });
       // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
-      String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String bearerToken = token!;
 
       // Perform the POST request using Dio
       Response response = await Dio().put(

@@ -15,6 +15,8 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:html' as html;
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class SectionOne extends StatefulWidget {
   final MyTabController myTabController;
   late TabController _tabController;
@@ -34,6 +36,8 @@ class _SectionOneState extends State<SectionOne>
   List<String> ownedorlease = ['owned', 'rented'];
   List<String> genders = ['Male', 'Female'];
   bool isloadiing = true;
+  String? email;
+  String? token;
   int numberOfPersons = 1;
   List<String> provinces = [
     'Central',
@@ -850,12 +854,16 @@ class _SectionOneState extends State<SectionOne>
 
   // Function to fetch data from the API using dio with Bearer token
   Future<void> fetchData(int? requestId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+      email = prefs.getString('email');
+    });
     try {
       Dio dio = Dio();
 
       // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
-      String bearertoken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String bearertoken = token!;
       dio.options.headers['Authorization'] = 'Bearer $bearertoken';
 
       final response = await dio.get(
@@ -919,16 +927,18 @@ class _SectionOneState extends State<SectionOne>
 
   Future<void> updateData(
       int? id, MyTabController myTabController, int persons) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isloadiing = true;
+      token = prefs.getString('token');
+      email = prefs.getString('email');
     });
     final String apiUrl =
         'https://loan-managment.onrender.com/loan_requests/$id';
 
     try {
       var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
-      String accessToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String accessToken = token!;
       request.headers['Authorization'] = 'Bearer $accessToken';
       for (int i = 0; i < persons; i++) {
         // Add other applicant data to the request

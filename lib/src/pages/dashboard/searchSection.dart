@@ -13,6 +13,7 @@ import 'package:netone_loanmanagement_admin/src/res/apis/request.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/serchTextFiled.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchStatus extends StatefulWidget {
   const SearchStatus({super.key});
@@ -42,6 +43,8 @@ class _SearchStatusState extends State<SearchStatus> {
   List<String> orderstatus = ['delivered'];
   List<String> orderdeliverstatus = ['closed'];
   String seletedagent = 'Select Agent';
+  String? email;
+  String? token;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -450,8 +453,11 @@ class _SearchStatusState extends State<SearchStatus> {
   }
 
   Future<void> searchData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isloading = true;
+      token = prefs.getString('token');
+      email = prefs.getString('email');
     });
 
     final String apiEndpoint;
@@ -472,8 +478,7 @@ class _SearchStatusState extends State<SearchStatus> {
       apiEndpoint = 'https://loan-managment.onrender.com/loan_requests';
     }
 
-    final String bearerToken =
-        'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+    final String bearerToken = token!;
 
     try {
       print(apiEndpoint);

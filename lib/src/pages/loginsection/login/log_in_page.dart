@@ -174,11 +174,11 @@ class _FormSectionState extends State<_FormSection> {
         // Successful login, navigate to the dashboard
 
         // Obtain shared preferences.
-        if (rememberMe == true) {
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('token', response.data['token']);
-          await prefs.setString('email', email);
-        }
+
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', response.data['token']);
+        await prefs.setString('email', email);
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => DashboardScreen()),

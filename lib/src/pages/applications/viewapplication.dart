@@ -17,6 +17,7 @@ import 'package:netone_loanmanagement_admin/src/res/timeline.dart';
 import 'dart:js' as js;
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ViewApplication extends StatefulWidget {
   final int loanRequestId;
@@ -34,6 +35,8 @@ class _ViewApplicationState extends State<ViewApplication> {
   List<Uint8List> selectedFiles = [];
   List<String> selectedFilesnames = [];
   bool isloadiing = true;
+  String? email;
+  String? token;
   @override
   Widget build(BuildContext context) {
     return isloadiing == false
@@ -422,10 +425,15 @@ class _ViewApplicationState extends State<ViewApplication> {
   }
 
   Future<void> deleteData(int id) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isloadiing = true;
+      token = prefs.getString('token');
+      email = prefs.getString('email');
+    });
     final String apiUrl =
         'https://loan-managment.onrender.com/loan_requests/$id';
-    final String accessToken =
-        'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+    final String accessToken = token!;
 
     try {
       var response = await http.delete(
@@ -1546,12 +1554,17 @@ class _ViewApplicationState extends State<ViewApplication> {
   }
 
   Future<void> fetchLoanRequestDetails(int loanRequestId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isloadiing = true;
+      token = prefs.getString('token');
+      email = prefs.getString('email');
+    });
     try {
       Dio dio = Dio();
 
       // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
-      String bearerToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String bearerToken = token!;
 
       final response = await dio.get(
         'https://loan-managment.onrender.com/loan_requests/$loanRequestId',
@@ -1957,16 +1970,18 @@ class _ViewApplicationState extends State<ViewApplication> {
   }
 
   Future<void> updateData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isloadiing = true;
+      token = prefs.getString('token');
+      email = prefs.getString('email');
     });
     final String apiUrl =
         'https://loan-managment.onrender.com/loan_requests/${widget.loanRequestId}';
 
     try {
       var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
-      String accessToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String accessToken = token!;
       request.headers['Authorization'] = 'Bearer $accessToken';
 
       if (selectedFiles.isNotEmpty) {

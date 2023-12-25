@@ -31,7 +31,7 @@ class App extends StatelessWidget {
             if (snapshot.data == true) {
               return DashboardScreen();
             } else {
-              return DashboardScreen();
+              return LoginPage();
             }
           } else {
             // You can return a loading indicator if needed

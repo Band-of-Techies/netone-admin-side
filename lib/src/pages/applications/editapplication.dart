@@ -13,6 +13,7 @@ import 'package:netone_loanmanagement_admin/src/res/apis/loandetails.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditApplication extends StatefulWidget {
   int? requestid;
@@ -26,6 +27,8 @@ class _EditApplication extends State<EditApplication>
   bool isloading = true;
   late LoanRequestDetails loanDetail;
   final MyTabController myTabController = MyTabController();
+  String? email;
+  String? token;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -151,13 +154,16 @@ class _EditApplication extends State<EditApplication>
 
   // Function to fetch data from the API using dio with Bearer token
   Future<void> fetchData(int? requestId) async {
-    print(requestId);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+      email = prefs.getString('email');
+    });
     try {
       Dio dio = Dio();
 
       // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
-      String bearertoken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String bearertoken = token!;
       dio.options.headers['Authorization'] = 'Bearer $bearertoken';
 
       final response = await dio.get(

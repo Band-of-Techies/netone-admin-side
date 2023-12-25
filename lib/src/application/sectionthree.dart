@@ -21,6 +21,7 @@ import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:netone_loanmanagement_admin/src/res/textfield.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SectionThree extends StatefulWidget {
   final MyTabController myTabController;
@@ -42,7 +43,8 @@ class _SectionThreeState extends State<SectionThree>
   late LoanRequestDetails loanDetail;
   String? prodicutid;
   List<ProductList> products = [];
-
+  String? email;
+  String? token;
   String? productapplied;
   List<String> tenureOptions = [
     '3 months',
@@ -171,12 +173,16 @@ class _SectionThreeState extends State<SectionThree>
   }
 
   Future<void> fetchData(int? requestId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+      email = prefs.getString('email');
+    });
     try {
       Dio dio = Dio();
 
       // Replace 'YOUR_BEARER_TOKEN' with the actual Bearer token
-      String bearertoken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String bearertoken = token!;
       dio.options.headers['Authorization'] = 'Bearer $bearertoken';
 
       final response = await dio.get(
@@ -1074,16 +1080,18 @@ class _SectionThreeState extends State<SectionThree>
 
   Future<void> updateData(
       int? id, MyTabController myTabController, int persons) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isloadiing = true;
+      token = prefs.getString('token');
+      email = prefs.getString('email');
     });
     final String apiUrl =
         'https://loan-managment.onrender.com/loan_requests/$id';
 
     try {
       var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
-      String accessToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String accessToken = token!;
       request.headers['Authorization'] = 'Bearer $accessToken';
       request.fields['loan_request[description]'] =
           myTabController.loanDetails.descriptionController.text;
@@ -1147,16 +1155,18 @@ class _SectionThreeState extends State<SectionThree>
   }
 
   Future<void> updateProduct(String id) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isloadiing = true;
+      token = prefs.getString('token');
+      email = prefs.getString('email');
     });
     final String apiUrl =
         'https://loan-managment.onrender.com/loan_requests/${widget.id}';
 
     try {
       var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
-      String accessToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String accessToken = token!;
       request.headers['Authorization'] = 'Bearer $accessToken';
       request.fields['loan_request[product_id]'] = id;
 
