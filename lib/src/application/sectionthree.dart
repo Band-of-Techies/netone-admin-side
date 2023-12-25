@@ -10,7 +10,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:netone_loanmanagement_admin/src/application/datas/applicant.dart';
 import 'package:netone_loanmanagement_admin/src/application/datas/loandetails.dart';
 import 'package:netone_loanmanagement_admin/src/application/datas/products.dart';

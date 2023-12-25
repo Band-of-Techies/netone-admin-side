@@ -80,9 +80,9 @@ class _RequestItemState extends State<RequestItem> {
                   : widget.history == "existing"
                       ? AppColors.sidebarbackground
                       : widget.history == "rejected"
-                          ? Colors.red
+                          ? AppColors.sidebarbackground
                           : widget.history == "closed"
-                              ? Colors.yellow
+                              ? AppColors.sidebarbackground
                               : AppColors.sidebarbackground,
             ],
             stops: [0.01, 0.1],

@@ -23,8 +23,10 @@ class LoanRequestDetails {
   final dynamic applicantCount;
   final AgentDetails agent;
   final List<Document> documents;
+  final List<Document> orderdocuments;
 
   LoanRequestDetails({
+    required this.orderdocuments,
     required this.requestnumber,
     required this.documents,
     required this.id,
@@ -55,7 +57,11 @@ class LoanRequestDetails {
     List<Document> documents = (json['documents'] as List<dynamic>)
         .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
         .toList();
+    List<Document> orderdocuments = (json['order_documents'] as List<dynamic>)
+        .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+        .toList();
     return LoanRequestDetails(
+      orderdocuments: orderdocuments,
       documents: documents,
       id: json['id'] ?? "NA",
       requestnumber: json['request_number'] ?? "NA",

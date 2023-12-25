@@ -1,7 +1,10 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:typed_data';
+import 'dart:html' as html;
 import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +16,7 @@ import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:netone_loanmanagement_admin/src/res/timeline.dart';
 import 'dart:js' as js;
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 class ViewApplication extends StatefulWidget {
   final int loanRequestId;
@@ -27,10 +31,12 @@ class _ViewApplicationState extends State<ViewApplication> {
   late LoanRequestDetails loanDetail;
   List<String> currentstatusList = ['Approve', 'Reject'];
   String selectedstatus = '';
-  bool isloading = true;
+  List<Uint8List> selectedFiles = [];
+  List<String> selectedFilesnames = [];
+  bool isloadiing = true;
   @override
   Widget build(BuildContext context) {
-    return isloading == false
+    return isloadiing == false
         ? Scaffold(
             appBar: AppBar(
               backgroundColor: AppColors.mainbackground,
@@ -53,7 +59,7 @@ class _ViewApplicationState extends State<ViewApplication> {
               actions: [
                 Row(
                   children: [
-                    SizedBox(
+                    /*  SizedBox(
                       height: 40,
                       width: 350,
                       child: DropdownButtonFormField2<String>(
@@ -133,9 +139,21 @@ class _ViewApplicationState extends State<ViewApplication> {
                           color: AppColors.neutral,
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                        )),
+                        )),*/
                     SizedBox(
                       width: 20,
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          _addFiles(context);
+                        },
+                        icon: Icon(
+                          Icons.add,
+                          size: 20,
+                          color: AppColors.neutral,
+                        )),
+                    SizedBox(
+                      width: 10,
                     ),
                     IconButton(
                         onPressed: () {
@@ -343,6 +361,8 @@ class _ViewApplicationState extends State<ViewApplication> {
 
                   for (int i = 0; i < loanDetail.applicants.length; i++)
                     applicantDocuments(i, i),
+                  if (loanDetail.documents.isNotEmpty) additonalDocumnets(),
+                  if (loanDetail.orderdocuments.isNotEmpty) orderDocumnets()
                 ],
               ),
             ),
@@ -525,6 +545,316 @@ class _ViewApplicationState extends State<ViewApplication> {
                                         .applicants[applicantkey]
                                         .documents[index]
                                         .url;
+                                    js.context.callMethod('open', [pdfUrl]);
+                                  },
+                                  child: Container(
+                                    width: 300,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: AppColors.neutral),
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: AppColors.neutral,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Icon(
+                                          Icons.picture_as_pdf,
+                                          color: Colors.red,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  width: 300,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: AppColors.neutral),
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppColors.neutral,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      Icon(
+                                        Icons.enhanced_encryption,
+                                        color: Colors.red,
+                                      ),
+                                      CustomText(text: 'Unreadable Format')
+                                    ],
+                                  ),
+                                ),
+
+                      SizedBox(
+                          height: 8.0), // Add spacing between image and text
+
+                      // Display file name with overflow handling
+                      Flexible(
+                        child: Text(
+                          'Document  ${index + 1}',
+
+                          // Adjust the maximum lines based on your UI requirements
+                          style: GoogleFonts.dmSans(
+                            color: AppColors.neutral,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container additonalDocumnets() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      padding: EdgeInsets.fromLTRB(20, 25, 20, 15),
+      decoration: BoxDecoration(
+          color: AppColors.sidebarbackground,
+          borderRadius: BorderRadius.circular(20)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(
+            text: 'Additional Files',
+            fontWeight: FontWeight.w700,
+            fontSize: 15,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Wrap(
+            children: List.generate(
+              loanDetail.documents.length,
+              (index) {
+                return Container(
+                  margin: EdgeInsets.all(10),
+                  width: 300,
+                  height: 90,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Display Image for image files
+                      isImage(loanDetail.documents[index].contentType)
+                          ? GestureDetector(
+                              onTap: () {
+                                String imageUrl =
+                                    loanDetail.documents[index].url;
+                                js.context.callMethod('open', [imageUrl]);
+                              },
+                              child: Container(
+                                width: 300,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: AppColors.mainbackground),
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: AppColors.neutral,
+                                ),
+                                child: Image.network(
+                                  loanDetail.documents[index].url,
+                                  width:
+                                      300, // Set the width of the image as per your requirement
+                                  height:
+                                      50, // Set the height of the image as per your requirement
+                                  fit: BoxFit
+                                      .cover, // Adjust this based on your image requirements
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 300,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: AppColors.neutral),
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: AppColors.neutral,
+                                      ),
+                                      child: Center(
+                                        child: Text('Image Not Found'),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            )
+                          : loanDetail.documents[index].contentType
+                                  .contains('pdf')
+                              ? GestureDetector(
+                                  onTap: () {
+                                    String pdfUrl =
+                                        loanDetail.documents[index].url;
+                                    js.context.callMethod('open', [pdfUrl]);
+                                  },
+                                  child: Container(
+                                    width: 300,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: AppColors.neutral),
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: AppColors.neutral,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Icon(
+                                          Icons.picture_as_pdf,
+                                          color: Colors.red,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  width: 300,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: AppColors.neutral),
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppColors.neutral,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      Icon(
+                                        Icons.enhanced_encryption,
+                                        color: Colors.red,
+                                      ),
+                                      CustomText(text: 'Unreadable Format')
+                                    ],
+                                  ),
+                                ),
+
+                      SizedBox(
+                          height: 8.0), // Add spacing between image and text
+
+                      // Display file name with overflow handling
+                      Flexible(
+                        child: Text(
+                          'Document  ${index + 1}',
+
+                          // Adjust the maximum lines based on your UI requirements
+                          style: GoogleFonts.dmSans(
+                            color: AppColors.neutral,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container orderDocumnets() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      padding: EdgeInsets.fromLTRB(20, 25, 20, 15),
+      decoration: BoxDecoration(
+          color: AppColors.sidebarbackground,
+          borderRadius: BorderRadius.circular(20)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(
+            text: 'Order Documents',
+            fontWeight: FontWeight.w700,
+            fontSize: 15,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Wrap(
+            children: List.generate(
+              loanDetail.orderdocuments.length,
+              (index) {
+                return Container(
+                  margin: EdgeInsets.all(10),
+                  width: 300,
+                  height: 90,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Display Image for image files
+                      isImage(loanDetail.orderdocuments[index].contentType)
+                          ? GestureDetector(
+                              onTap: () {
+                                String imageUrl =
+                                    loanDetail.orderdocuments[index].url;
+                                js.context.callMethod('open', [imageUrl]);
+                              },
+                              child: Container(
+                                width: 300,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: AppColors.mainbackground),
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: AppColors.neutral,
+                                ),
+                                child: Image.network(
+                                  loanDetail.orderdocuments[index].url,
+                                  width:
+                                      300, // Set the width of the image as per your requirement
+                                  height:
+                                      50, // Set the height of the image as per your requirement
+                                  fit: BoxFit
+                                      .cover, // Adjust this based on your image requirements
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 300,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: AppColors.neutral),
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: AppColors.neutral,
+                                      ),
+                                      child: Center(
+                                        child: Text('Image Not Found'),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            )
+                          : loanDetail.orderdocuments[index].contentType
+                                  .contains('pdf')
+                              ? GestureDetector(
+                                  onTap: () {
+                                    String pdfUrl =
+                                        loanDetail.orderdocuments[index].url;
                                     js.context.callMethod('open', [pdfUrl]);
                                   },
                                   child: Container(
@@ -1237,7 +1567,7 @@ class _ViewApplicationState extends State<ViewApplication> {
         setState(() {
           loanDetail = LoanRequestDetails.fromJson(response.data);
 
-          isloading = false;
+          isloadiing = false;
         });
 
         // print(loanDetail.applicantCount);
@@ -1250,6 +1580,261 @@ class _ViewApplicationState extends State<ViewApplication> {
       // Handle Dio errors or network errors
       print('Dio error: $error');
     }
+  }
+
+  Future<void> _addFiles(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        // Use the AlertDialog widget for the popup
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            backgroundColor: AppColors.mainbackground,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CustomText(
+                  text: 'Upload Attatchments',
+                  fontSize: 20,
+                  color: AppColors.neutral,
+                ),
+                TextButton.icon(
+                  onPressed: () async {
+                    FilePickerResult? result =
+                        await FilePicker.platform.pickFiles(
+                      allowMultiple: false,
+                      type: FileType.custom,
+                      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+                    );
+
+                    if (result != null) {
+                      if (result.files.first.size > 1024 * 1024) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('The file size exceeds limit'),
+                          ),
+                        );
+                      } else {
+                        setState(() {
+                          selectedFiles
+                              .addAll(result.files.map((file) => file.bytes!));
+                          selectedFilesnames
+                              .addAll(result.files.map((file) => file.name));
+                        });
+                      }
+                      print(selectedFiles);
+                    }
+                  },
+                  icon: Icon(
+                    Icons.add,
+                    color: AppColors.mainColor,
+                  ),
+                  label: CustomText(
+                    text: 'Add Files',
+                    color: AppColors.neutral,
+                  ),
+                )
+              ],
+            ),
+            content: SingleChildScrollView(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * .5,
+                height: MediaQuery.of(context).size.height * .7,
+                child: selectedFiles.isNotEmpty
+                    ? Container(
+                        width: MediaQuery.of(context).size.width * .7,
+                        height: 120,
+                        child: Wrap(
+                          children: List.generate(
+                            selectedFiles.length,
+                            (index) {
+                              var fileBytes = selectedFiles[index];
+                              var fileName = selectedFilesnames[index];
+                              String fileExtension =
+                                  fileName.split('.').last.toLowerCase();
+
+                              return Container(
+                                margin: EdgeInsets.all(10),
+                                width: 300,
+                                height: 80,
+                                child: Stack(
+                                  children: [
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Display Image for image files
+
+                                        (fileExtension != 'pdf')
+                                            ? GestureDetector(
+                                                onTap: () {
+                                                  // Open image in a new tab
+                                                  final blob = html.Blob(
+                                                      [fileBytes], 'image/*');
+                                                  final url = html.Url
+                                                      .createObjectUrlFromBlob(
+                                                          blob);
+                                                  html.window
+                                                      .open(url, '_blank');
+                                                },
+                                                child: Container(
+                                                  width: 300,
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color:
+                                                            AppColors.neutral),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                    color: AppColors.neutral,
+                                                  ),
+                                                  child: Image.memory(
+                                                    fileBytes,
+                                                    width:
+                                                        300, // Set the width of the image as per your requirement
+                                                    height:
+                                                        50, // Set the height of the image as per your requirement
+                                                    fit: BoxFit
+                                                        .cover, // Adjust this based on your image requirements
+                                                  ),
+                                                ),
+                                              )
+                                            : GestureDetector(
+                                                onTap: () {
+                                                  // Open PDF in a new tab
+                                                  final blob = html.Blob([
+                                                    Uint8List.fromList(
+                                                        fileBytes)
+                                                  ], 'application/pdf');
+                                                  final url = html.Url
+                                                      .createObjectUrlFromBlob(
+                                                          blob);
+                                                  html.window
+                                                      .open(url, '_blank');
+                                                },
+                                                child: Container(
+                                                  width: 300,
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: AppColors
+                                                            .mainColor),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                    color: AppColors.neutral,
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 20,
+                                                      ),
+                                                      Icon(
+                                                        Icons.picture_as_pdf,
+                                                        color: Colors.red,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                        SizedBox(
+                                            height:
+                                                8.0), // Add spacing between image and text
+
+                                        // Display file name with overflow handling
+                                        Flexible(
+                                          child: Text(
+                                            fileName,
+                                            overflow: TextOverflow.ellipsis,
+                                            // Adjust the maximum lines based on your UI requirements
+                                            style: GoogleFonts.dmSans(
+                                              fontSize: 14,
+                                              color: AppColors.neutral,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Positioned(
+                                      top: 12,
+                                      right: 5,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          // Handle the close icon tap
+                                          setState(() {
+                                            selectedFiles.removeAt(index);
+                                            selectedFilesnames.removeAt(index);
+                                          });
+                                        },
+                                        child: CircleAvatar(
+                                          radius: 12,
+                                          backgroundColor: AppColors.mainColor,
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 15,
+                                            color: AppColors.neutral,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ))
+                    : SizedBox(),
+              ),
+            ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              AppColors.mainbackground),
+                          padding: MaterialStateProperty.all(
+                              EdgeInsets.fromLTRB(15, 5, 15, 5))),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: CustomText(
+                        text: 'Close',
+                        color: AppColors.neutral,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      )),
+                  SizedBox(
+                    width: 15,
+                  ),
+                  ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(AppColors.mainColor),
+                          padding: MaterialStateProperty.all(
+                              EdgeInsets.fromLTRB(15, 5, 15, 5))),
+                      onPressed: () {
+                        updateData();
+                        Navigator.pop(context);
+                      },
+                      child: CustomText(
+                        text: 'Upload',
+                        color: AppColors.neutral,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ))
+                ],
+              ),
+            ],
+          );
+        });
+      },
+    );
   }
 
   Future<void> _showPopup(BuildContext context) async {
@@ -1369,5 +1954,71 @@ class _ViewApplicationState extends State<ViewApplication> {
         ],
       ),
     );
+  }
+
+  Future<void> updateData() async {
+    setState(() {
+      isloadiing = true;
+    });
+    final String apiUrl =
+        'https://loan-managment.onrender.com/loan_requests/${widget.loanRequestId}';
+
+    try {
+      var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
+      String accessToken =
+          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      request.headers['Authorization'] = 'Bearer $accessToken';
+
+      if (selectedFiles.isNotEmpty) {
+        for (var file in selectedFiles) {
+          request.files.add(http.MultipartFile(
+            'loan_request[documents][]',
+            http.ByteStream.fromBytes(file),
+            file.length,
+            filename: 'file.jpg', // Provide a filename here
+            contentType: MediaType('application', 'octet-stream'),
+          ));
+        }
+      }
+
+      var response = await request.send();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Request was successful
+        print('Files Submitted successfully');
+        setState(() {
+          isloadiing = false;
+        });
+        warning('Files Submitted');
+        fetchLoanRequestDetails(widget.loanRequestId);
+        //  clearAllFields();
+      } else {
+        // Request failed
+        print('Form submission failed with status: ${response.statusCode}');
+        setState(() {
+          isloadiing = false;
+        });
+        warning('Error: Cannot Add Files');
+      }
+    } catch (e) {
+      print("Error: $e");
+      warning('Error');
+    }
+  }
+
+  warning(String message) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        width: MediaQuery.of(context).size.width * .7,
+        backgroundColor: AppColors.neutral,
+        duration: Duration(seconds: 3),
+        shape: StadiumBorder(),
+        behavior: SnackBarBehavior.floating,
+        content: Center(
+          child: CustomText(
+              text: message,
+              fontSize: 13,
+              color: AppColors.mainColor,
+              fontWeight: FontWeight.w500),
+        )));
   }
 }
