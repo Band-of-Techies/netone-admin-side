@@ -20,7 +20,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Wons',
+      title: 'Admin - Netone Loan Management',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: FontFamily.dmSans),
       navigatorKey: GetIt.I.get<NavigationService>().navigatorKey,

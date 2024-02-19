@@ -53,19 +53,13 @@ class _FormSectionState extends State<_FormSection> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ColorFiltered(
-            colorFilter: const ColorFilter.mode(
-              Colors.white,
-              BlendMode.srcIn,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Image.asset(
-                'assets/png/netone.png',
-                width: 300,
-                height: 200,
-                scale: .6,
-              ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Image.asset(
+              'assets/png/netone.png',
+              width: 300,
+              height: 200,
+              scale: .6,
             ),
           ),
           const CustomText(

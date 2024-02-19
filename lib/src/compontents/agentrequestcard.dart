@@ -14,6 +14,7 @@ import 'dart:html' as html;
 import 'package:http/http.dart' as http;
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AgentRequestItem extends StatefulWidget {
   final String requestId;
@@ -685,14 +686,14 @@ class _AgentRequestItemState extends State<AgentRequestItem> {
 
   Future<void> _submitAssignment(
       int id, String seletedagent, String reason) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (seletedagent != null) {
       print(seletedagent);
       // Replace with your actual API endpoint
       String apiUrl = "https://loan-managment.onrender.com/loan_requests/$id";
       // Replace 'yourAccessToken' with the actual token
       print(apiUrl);
-      String accessToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String accessToken = prefs.getString('token')!;
 
       Dio dio = Dio();
       dio.options.headers = {
@@ -754,11 +755,10 @@ class _AgentRequestItemState extends State<AgentRequestItem> {
   Future<void> updateWithDoc(int id, String seletedagent) async {
     final String apiUrl =
         'https://loan-managment.onrender.com/loan_requests/$id';
-
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
-      String accessToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String accessToken = prefs.getString('token')!;
       request.headers['Authorization'] = 'Bearer $accessToken';
       request.fields['loan_request[request_order_status]'] = seletedagent;
       if (selectedFiles.isNotEmpty) {

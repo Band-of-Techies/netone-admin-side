@@ -120,7 +120,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           height: 10,
                         ),
                         Text(
-                          'Section Started:',
+                          'Session Started:',
                           style: GoogleFonts.dmSans(
                               fontSize: 14, color: Colors.white),
                         ),

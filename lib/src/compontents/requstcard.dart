@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:netone_loanmanagement_admin/src/pages/applications/viewapplication.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RequestItem extends StatefulWidget {
   final String gender;
@@ -287,13 +288,14 @@ class _RequestItemState extends State<RequestItem> {
   }
 
   Future<void> _submitAssignment(int id, String seletedagent) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (seletedagent != null) {
       // Replace with your actual API endpoint
+
       String apiUrl =
           "https://loan-managment.onrender.com/loan_requests/$id/assign_to_agent";
       // Replace 'yourAccessToken' with the actual token
-      String accessToken =
-          'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHBpcmVzIjoxNzA0MDIwNzQ3fQ.mr7ZVonDmM7i3am7EipAsHhTV21epUJtpXK5sbPCM2Y';
+      String accessToken = prefs.getString('token')!;
 
       Dio dio = Dio();
       dio.options.headers = {
@@ -305,8 +307,7 @@ class _RequestItemState extends State<RequestItem> {
       Map<String, dynamic> requestBody = {
         'user_id': seletedagent,
       };
-      print(seletedagent);
-      print(id);
+
       try {
         Response response = await dio.post(apiUrl, data: requestBody);
         if (response.statusCode == 201 || response.statusCode == 200) {
