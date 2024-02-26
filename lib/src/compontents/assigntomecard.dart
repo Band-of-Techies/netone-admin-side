@@ -9,7 +9,7 @@ import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class RequestItem extends StatefulWidget {
+class AssigntoMeCard extends StatefulWidget {
   final String gender;
   final String requestId;
   final VoidCallback updateDataCallback;
@@ -17,33 +17,27 @@ class RequestItem extends StatefulWidget {
   final String date;
   final bool isChecked;
   final Function(bool?) onCheckboxChanged;
-  final List<Map<String, dynamic>> agents;
-  final String selectedAgent;
   final int applicantCount;
   final VoidCallback onConfirm;
   final VoidCallback onVerticalMenuPressed;
   final String productname;
   final String amount;
   final String functionstring;
-  final String agent;
   final int loanid;
   final String history;
 
-  RequestItem({
+  AssigntoMeCard({
     required this.history,
     required this.gender,
     required this.updateDataCallback,
     required this.applicantCount,
     required this.loanid,
-    required this.agent,
     required this.functionstring,
     required this.requestId,
     required this.customerName,
     required this.date,
     required this.isChecked,
     required this.onCheckboxChanged,
-    required this.agents,
-    required this.selectedAgent,
     required this.onConfirm,
     required this.onVerticalMenuPressed,
     required this.amount,
@@ -51,10 +45,10 @@ class RequestItem extends StatefulWidget {
   });
 
   @override
-  _RequestItemState createState() => _RequestItemState();
+  _AssigntoMeCardState createState() => _AssigntoMeCardState();
 }
 
-class _RequestItemState extends State<RequestItem> {
+class _AssigntoMeCardState extends State<AssigntoMeCard> {
   String? seletedagent;
   @override
   Widget build(BuildContext context) {
@@ -107,17 +101,6 @@ class _RequestItemState extends State<RequestItem> {
                           width: MediaQuery.of(context).size.width * .05,
                           child:
                               CustomText(fontSize: 14, text: widget.requestId)),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .06,
-                        child: CustomText(
-                          fontSize: 13,
-                          text: widget.agent,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
                     ],
                   ),
                   SizedBox(
@@ -176,71 +159,6 @@ class _RequestItemState extends State<RequestItem> {
               ),
               Row(
                 children: [
-                  SizedBox(
-                    width: 160,
-                    child: DropdownButtonFormField2<String>(
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        // Add Horizontal padding using menuItemStyleData.padding so it matches
-                        // the menu padding when button's width is not specified.
-                        contentPadding:
-                            const EdgeInsets.symmetric(vertical: 16),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        // Add more decoration..
-                      ),
-                      hint: Text(
-                        widget.functionstring,
-                        style: GoogleFonts.dmSans(
-                            fontSize: 14, color: AppColors.neutral),
-                      ),
-                      items: widget.agents.map((agent) {
-                        return DropdownMenuItem<String>(
-                          value: agent['id'].toString(),
-                          child: CustomText(
-                            fontSize: 14,
-                            color: AppColors.neutral,
-                            text: agent['name'].toString(),
-                          ),
-                        );
-                      }).toList(),
-                      validator: (value) {
-                        if (value == null) {
-                          return widget.functionstring;
-                        }
-                        return null;
-                      },
-                      onChanged: (agent) {
-                        setState(() {
-                          seletedagent = agent!;
-                          print(agent);
-                        });
-                      },
-                      buttonStyleData: const ButtonStyleData(
-                        padding: EdgeInsets.only(right: 8),
-                      ),
-                      iconStyleData: const IconStyleData(
-                        icon: Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.black45,
-                        ),
-                        iconSize: 24,
-                      ),
-                      dropdownStyleData: DropdownStyleData(
-                        decoration: BoxDecoration(
-                          color: AppColors.sidebarbackground,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      menuItemStyleData: const MenuItemStyleData(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 25,
-                  ),
                   TextButton(
                       style: ButtonStyle(
                           padding: MaterialStateProperty.all(
@@ -254,12 +172,12 @@ class _RequestItemState extends State<RequestItem> {
                           backgroundColor:
                               MaterialStateProperty.all(AppColors.mainColor)),
                       onPressed: () {
-                        _submitAssignment(widget.loanid, seletedagent!);
+                        _submitAssignment(widget.loanid);
                       },
                       child: CustomText(
                         fontSize: 14,
                         color: AppColors.neutral,
-                        text: 'Assign',
+                        text: 'Assign to me',
                       )),
                   SizedBox(
                     width: 10,
@@ -287,15 +205,14 @@ class _RequestItemState extends State<RequestItem> {
     );
   }
 
-  Future<void> _submitAssignment(int id, String seletedagent) async {
+  Future<void> _submitAssignment(int id) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (seletedagent != null) {
-      // Replace with your actual API endpoint
+    final String? accessToken = prefs.getString('token');
 
+    if (accessToken != null) {
+      // Replace with your actual API endpoint
       String apiUrl =
-          "https://loan-managment.onrender.com/loan_requests/$id/assign_to_agent";
-      // Replace 'yourAccessToken' with the actual token
-      String accessToken = prefs.getString('token')!;
+          "https://loan-managment.onrender.com/loan_requests/$id/assign_to_me";
 
       Dio dio = Dio();
       dio.options.headers = {
@@ -303,9 +220,9 @@ class _RequestItemState extends State<RequestItem> {
         'Authorization': 'Bearer $accessToken',
       };
 
-      // Create the request body
+      // Optionally, you can create the request body here if needed
       Map<String, dynamic> requestBody = {
-        'user_id': seletedagent,
+        // Include any parameters you need to send in the request body
       };
 
       try {
@@ -313,6 +230,7 @@ class _RequestItemState extends State<RequestItem> {
         if (response.statusCode == 201 || response.statusCode == 200) {
           // Successfully created assignment (status code 201 for POST)
           print('Assignment created successfully');
+          // Assuming `updateDataCallback` is a function passed as a widget parameter
           widget.updateDataCallback();
         } else {
           // Handle error
@@ -323,6 +241,8 @@ class _RequestItemState extends State<RequestItem> {
         // Handle error
         print('Error during POST request: $error');
       }
+    } else {
+      print('Access token not found. Make sure to login first.');
     }
   }
 }

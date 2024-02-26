@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:dio/dio.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -9,21 +8,18 @@ import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProductsStatus extends StatefulWidget {
-  const ProductsStatus({super.key});
+class CategoryStatus extends StatefulWidget {
+  const CategoryStatus({super.key});
 
   @override
-  State<ProductsStatus> createState() => _ProductsStatusState();
+  State<CategoryStatus> createState() => _CategoryStatusState();
 }
 
-class _ProductsStatusState extends State<ProductsStatus> {
-  TextEditingController productname = TextEditingController();
-  TextEditingController productprice = TextEditingController();
-  TextEditingController productdesc = TextEditingController();
-  List<dynamic> products = []; // List to store product data
-  List<dynamic> cats = [];
-  String? catid;
-  String? catname;
+class _CategoryStatusState extends State<CategoryStatus> {
+  TextEditingController catname = TextEditingController();
+  TextEditingController catdesc = TextEditingController();
+  List<dynamic> cats = []; // List to store product data
+
   String? email;
   String? token;
   @override
@@ -36,30 +32,29 @@ class _ProductsStatusState extends State<ProductsStatus> {
         ),
         backgroundColor: AppColors.mainColor,
         onPressed: () {
-          productname.clear();
-          productdesc.clear();
-          productprice.clear();
+          catname.clear();
+          catdesc.clear();
+
           _showAddProductPopup(context, false, '');
         },
       ),
       backgroundColor: AppColors.mainbackground,
-      body: products != null && products.isNotEmpty
+      body: cats != null && cats.isNotEmpty
           ? Wrap(children: [
-              for (int i = 0; i < products.length; i++)
+              for (int i = 0; i < cats.length; i++)
                 GestureDetector(
                   onTap: () {
                     _showAddProductPopup(
-                        context, true, products[i]['id'].toString());
+                        context, true, cats[i]['id'].toString());
                     setState(() {
-                      productname.text = products[i]['name'];
-                      productdesc.text = products[i]['description'];
-                      productprice.text = products[i]['price'];
+                      catname.text = cats[i]['name'];
+                      catdesc.text = cats[i]['description'];
                     });
                   },
                   child: Container(
                     margin: EdgeInsets.all(10),
                     width: MediaQuery.of(context).size.width * .35,
-                    height: MediaQuery.of(context).size.height * .2,
+                    height: MediaQuery.of(context).size.height * .18,
                     decoration: BoxDecoration(
                         color: AppColors.sidebarbackground,
                         borderRadius: BorderRadius.circular(10)),
@@ -70,7 +65,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
                             Container(
                               margin: EdgeInsets.only(right: 10),
                               width: 120,
-                              height: MediaQuery.of(context).size.height * .2,
+                              height: MediaQuery.of(context).size.height * .18,
                               decoration: const BoxDecoration(
                                   image: DecorationImage(
                                     scale: .5,
@@ -91,21 +86,18 @@ class _ProductsStatusState extends State<ProductsStatus> {
                                 children: [
                                   Row(
                                     children: [
-                                      CustomText(text: products[i]['name']),
+                                      CustomText(text: cats[i]['name']),
                                       SizedBox(
                                         width: 20,
                                       ),
-                                      CustomText(text: products[i]['price']),
                                     ],
                                   ),
                                   SizedBox(
                                     height: 10,
                                   ),
                                   CustomText(
-                                    text: products[i]['category']['name'] ==
-                                            null
-                                        ? 'Category: NA'
-                                        : 'Category: ${(products[i]['category']['name'])}',
+                                    text:
+                                        'Created: ${formatDate(cats[i]['created_at'])}',
                                     fontSize: 12,
                                   ),
                                   SizedBox(
@@ -113,22 +105,14 @@ class _ProductsStatusState extends State<ProductsStatus> {
                                   ),
                                   CustomText(
                                     text:
-                                        'Created: ${formatDate(products[i]['created_at'])}',
+                                        'Updated: ${formatDate(cats[i]['updated_at'])}',
                                     fontSize: 12,
                                   ),
                                   SizedBox(
                                     height: 10,
                                   ),
                                   CustomText(
-                                    text:
-                                        'Updated: ${formatDate(products[i]['updated_at'])}',
-                                    fontSize: 12,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomText(
-                                    text: products[i]['description'],
+                                    text: cats[i]['description'],
                                     fontSize: 12,
                                   ),
                                 ],
@@ -147,7 +131,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
                               onPressed: () {
                                 // Show the confirmation dialog
                                 _showDeleteConfirmationDialog(
-                                    context, products[i]['id'].toString());
+                                    context, cats[i]['id'].toString());
                               },
                             ))
                       ],
@@ -183,7 +167,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
                   backgroundColor:
                       MaterialStateProperty.all(AppColors.mainColor)),
               onPressed: () {
-                _deleteProduct(productId);
+                //  _deleteProduct(productId);
                 Navigator.of(context).pop(); // Close the dialog
               },
               child: CustomText(text: 'Delete'),
@@ -234,82 +218,46 @@ class _ProductsStatusState extends State<ProductsStatus> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: AppColors.sidebarbackground,
-          title: CustomText(text: 'Add Product'),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return SizedBox(
-                width: MediaQuery.of(context).size.width * .4,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Add your form fields or content for adding a product
-                    Wrap(
-                      spacing: 8.0, // Adjust the spacing between items
-                      runSpacing: 8.0, // Adjust the spacing between lines
-                      children: [
-                        for (int i = 0; i < cats.length; i++)
-                          buildCheckBox(
-                              cats[i]['id'], cats[i]['name'], i, setState),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: buildEditableField(
-                            'Product',
-                            productname,
-                            false,
-                            (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a product';
-                              } else if (value.length < 4) {
-                                return 'Product name must be at least 4 characters long';
-                              }
-                              return null; // Return null if validation passes
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Expanded(
-                          child: buildEditableField(
-                            'Price',
-                            productprice,
-                            false,
-                            (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter product price';
-                              }
-                              return null; // Return null if validation passes
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
+          title: CustomText(text: 'Add Category'),
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width * .4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Add your form fields or content for adding a product
 
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    buildEditableField(
-                      'Description',
-                      productdesc,
-                      false,
-                      (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter description';
-                        }
-                        return null; // Return null if validation passes
-                      },
-                    ),
-                  ],
+                buildEditableField(
+                  'Category Name',
+                  catname,
+                  false,
+                  (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a product';
+                    } else if (value.length < 4) {
+                      return 'Product name must be at least 4 characters long';
+                    }
+                    return null; // Return null if validation passes
+                  },
                 ),
-              );
-            },
+
+                const SizedBox(
+                  height: 20,
+                ),
+                buildEditableField(
+                  'Description',
+                  catdesc,
+                  false,
+                  (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter description';
+                    }
+                    return null; // Return null if validation passes
+                  },
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -331,22 +279,18 @@ class _ProductsStatusState extends State<ProductsStatus> {
                   backgroundColor:
                       MaterialStateProperty.all(AppColors.mainColor)),
               onPressed: () async {
-                if (update == false && catid != null) {
+                if (update == false) {
                   await addToCart(
-                    catid!,
-                    productname.text,
-                    productprice.text,
-                    productdesc.text,
+                    catname.text,
+                    catdesc.text,
                     context,
                   );
                 }
                 if (update == true) {
                   await updateProduct(
-                    catid!,
-                    productname.text,
+                    catname.text,
                     id,
-                    productprice.text,
-                    productdesc.text,
+                    catdesc.text,
                     context,
                   );
                 }
@@ -368,68 +312,9 @@ class _ProductsStatusState extends State<ProductsStatus> {
     super.initState();
     // Call the API when the page is opened
     _fetchProducts();
-    _fetchCategory();
-  }
-
-  Widget buildCheckBox(int id, String title, int i, StateSetter setState) {
-    return InkWell(
-      onTap: () {
-        setState(() {
-          catid = id.toString();
-          catname = title;
-          print(catid);
-          print(catname);
-        });
-      },
-      child: Chip(
-        padding: EdgeInsets.all(12),
-        label: Text(
-          title,
-          style: GoogleFonts.dmSans(
-            color: AppColors.neutral,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        backgroundColor: catid == id.toString()
-            ? AppColors.mainColor
-            : AppColors.sidebarbackground,
-      ),
-    );
   }
 
   Future<void> _fetchProducts() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      token = prefs.getString('token');
-      email = prefs.getString('email');
-    });
-    try {
-      // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
-      String bearerToken = token!;
-
-      final response = await Dio().get(
-        'https://loan-managment.onrender.com/products',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $bearerToken',
-          },
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        products = response.data;
-      } else {
-        // Handle API error
-        print('Failed to fetch products. Status code: ${response.statusCode}');
-      }
-    } catch (error) {
-      // Handle Dio errors or network errors
-      print('Error: $error');
-    }
-  }
-
-  Future<void> _fetchCategory() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       token = prefs.getString('token');
@@ -464,22 +349,15 @@ class _ProductsStatusState extends State<ProductsStatus> {
   }
 
   Future<void> addToCart(
-    String catid,
     String name,
-    String price,
     String description,
     BuildContext context,
   ) async {
     // Validate the form fields before proceeding
     try {
       // Prepare data for API request
-      Map<String, dynamic> productData = {
-        "product": {
-          "category_id": catid,
-          "name": name,
-          "price": price,
-          "description": description,
-        }
+      Map<String, dynamic> categoryData = {
+        "category": {"name": name, "description": description}
       };
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       setState(() {
@@ -491,8 +369,8 @@ class _ProductsStatusState extends State<ProductsStatus> {
       print('here');
       // Perform the POST request using Dio
       Response response = await Dio().post(
-        'https://loan-managment.onrender.com/products',
-        data: productData,
+        'https://loan-managment.onrender.com/categories',
+        data: categoryData,
         options: Options(
           headers: {
             'Authorization': 'Bearer $bearerToken',
@@ -503,11 +381,10 @@ class _ProductsStatusState extends State<ProductsStatus> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Product added successfully, handle the response as needed
-        print('Product added successfully: ${response.data}');
-        productdesc.clear();
-        productname.clear();
-        productprice
-            .clear(); // Close the popup or perform other actions if needed
+        print('Category added successfully: ${response.data}');
+        catdesc.clear();
+        catname.clear();
+
         _fetchProducts();
         Navigator.of(context).pop();
       } else {
@@ -523,10 +400,8 @@ class _ProductsStatusState extends State<ProductsStatus> {
   }
 
   Future<void> updateProduct(
-    String catid,
     String name,
     String id,
-    String price,
     String description,
     BuildContext context,
   ) async {
@@ -535,9 +410,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
       // Prepare data for API request
       Map<String, dynamic> productData = {
         "product": {
-          "category_id": catid,
           "name": name,
-          "price": price,
           "description": description,
         }
       };
@@ -564,10 +437,9 @@ class _ProductsStatusState extends State<ProductsStatus> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Product added successfully, handle the response as needed
         print('Product updaed successfully: ${response.data}');
-        productdesc.clear();
-        productname.clear();
-        productprice
-            .clear(); // Close the popup or perform other actions if needed
+        catdesc.clear();
+        catname.clear();
+
         _fetchProducts();
 
         Navigator.of(context).pop();

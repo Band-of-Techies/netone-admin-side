@@ -7,8 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:netone_loanmanagement_admin/src/compontents/widgets.dart';
+import 'package:netone_loanmanagement_admin/src/createapplication/createapp.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/agents.dart';
+import 'package:netone_loanmanagement_admin/src/pages/dashboard/assigntome.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/bankstatus.dart';
+import 'package:netone_loanmanagement_admin/src/pages/dashboard/category.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/closedorders.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/products.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/searchSection.dart';
@@ -34,6 +37,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String currentDate = '';
   String? email;
   String? token;
+  String? role;
   void onTabSelected(String tab) {
     setState(() {
       selectedTab = tab;
@@ -143,11 +147,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     isSelected: selectedTab == 'dashboard',
                     onTap: () => onTabSelected('dashboard'),
                   ),
-                  SidebarTab(
-                    title: 'Requests',
-                    isSelected: selectedTab == 'requests',
-                    onTap: () => onTabSelected('requests'),
-                  ),
+                  if (role == 'Admin' && role != 'Agent')
+                    SidebarTab(
+                      title: 'Requests',
+                      isSelected: selectedTab == 'requests',
+                      onTap: () => onTabSelected('requests'),
+                    ),
+                  if (role == 'Agent' && role != 'Admin')
+                    SidebarTab(
+                      title: 'Assign to Me',
+                      isSelected: selectedTab == 'assigntome',
+                      onTap: () => onTabSelected('assigntome'),
+                    ),
                   SidebarTab(
                     title: 'Netone Status',
                     isSelected: selectedTab == 'neteon_status',
@@ -194,16 +205,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   SizedBox(
                     height: 30,
                   ),
-                  SidebarTab(
-                    title: 'Products',
-                    isSelected: selectedTab == 'products',
-                    onTap: () => onTabSelected('products'),
-                  ),
-                  SidebarTab(
-                    title: 'Agents',
-                    isSelected: selectedTab == 'agents',
-                    onTap: () => onTabSelected('agents'),
-                  ),
+                  if (role == 'Admin')
+                    SidebarTab(
+                      title: 'Category',
+                      isSelected: selectedTab == 'category',
+                      onTap: () => onTabSelected('category'),
+                    ),
+                  if (role == 'Admin')
+                    SidebarTab(
+                      title: 'Products',
+                      isSelected: selectedTab == 'products',
+                      onTap: () => onTabSelected('products'),
+                    ),
+                  if (role == 'Admin')
+                    SidebarTab(
+                      title: 'Agents',
+                      isSelected: selectedTab == 'agents',
+                      onTap: () => onTabSelected('agents'),
+                    ),
                   SizedBox(
                     height: 30,
                   ),
@@ -253,6 +272,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {
       token = prefs.getString('token');
       email = prefs.getString('email');
+      role = prefs.getString('role');
     });
   }
 
@@ -262,6 +282,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return DashboardContent();
       case 'requests':
         return RequestsSection();
+      case 'assigntome':
+        return AssignToMe();
       case 'neteon_status':
         return NetoneStatusSection();
       case 'bank_status':
@@ -282,6 +304,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return SearchStatus();
       case 'products':
         return ProductsStatus();
+      case 'category':
+        return CategoryStatus();
       case 'logout':
         clearSharedPreferences();
         return SizedBox();
@@ -354,6 +378,15 @@ class _DashboardContentState extends State<DashboardContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: IconButton(
+        icon: Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyApp()),
+          );
+        },
+      ),
       backgroundColor: AppColors.mainbackground,
       body: ListView(children: [
         Wrap(

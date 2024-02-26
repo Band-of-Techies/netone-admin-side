@@ -31,12 +31,13 @@ class ViewApplication extends StatefulWidget {
 class _ViewApplicationState extends State<ViewApplication> {
   late LoanRequestDetails loanDetail;
   List<String> currentstatusList = ['Approve', 'Reject'];
-  String selectedstatus = '';
+  String? currentstatus;
   List<Uint8List> selectedFiles = [];
   List<String> selectedFilesnames = [];
   bool isloadiing = true;
   String? email;
   String? token;
+  String? role;
   @override
   Widget build(BuildContext context) {
     return isloadiing == false
@@ -170,33 +171,35 @@ class _ViewApplicationState extends State<ViewApplication> {
                     SizedBox(
                       width: 10,
                     ),
-                    IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EditApplication(
-                                      requestid: widget.loanRequestId,
-                                    )),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.edit,
-                          size: 20,
-                          color: AppColors.neutral,
-                        )),
+                    if (loanDetail.requestSystemStatus == 'pending')
+                      IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditApplication(
+                                        requestid: widget.loanRequestId,
+                                      )),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.edit,
+                            size: 20,
+                            color: AppColors.neutral,
+                          )),
                     SizedBox(
                       width: 10,
                     ),
-                    IconButton(
-                        onPressed: () {
-                          showDeleteConfirmationDialog(context);
-                        },
-                        icon: Icon(
-                          Icons.delete,
-                          size: 20,
-                          color: AppColors.neutral,
-                        )),
+                    if (role == 'Admin' && role != 'Agent')
+                      IconButton(
+                          onPressed: () {
+                            showDeleteConfirmationDialog(context);
+                          },
+                          icon: Icon(
+                            Icons.delete,
+                            size: 20,
+                            color: AppColors.neutral,
+                          )),
                     SizedBox(
                       width: 10,
                     ),
@@ -1975,6 +1978,7 @@ class _ViewApplicationState extends State<ViewApplication> {
       isloadiing = true;
       token = prefs.getString('token');
       email = prefs.getString('email');
+      role = prefs.getString('role');
     });
     final String apiUrl =
         'https://loan-managment.onrender.com/loan_requests/${widget.loanRequestId}';

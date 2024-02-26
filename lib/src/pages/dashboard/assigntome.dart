@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:netone_loanmanagement_admin/src/compontents/assigntomecard.dart';
 import 'package:netone_loanmanagement_admin/src/compontents/requstcard.dart';
 import 'package:netone_loanmanagement_admin/src/res/apis/request.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
@@ -8,12 +9,12 @@ import 'package:netone_loanmanagement_admin/src/res/serchTextFiled.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class RequestsSection extends StatefulWidget {
+class AssignToMe extends StatefulWidget {
   @override
-  _RequestsSectionState createState() => _RequestsSectionState();
+  _AssignToMeState createState() => _AssignToMeState();
 }
 
-class _RequestsSectionState extends State<RequestsSection> {
+class _AssignToMeState extends State<AssignToMe> {
   TextEditingController search = TextEditingController();
   // Mock data for demonstration purposes
   List<Map<String, dynamic>> agentList = [];
@@ -21,7 +22,6 @@ class _RequestsSectionState extends State<RequestsSection> {
   bool isloading = true;
   List<LoanRequest>? loanRequests;
   String? searchValue;
-  String seletedagent = 'Select Agent';
   String? errorMessage;
   String? email;
   String? token;
@@ -49,14 +49,13 @@ class _RequestsSectionState extends State<RequestsSection> {
                 ? ListView.builder(
                     itemCount: loanRequests!.length,
                     itemBuilder: (context, index) {
-                      return RequestItem(
+                      return AssigntoMeCard(
                         history: loanRequests![index].history,
                         gender: loanRequests![index].gender,
                         updateDataCallback: updateData,
                         applicantCount: loanRequests![index].applicantCount,
                         loanid: loanRequests![index].id,
-                        agent:
-                            'Not Assigned', // Replace with actual agent information from API if available
+
                         functionstring: 'Select Agent',
                         productname: loanRequests![index]
                             .product
@@ -72,10 +71,6 @@ class _RequestsSectionState extends State<RequestsSection> {
                         onCheckboxChanged: (value) {
                           // Handle checkbox change, if needed
                         },
-                        agents:
-                            agentList, // Replace with actual agent list from API if available
-                        selectedAgent:
-                            seletedagent, // Replace with actual selected agent from API if available
 
                         onConfirm: () {
                           // Handle confirmation
@@ -138,48 +133,20 @@ class _RequestsSectionState extends State<RequestsSection> {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print('Response');
-        print(response.data);
         setState(() {
           // Convert each item in the array to a LoanRequest object
           loanRequests = (response.data['loan_requests'] as List<dynamic>)
               .map((json) => LoanRequest.fromJson(json))
               .toList();
+          isloading = false;
         });
+        print('Response');
         print('Loan $loanRequests');
       } else {
         print('Error: ${response.statusCode} - ${response.statusMessage}');
         setState(() {
           errorMessage = 'Error';
         });
-      }
-      final String agentsApiEndpoint =
-          'https://loan-managment.onrender.com/users';
-      var agentsResponse = await dio.get(
-        agentsApiEndpoint,
-        options: Options(
-          headers: {'Authorization': 'Bearer $bearerToken'},
-        ),
-      );
-
-      if (agentsResponse.statusCode == 200 ||
-          agentsResponse.statusCode == 201) {
-        setState(() {
-          // Extract agent names from the response and update the agentList
-          agentList = (agentsResponse.data['users'] as List<dynamic>)
-              .map((agent) => {
-                    'id': agent['id'],
-                    'name': agent['name'],
-                  })
-              .toList();
-          isloading = false;
-        });
-      } else {
-        setState(() {
-          errorMessage = 'Error';
-        });
-        print(
-            'Error: ${agentsResponse.statusCode} - ${agentsResponse.statusMessage}');
       }
     } catch (error) {
       setState(() {
