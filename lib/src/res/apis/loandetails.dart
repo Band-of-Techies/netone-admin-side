@@ -18,14 +18,15 @@ class LoanRequestDetails {
   final String requestBankUpdateDate;
   final String requestSystemUpdateDate;
   final String requestOrderUpdateDate;
-  final Product product;
   final List<Applicant> applicants;
   final dynamic applicantCount;
   final AgentDetails agent;
   final List<Document> documents;
   final List<Document> orderdocuments;
+  final List<RequestedProduct> requestedProducts;
 
   LoanRequestDetails({
+    required this.requestedProducts,
     required this.orderdocuments,
     required this.requestnumber,
     required this.documents,
@@ -47,7 +48,6 @@ class LoanRequestDetails {
     required this.requestBankUpdateDate,
     required this.requestSystemUpdateDate,
     required this.requestOrderUpdateDate,
-    required this.product,
     required this.applicants,
     required this.applicantCount,
     required this.agent,
@@ -60,6 +60,11 @@ class LoanRequestDetails {
     List<Document> orderdocuments = (json['order_documents'] as List<dynamic>)
         .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
         .toList();
+    List<RequestedProduct> requestedProducts =
+        (json['requested_products'] as List<dynamic>)
+            .map((product) =>
+                RequestedProduct.fromJson(product as Map<String, dynamic>))
+            .toList();
     return LoanRequestDetails(
       orderdocuments: orderdocuments,
       documents: documents,
@@ -83,7 +88,7 @@ class LoanRequestDetails {
       requestSystemUpdateDate: (json['request_system_update_date'] ?? "NA"),
       requestOrderUpdateDate: (json['request_order_update_date'] ?? "NA"),
       agent: AgentDetails.fromJson(json['assign_to'] ?? "NA"),
-      product: Product.fromJson(json['product'] ?? "NA"),
+      requestedProducts: requestedProducts,
       applicants: (json['applicants'] as List<dynamic>)
           .map(
             (applicant) =>
@@ -351,6 +356,32 @@ class Document {
       id: json['id'] ?? "NA",
       contentType: json['content_type'] ?? "NA",
       url: json['url'] ?? "NA",
+    );
+  }
+}
+
+class RequestedProduct {
+  final dynamic id;
+  final int quantity;
+  final int productId;
+  final String productName;
+  final String productDescription;
+
+  RequestedProduct({
+    required this.id,
+    required this.quantity,
+    required this.productId,
+    required this.productName,
+    required this.productDescription,
+  });
+
+  factory RequestedProduct.fromJson(Map<String, dynamic> json) {
+    return RequestedProduct(
+      id: json['id'] ?? "NA",
+      quantity: json['quantity'] ?? 0,
+      productId: json['product_id'] ?? "NA",
+      productName: json['product_name'] ?? "NA",
+      productDescription: json['product_description'] ?? "NA",
     );
   }
 }

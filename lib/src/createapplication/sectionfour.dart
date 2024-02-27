@@ -636,9 +636,26 @@ class _SectionFourState extends State<SectionFour>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomText(
-            text: myTabController.loanDetails.selectedLoanOption == null
+            text: myTabController.loanDetails.loancategory == null
                 ? 'Loan Product Applied for:'
-                : 'Loan Product Applied for: ${myTabController.loanDetails.selectedLoanOption}',
+                : 'Loan  Applied for: ${myTabController.loanDetails.loancategory}',
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Wrap(
+            children: [
+              CustomText(
+                text: 'Products',
+              ),
+              for (int i = 0;
+                  i < myTabController.loanDetails.chosenProductIds.length;
+                  i++)
+                CustomText(
+                  text:
+                      '${myTabController.loanDetails.chosenProductNames[i]}(${myTabController.loanDetails.quantity[i]})',
+                ),
+            ],
           ),
           SizedBox(
             height: 20,
@@ -773,18 +790,32 @@ class _SectionFourState extends State<SectionFour>
       var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
 
       // Add JSON data as form fields
-      request.fields['loan_request[description]'] = "description";
-      request.fields['loan_request[cost_of_asset]'] = "2440";
-      request.fields['loan_request[insurance_cost]'] = "452525";
-      request.fields['loan_request[advance_payment]'] = "4646";
-      request.fields['loan_request[loan_amount]'] = "2525";
-      request.fields['loan_request[loan_tenure]'] = "12";
-      request.fields['loan_request[product_id]'] = "3";
+      request.fields['loan_request[description]'] =
+          myTabController.loanDetails.descriptionController.text;
+      request.fields['loan_request[cost_of_asset]'] =
+          myTabController.loanDetails.costofasset.text;
+      request.fields['loan_request[insurance_cost]'] =
+          myTabController.loanDetails.insurancecost.text;
+      request.fields['loan_request[advance_payment]'] =
+          myTabController.loanDetails.advancepayment.text;
+      request.fields['loan_request[loan_amount]'] =
+          myTabController.loanDetails.loanamaountapplied.text;
+      request.fields['loan_request[loan_tenure]'] =
+          myTabController.loanDetails.tenure.toString();
+      for (int i = 0;
+          i < myTabController.loanDetails.chosenProductIds.length;
+          i++) {
+        request.fields[
+                'loan_request[loan_request_products_attributes][$i][product_id]'] =
+            myTabController.loanDetails.chosenProductIds[i].toString();
+        request.fields[
+                'loan_request[loan_request_products_attributes][$i][quantity]'] =
+            myTabController.loanDetails.quantity[i].toString();
+      }
 
       for (int i = 0; i < numberOfApplicants; i++) {
         // Add other applicant data to the request
-        print('12');
-        print(myTabController.applicants[i].firstNameController.text);
+
         request.fields['loan_request[applicants_attributes][$i][surname]'] =
             myTabController.applicants[i].surnameController.text;
         request.fields['loan_request[applicants_attributes][$i][first_name]'] =

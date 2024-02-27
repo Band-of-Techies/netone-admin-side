@@ -1411,8 +1411,17 @@ class _ViewApplicationState extends State<ViewApplication> {
         children: [
           CustomText(
             fontSize: 15,
-            text: 'Loan Product Applied for: ${loanDetail.product.name}',
+            text: 'Loan Product Applied',
           ),
+          SizedBox(
+            height: 40,
+          ),
+          for (int i = 0; i < loanDetail.requestedProducts.length; i++)
+            CustomText(
+              fontSize: 15,
+              text:
+                  '${loanDetail.requestedProducts[i].productName}(${loanDetail.requestedProducts[i].quantity})',
+            ),
           SizedBox(
             height: 40,
           ),

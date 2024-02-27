@@ -363,6 +363,7 @@ class DashboardContent extends StatefulWidget {
   final Color leftBarColor = AppColors.mainColor;
   final Color rightBarColor = AppColors.neutral;
   final Color avgColor = AppColors.sidebarbackground;
+
   @override
   State<DashboardContent> createState() => _DashboardContentState();
 }
@@ -372,21 +373,25 @@ class _DashboardContentState extends State<DashboardContent> {
   int touchedIndex = -1;
   late List<BarChartGroupData> rawBarGroups;
   late List<BarChartGroupData> showingBarGroups;
-
+  String? role;
   int touchedGroupIndex = -1;
+  String? email;
+  String? token;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: IconButton(
-        icon: Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => MyApp()),
-          );
-        },
-      ),
+      floatingActionButton: (role == 'Admin' && role != 'Agent')
+          ? IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MyApp()),
+                );
+              },
+            )
+          : SizedBox(),
       backgroundColor: AppColors.mainbackground,
       body: ListView(children: [
         Wrap(
@@ -607,6 +612,15 @@ class _DashboardContentState extends State<DashboardContent> {
     rawBarGroups = items;
 
     showingBarGroups = rawBarGroups;
+  }
+
+  void gettokens() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+      email = prefs.getString('email');
+      role = prefs.getString('role');
+    });
   }
 
   Widget leftTitles(double value, TitleMeta meta) {

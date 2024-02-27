@@ -35,8 +35,13 @@ class _SectionThreeState extends State<SectionThree>
   LoanDetails loadndetails = LoanDetails();
   final _formKey = GlobalKey<FormState>();
 
+  List<int> quantity = [];
   List<Product> products = [];
-
+  List<Categories> categories = [];
+  String? categoryName; // Define categoryName as a String variable
+  String? categoryId; // Define categoryId as a String variable
+  String? prodcutname;
+  String? productid;
   List<String> tenureOptions = [
     '3 months',
     '6 months',
@@ -54,7 +59,7 @@ class _SectionThreeState extends State<SectionThree>
     loadndetails = myTabController.loanDetails;
     List<ApplicantDetails> applicants = myTabController.applicants;
     return Scaffold(
-      body: products.isEmpty || products == null
+      body: categories.isEmpty || categories == null
           ? Center(
               child: CircularProgressIndicator(color: primary),
             )
@@ -194,7 +199,8 @@ class _SectionThreeState extends State<SectionThree>
   @override
   void initState() {
     super.initState();
-    fetchProducts();
+
+    fetchCategories();
   }
 
   bool validateTenure(LoanDetails loanDetails) {
@@ -209,8 +215,8 @@ class _SectionThreeState extends State<SectionThree>
     return true;
   }
 
-  void fetchProducts() async {
-    final String apiUrl = 'https://loan-managment.onrender.com/products';
+  void fetchCategories() async {
+    final String apiUrl = 'https://loan-managment.onrender.com/categories';
 
     try {
       final dio = Dio();
@@ -231,13 +237,52 @@ class _SectionThreeState extends State<SectionThree>
         final List<dynamic> responseData = response.data;
 
         setState(() {
-          products =
-              responseData.map((data) => Product.fromJson(data)).toList();
+          categories =
+              responseData.map((data) => Categories.fromJson(data)).toList();
         });
         ;
       } else {
         // Handle error, show a message, or perform other actions on failure
-        print('Failed to fetch products. Status code: ${response.statusCode}');
+        print(
+            'Failed to fetch categories. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle exceptions
+      print('Error during API call: $error');
+    }
+  }
+
+  void fetchProducts(String id) async {
+    final String apiUrl = 'https://loan-managment.onrender.com/products/$id';
+    setState(() {
+      products = [];
+    });
+    try {
+      final dio = Dio();
+      final response = await dio.get(
+        apiUrl,
+        options: Options(headers: {
+          // Add any custom headers if needed
+
+          // Add CORS headers to the request
+          'Access-Control-Allow-Origin': '*', // Or specify a specific origin
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers':
+              'Origin, Content-Type, Accept, Authorization, X-Requested-With',
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = response.data;
+        print(123);
+        print(responseData);
+        setState(() {
+          products = [Product.fromJson(responseData)];
+        });
+      } else {
+        // Handle error, show a message, or perform other actions on failure
+
+        print('Failed to fetch product. Status code: ${response.statusCode}');
       }
     } catch (error) {
       // Handle exceptions
@@ -576,7 +621,7 @@ class _SectionThreeState extends State<SectionThree>
                   hint: Text(
                     loadndetails.tenure != null
                         ? loadndetails.tenure.toString()
-                        : 'Preferred Year of Retirement',
+                        : 'Loan Tenure',
                     style: GoogleFonts.dmSans(
                       fontSize: 15,
                       color: blackfont,
@@ -794,14 +839,214 @@ class _SectionThreeState extends State<SectionThree>
         SizedBox(
           height: 20,
         ),
-        Wrap(
-          spacing: 8.0, // Adjust the spacing between items
-          runSpacing: 8.0, // Adjust the spacing between lines
+        Row(
           children: [
-            for (int i = 0; i < products.length; i++)
-              buildCheckBox(products[i].id, products[i].name, i),
+            SizedBox(
+              width: 400,
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton2<Categories>(
+                  isExpanded: true,
+                  hint: Text(
+                    categoryName ?? 'Choose Category',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 15,
+                      color: blackfont,
+                      height: .5,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  items: categories.map((category) {
+                    return DropdownMenuItem(
+                      value: category,
+                      child: Text(
+                        category.name,
+                        style: GoogleFonts.dmSans(color: blackfont),
+                      ),
+                    );
+                  }).toList(),
+                  value: categoryName != null
+                      ? categories.firstWhere(
+                          (element) => element.name == categoryName,
+                          orElse: () => categories.first,
+                        )
+                      : null,
+                  onChanged: (Categories? value) {
+                    setState(() {
+                      loadndetails.loancategory = value!.name;
+                      categoryName = value.name;
+                      categoryId = value.id.toString();
+                      fetchProducts(categoryId!);
+                      loadndetails.chosenProductIds = [];
+                      loadndetails.chosenProductNames = [];
+                      loadndetails.quantity = [];
+                    });
+                  },
+                  buttonStyleData: ButtonStyleData(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: categoryName == null ? Colors.red : Colors.grey,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            if (products.isNotEmpty)
+              SizedBox(
+                width: 400,
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton2<Product>(
+                    isExpanded: true,
+                    hint: Text(
+                      prodcutname ?? 'Choose Product',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 15,
+                        color: blackfont,
+                        height: .5,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    items: products.map((product) {
+                      return DropdownMenuItem(
+                        value: product,
+                        child: Text(
+                          product.name,
+                          style: GoogleFonts.dmSans(color: blackfont),
+                        ),
+                      );
+                    }).toList(),
+                    value: prodcutname != null
+                        ? products.firstWhere(
+                            (element) => element.name == prodcutname,
+                            orElse: () => products.first,
+                          )
+                        : null,
+                    onChanged: (Product? value) {
+                      setState(() {
+                        if (!loadndetails.chosenProductIds
+                            .contains(value!.id)) {
+                          loadndetails.chosenProductIds.add(value.id);
+                          loadndetails.chosenProductNames.add(value.name);
+                          loadndetails.quantity.add(1);
+                          loadndetails.chosenProductPrice.add(value.price);
+                          loadndetails.totalcost =
+                              loadndetails.totalcost! + value.price;
+                          loadndetails.costofasset.text =
+                              loadndetails.totalcost.toString();
+                        }
+                      });
+                    },
+                    buttonStyleData: ButtonStyleData(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color:
+                              categoryName == null ? Colors.red : Colors.grey,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
+        SizedBox(
+          height: 20,
+        ),
+        if (loadndetails.chosenProductIds.isNotEmpty)
+          for (int i = 0; i < loadndetails.chosenProductIds.length; i++)
+            Column(
+              children: [
+                Row(
+                  children: [
+                    if (i < loadndetails.chosenProductNames.length)
+                      Text(
+                        loadndetails.chosenProductNames[i],
+                        style: GoogleFonts.dmSans(
+                          color: blackfont,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    SizedBox(width: 50),
+                    if (i < loadndetails.quantity.length)
+                      CircleAvatar(
+                        backgroundColor: primary,
+                        child: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              if (loadndetails.quantity[i] > 1) {
+                                loadndetails.quantity[i]--;
+                                loadndetails.totalcost =
+                                    loadndetails.totalcost! -
+                                        loadndetails.chosenProductPrice[i];
+                                loadndetails.costofasset.text =
+                                    loadndetails.totalcost.toString();
+                              }
+                            });
+                          },
+                          icon: Icon(Icons.minimize_sharp),
+                        ),
+                      ),
+                    SizedBox(width: 20),
+                    if (i < loadndetails.quantity.length)
+                      Text(
+                        loadndetails.quantity[i].toString(),
+                        style: GoogleFonts.dmSans(
+                          color: blackfont,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    SizedBox(width: 20),
+                    if (i < loadndetails.quantity.length)
+                      CircleAvatar(
+                        backgroundColor: primary,
+                        child: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              if (loadndetails.quantity[i] < 10) {
+                                loadndetails.quantity[i]++;
+                                loadndetails.totalcost =
+                                    loadndetails.totalcost! +
+                                        loadndetails.chosenProductPrice[i];
+                                loadndetails.costofasset.text =
+                                    loadndetails.totalcost.toString();
+                              }
+                            });
+                          },
+                          icon: Icon(Icons.add),
+                        ),
+                      ),
+                    SizedBox(width: 20),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          double approxcost =
+                              loadndetails.chosenProductPrice[i] *
+                                  loadndetails.quantity[i];
+
+                          loadndetails.costofasset.text =
+                              (loadndetails.totalcost! - approxcost).toString();
+                          loadndetails.chosenProductNames.removeAt(i);
+                          loadndetails.quantity.removeAt(i);
+                          loadndetails.chosenProductIds.removeAt(i);
+                        });
+                      },
+                      icon: Icon(Icons.delete),
+                    ),
+                  ],
+                ),
+              ],
+            ),
         SizedBox(
           height: 40,
         ),
@@ -833,31 +1078,6 @@ class _SectionThreeState extends State<SectionThree>
           validator: (value) {},
         )
       ],
-    );
-  }
-
-  Widget buildCheckBox(int id, String title, int i) {
-    return InkWell(
-      onTap: () {
-        setState(() {
-          loadndetails.selectedLoanOption = id;
-          loadndetails.costofasset.text = products[i].price.toString();
-        });
-      },
-      child: Chip(
-        padding: EdgeInsets.all(12),
-        label: Text(
-          title,
-          style: GoogleFonts.dmSans(
-              color:
-                  loadndetails.selectedLoanOption == id ? whitefont : blackfont,
-              fontSize: 14,
-              fontWeight: FontWeight.w700),
-        ),
-        backgroundColor: loadndetails.selectedLoanOption == id
-            ? primary // Change the color when selected
-            : whitefont,
-      ),
     );
   }
 }
