@@ -37,7 +37,7 @@ class _EditApplication extends State<EditApplication>
           ? ChangeNotifierProvider(
               create: (context) => MyTabController(),
               child: DefaultTabController(
-                length: 4, // Number of tabs (sections)
+                length: 3, // Number of tabs (sections)
                 child: Scaffold(
                   appBar: AppBar(
                     backgroundColor: AppColors.mainbackground,
@@ -143,7 +143,7 @@ class _EditApplication extends State<EditApplication>
   void initState() {
     super.initState();
     fetchData(widget.requestid);
-    myTabController.tabController = TabController(length: 4, vsync: this);
+    myTabController.tabController = TabController(length: 3, vsync: this);
   }
 
   @override

@@ -210,8 +210,8 @@ class _FormSection extends StatelessWidget {
                     textInputAction: TextInputAction.done,
                     isPassword: true,
                     enabled: true,
-                    suffixIcon:
-                        visibilityToggle(togglePasswordVisibility, true),
+                    //suffixIcon:
+                    //    visibilityToggle(togglePasswordVisibility, true),
                   ),
                   const SizedBox(height: 25),
                   Row(
@@ -309,6 +309,12 @@ class _FormSection extends StatelessWidget {
 
   togglePasswordVisibility() {}
 }
+/*
+Widget visibilityToggle(Function? onToggle) => InkWell(
+      onTap: onToggle != null ? () => onToggle() : null,
+      child: Icon(_isHidden ? Icons.visibility : Icons.visibility_off,
+          color: AppColors.primary),
+    );*/
 
 class _ImageSection extends StatelessWidget {
   const _ImageSection({Key? key}) : super(key: key);

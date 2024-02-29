@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:netone_loanmanagement_admin/src/createapplication/constants/colors.dart';
 import 'package:netone_loanmanagement_admin/src/createapplication/constants/text.dart';
 import 'package:netone_loanmanagement_admin/src/createapplication/createapp.dart';
+import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 
 import 'package:provider/provider.dart';
 
@@ -51,134 +52,146 @@ class _SectionFourState extends State<SectionFour>
       body: isloadiing == false
           ? Padding(
               padding: EdgeInsets.all(20),
-              child: ListView(
-                children: [
-                  CustomText(
-                    text: 'Part 1 ',
-                    color: blackfont,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  CustomText(
-                    text: 'Applicant Details',
-                    color: primary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  applicantDetails(myTabController, 0),
-                  if (numberOfPersons > 1) applicantDetails(myTabController, 1),
-                  if (numberOfPersons > 2) applicantDetails(myTabController, 2),
-                  if (numberOfPersons > 3) applicantDetails(myTabController, 3),
+              child: RawScrollbar(
+                thumbVisibility: true,
+                thumbColor: AppColors.mainColor,
+                radius: Radius.circular(20),
+                thickness: 5,
+                child: ListView(
+                  children: [
+                    CustomText(
+                      text: 'Part 1 ',
+                      color: blackfont,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    CustomText(
+                      text: 'Applicant Details',
+                      color: primary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    applicantDetails(myTabController, 0),
+                    if (numberOfPersons > 1)
+                      applicantDetails(myTabController, 1),
+                    if (numberOfPersons > 2)
+                      applicantDetails(myTabController, 2),
+                    if (numberOfPersons > 3)
+                      applicantDetails(myTabController, 3),
 
-                  // Display other details as needed
+                    // Display other details as needed
 
-                  // Display details from Section Two
-                  CustomText(
-                    text: 'Part 2',
-                    color: blackfont,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  CustomText(
-                    text: 'Employment Details',
-                    color: primary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  employmentDetals(myTabController, 0),
-                  if (numberOfPersons > 1) employmentDetals(myTabController, 1),
-                  if (numberOfPersons > 2) employmentDetals(myTabController, 2),
-                  if (numberOfPersons > 3) employmentDetals(myTabController, 3),
-                  CustomText(
-                    text: 'Part 3',
-                    color: blackfont,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  CustomText(
-                    text: 'Loan Details',
-                    color: primary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  loanDetails(myTabController),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .48,
-                        child: ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(buttondarkbg),
-                                padding: MaterialStateProperty.all(
-                                    EdgeInsets.all(15))),
-                            onPressed: () {
-                              //printApplicantDetails();
+                    // Display details from Section Two
+                    CustomText(
+                      text: 'Part 2',
+                      color: blackfont,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    CustomText(
+                      text: 'Employment Details',
+                      color: primary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    employmentDetals(myTabController, 0),
+                    if (numberOfPersons > 1)
+                      employmentDetals(myTabController, 1),
+                    if (numberOfPersons > 2)
+                      employmentDetals(myTabController, 2),
+                    if (numberOfPersons > 3)
+                      employmentDetals(myTabController, 3),
+                    CustomText(
+                      text: 'Part 3',
+                      color: blackfont,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    CustomText(
+                      text: 'Loan Details',
+                      color: primary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    loanDetails(myTabController),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * .48,
+                          child: ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all(buttondarkbg),
+                                  padding: MaterialStateProperty.all(
+                                      EdgeInsets.all(15))),
+                              onPressed: () {
+                                //printApplicantDetails();
 
-                              widget._tabController
-                                  .animateTo(widget._tabController.index - 1);
+                                widget._tabController
+                                    .animateTo(widget._tabController.index - 1);
 
-                              //widget.myTabController.updateNumberOfPersons(numberOfPersons);
-                              //  DefaultTabController.of(context)?.animateTo(1);
-                              // if (_formKey.currentState!.validate()) {
-                              //   // Form is valid, move to the next section
+                                //widget.myTabController.updateNumberOfPersons(numberOfPersons);
+                                //  DefaultTabController.of(context)?.animateTo(1);
+                                // if (_formKey.currentState!.validate()) {
+                                //   // Form is valid, move to the next section
 
-                              // }
-                            },
-                            child: CustomText(
-                              text: 'Previous',
-                              color: whitefont,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                            )),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .48,
-                        child: ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(primary),
-                                padding: MaterialStateProperty.all(
-                                    EdgeInsets.all(15))),
-                            onPressed: () {
-                              print(widget.myTabController.numberOfPersons);
-                              // submitsForm(widget.myTabController);
-                              sendLoanRequest(
-                                  widget.myTabController.numberOfPersons,
-                                  myTabController);
-                            },
-                            child: CustomText(
-                              text: 'Submit',
-                              color: whitefont,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                            )),
-                      ),
-                    ],
-                  ),
-                ],
+                                // }
+                              },
+                              child: CustomText(
+                                text: 'Previous',
+                                color: whitefont,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              )),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * .48,
+                          child: ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all(primary),
+                                  padding: MaterialStateProperty.all(
+                                      EdgeInsets.all(15))),
+                              onPressed: () {
+                                print(widget.myTabController.numberOfPersons);
+                                // submitsForm(widget.myTabController);
+                                sendLoanRequest(
+                                    widget.myTabController.numberOfPersons,
+                                    myTabController);
+                              },
+                              child: CustomText(
+                                text: 'Submit',
+                                color: whitefont,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              )),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             )
           : Center(
@@ -974,14 +987,14 @@ class _SectionFourState extends State<SectionFour>
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Request was successful
         print('Form submitted successfully');
+        String responseBody = await response.stream.bytesToString();
 
-        warning('Form Submitted');
+        Map<String, dynamic> jsonResponse = json.decode(responseBody);
+        int loanRequestId = jsonResponse['loan_request_id'];
+
         warning('Assinging to you');
-        assignToMe('1');
-        Future.delayed(Duration(seconds: 3), () {
-          html.window.location.reload();
-        });
-        //  clearAllFields();
+
+        assignToMe(loanRequestId);
       } else {
         // Request failed
         print('Form submission failed with status: ${response.statusCode}');
@@ -996,15 +1009,9 @@ class _SectionFourState extends State<SectionFour>
     }
   }
 
-  Future<void> assignToMe(String request_id) async {
+  Future<void> assignToMe(int request_id) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token') ?? '';
-    final String email = prefs.getString('email') ?? '';
-
-    if (token.isEmpty || email.isEmpty) {
-      // Handle case where token or email is empty
-      return;
-    }
 
     final String url =
         'https://loan-managment.onrender.com/loan_requests/$request_id/assign_to_me';
@@ -1022,6 +1029,7 @@ class _SectionFourState extends State<SectionFour>
         warning('Request assigned to you');
         // Request successful
         print('Assigned to you successfully.');
+        clearAllFields();
       } else {
         // Request failed
         warning('Request failed to assign');

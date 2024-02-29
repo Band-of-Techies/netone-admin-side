@@ -9,6 +9,7 @@ import 'package:netone_loanmanagement_admin/src/createapplication/constants/colo
 import 'package:netone_loanmanagement_admin/src/createapplication/constants/text.dart';
 import 'package:netone_loanmanagement_admin/src/createapplication/constants/textfield.dart';
 import 'package:netone_loanmanagement_admin/src/createapplication/createapp.dart';
+import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 
 import 'package:provider/provider.dart';
 
@@ -195,115 +196,122 @@ class _SectionTwoState extends State<SectionTwo>
         padding: EdgeInsets.all(20),
         child: Form(
           key: _formKey,
-          child: ListView(
-            children: [
-              CustomText(
-                text: 'Employment Details',
-                color: blackfont,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              employmentDetails('Applicant 1', applicantDetailsLists[0]),
-              if (numberOfPersons > 1)
-                employmentDetails('Applicant 2', applicantDetailsLists[1]),
-              if (numberOfPersons > 2)
-                employmentDetails('Applicant 3', applicantDetailsLists[2]),
-              if (numberOfPersons > 3)
-                employmentDetails('Applicant 4', applicantDetailsLists[3]),
-              SizedBox(
-                height: 20,
-              ),
-              CustomText(
-                text: 'Next of Kin Information',
-                color: blackfont,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              kinInformation('Applicant 1', applicantDetailsLists[0]),
-              if (numberOfPersons > 1)
-                kinInformation('Applicant 2', applicantDetailsLists[1]),
-              if (numberOfPersons > 2)
-                kinInformation('Applicant 3', applicantDetailsLists[2]),
-              if (numberOfPersons > 3)
-                kinInformation('Applicant 4', applicantDetailsLists[3]),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * .48,
-                    child: ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(buttondarkbg),
-                            padding:
-                                MaterialStateProperty.all(EdgeInsets.all(15))),
-                        onPressed: () {
-                          if (widget._tabController.index <
-                              widget._tabController.length - 1) {
-                            widget._tabController
-                                .animateTo(widget._tabController.index - 1);
-                          } else {
-                            // Handle the case when the last tab is reached
-                          }
-                          //widget.myTabController.updateNumberOfPersons(numberOfPersons);
-                          //  DefaultTabController.of(context)?.animateTo(1);
-                          // if (_formKey.currentState!.validate()) {
-                          //   // Form is valid, move to the next section
-
-                          // }
-                        },
-                        child: CustomText(
-                          text: 'Previous',
-                          color: whitefont,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        )),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * .48,
-                    child: ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(primary),
-                            padding:
-                                MaterialStateProperty.all(EdgeInsets.all(15))),
-                        onPressed: () {
-                          //widget.myTabController.updateNumberOfPersons(numberOfPersons);
-                          //  DefaultTabController.of(context)?.animateTo(1);
-                          if (_formKey.currentState!.validate()) {
-                            // Form is valid, move to the next section
-                            if (validateLocation(applicantDetailsLists) &&
-                                validateRetrirement(applicantDetailsLists)) {
-                              myTabController.employmentDetailsList =
-                                  applicantDetailsLists;
-                              myTabController.updateEMplymentandKlin(
-                                  applicantDetailsLists);
-                              // printApplicantDetails();
-                              if (widget._tabController.index <
-                                  widget._tabController.length - 1) {
-                                widget._tabController
-                                    .animateTo(widget._tabController.index + 1);
-                              }
+          child: RawScrollbar(
+            thumbVisibility: true,
+            thumbColor: AppColors.mainColor,
+            radius: Radius.circular(20),
+            thickness: 5,
+            child: ListView(
+              children: [
+                CustomText(
+                  text: 'Employment Details',
+                  color: blackfont,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                employmentDetails('Applicant 1', applicantDetailsLists[0]),
+                if (numberOfPersons > 1)
+                  employmentDetails('Applicant 2', applicantDetailsLists[1]),
+                if (numberOfPersons > 2)
+                  employmentDetails('Applicant 3', applicantDetailsLists[2]),
+                if (numberOfPersons > 3)
+                  employmentDetails('Applicant 4', applicantDetailsLists[3]),
+                SizedBox(
+                  height: 20,
+                ),
+                CustomText(
+                  text: 'Next of Kin Information',
+                  color: blackfont,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                kinInformation('Applicant 1', applicantDetailsLists[0]),
+                if (numberOfPersons > 1)
+                  kinInformation('Applicant 2', applicantDetailsLists[1]),
+                if (numberOfPersons > 2)
+                  kinInformation('Applicant 3', applicantDetailsLists[2]),
+                if (numberOfPersons > 3)
+                  kinInformation('Applicant 4', applicantDetailsLists[3]),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .48,
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(buttondarkbg),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.all(15))),
+                          onPressed: () {
+                            if (widget._tabController.index <
+                                widget._tabController.length - 1) {
+                              widget._tabController
+                                  .animateTo(widget._tabController.index - 1);
                             } else {
-                              warning('Complete Details');
+                              // Handle the case when the last tab is reached
                             }
-                          }
-                        },
-                        child: CustomText(
-                          text: 'Next',
-                          color: whitefont,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        )),
-                  ),
-                ],
-              ),
-            ],
+                            //widget.myTabController.updateNumberOfPersons(numberOfPersons);
+                            //  DefaultTabController.of(context)?.animateTo(1);
+                            // if (_formKey.currentState!.validate()) {
+                            //   // Form is valid, move to the next section
+
+                            // }
+                          },
+                          child: CustomText(
+                            text: 'Previous',
+                            color: whitefont,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          )),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .48,
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(primary),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.all(15))),
+                          onPressed: () {
+                            //widget.myTabController.updateNumberOfPersons(numberOfPersons);
+                            //  DefaultTabController.of(context)?.animateTo(1);
+                            if (_formKey.currentState!.validate()) {
+                              // Form is valid, move to the next section
+                              if (validateLocation(applicantDetailsLists) &&
+                                  validateRetrirement(applicantDetailsLists)) {
+                                myTabController.employmentDetailsList =
+                                    applicantDetailsLists;
+                                myTabController.updateEMplymentandKlin(
+                                    applicantDetailsLists);
+                                // printApplicantDetails();
+                                if (widget._tabController.index <
+                                    widget._tabController.length - 1) {
+                                  widget._tabController.animateTo(
+                                      widget._tabController.index + 1);
+                                }
+                              } else {
+                                warning('Complete Details');
+                              }
+                            }
+                          },
+                          child: CustomText(
+                            text: 'Next',
+                            color: whitefont,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          )),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

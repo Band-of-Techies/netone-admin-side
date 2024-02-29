@@ -15,6 +15,7 @@ import 'package:netone_loanmanagement_admin/src/createapplication/constants/colo
 import 'package:netone_loanmanagement_admin/src/createapplication/constants/text.dart';
 import 'package:netone_loanmanagement_admin/src/createapplication/constants/textfield.dart';
 import 'package:netone_loanmanagement_admin/src/createapplication/createapp.dart';
+import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'dart:js' as js;
 
 import 'package:provider/provider.dart';
@@ -67,129 +68,136 @@ class _SectionThreeState extends State<SectionThree>
               padding: EdgeInsets.all(20),
               child: Form(
                 key: _formKey,
-                child: ListView(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(bottom: 30),
-                      padding: EdgeInsets.fromLTRB(20, 25, 20, 25),
-                      child: Column(
+                child: RawScrollbar(
+                  thumbVisibility: true,
+                  thumbColor: AppColors.mainColor,
+                  radius: Radius.circular(20),
+                  thickness: 5,
+                  child: ListView(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(bottom: 30),
+                        padding: EdgeInsets.fromLTRB(20, 25, 20, 25),
+                        child: Column(
+                          children: [
+                            section3A(),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            loandetails(applicants),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Text(
+                              'Affirmations',
+                              style: GoogleFonts.dmSans(
+                                  color: blackfont,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                            SizedBox(height: 20),
+                            affirmationsection(
+                                'For First Applicant', applicants, 0),
+                            if (widget.myTabController.numberOfPersons > 1)
+                              affirmationsection(
+                                  'For Second Applicant', applicants, 1),
+                            if (widget.myTabController.numberOfPersons > 2)
+                              affirmationsection(
+                                  'For Third Applicant', applicants, 2),
+                            if (widget.myTabController.numberOfPersons > 3)
+                              affirmationsection(
+                                  'For Fourth Applicant', applicants, 4),
+                            SizedBox(height: 40),
+                            /*  Text(
+                    'Supporting Documentation Submitted, loadndetails are advised to attach the following documents',
+                    style: GoogleFonts.dmSans(
+                        color: blackfont,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                  ),*/
+                            // DocumentTable(),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          section3A(),
                           SizedBox(
-                            height: 30,
+                            width: MediaQuery.of(context).size.width * .48,
+                            child: ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all(buttondarkbg),
+                                    padding: MaterialStateProperty.all(
+                                        EdgeInsets.all(15))),
+                                onPressed: () {
+                                  myTabController.loanDetails = loadndetails;
+                                  //printApplicantDetails();
+                                  if (widget._tabController.index <
+                                      widget._tabController.length - 1) {
+                                    widget._tabController.animateTo(
+                                        widget._tabController.index - 1);
+                                  } else {
+                                    // Handle the case when the last tab is reached
+                                  }
+                                  //widget.myTabController.updateNumberOfPersons(numberOfPersons);
+                                  //  DefaultTabController.of(context)?.animateTo(1);
+                                  // if (_formKey.currentState!.validate()) {
+                                  //   // Form is valid, move to the next section
+
+                                  // }
+                                },
+                                child: CustomText(
+                                  text: 'Previous',
+                                  color: whitefont,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                )),
                           ),
-                          loandetails(applicants),
                           SizedBox(
-                            height: 30,
+                            width: MediaQuery.of(context).size.width * .48,
+                            child: ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all(primary),
+                                    padding: MaterialStateProperty.all(
+                                        EdgeInsets.all(15))),
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    if (validateTenure(loadndetails)) {
+                                      myTabController.loanDetails =
+                                          loadndetails;
+                                      //printApplicantDetails();
+                                      if (widget._tabController.index <
+                                          widget._tabController.length - 1) {
+                                        widget._tabController.animateTo(
+                                            widget._tabController.index + 1);
+                                      } else {
+                                        // Handle the case when the last tab is reached
+                                      }
+                                    } else {
+                                      warning('Select Tenure');
+                                    }
+                                  }
+
+                                  //widget.myTabController.updateNumberOfPersons(numberOfPersons);
+                                  //  DefaultTabController.of(context)?.animateTo(1);
+                                  // if (_formKey.currentState!.validate()) {
+                                  //   // Form is valid, move to the next section
+
+                                  // }
+                                },
+                                child: CustomText(
+                                  text: 'Next',
+                                  color: whitefont,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                )),
                           ),
-                          Text(
-                            'Affirmations',
-                            style: GoogleFonts.dmSans(
-                                color: blackfont,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700),
-                          ),
-                          SizedBox(height: 20),
-                          affirmationsection(
-                              'For First Applicant', applicants, 0),
-                          if (widget.myTabController.numberOfPersons > 1)
-                            affirmationsection(
-                                'For Second Applicant', applicants, 1),
-                          if (widget.myTabController.numberOfPersons > 2)
-                            affirmationsection(
-                                'For Third Applicant', applicants, 2),
-                          if (widget.myTabController.numberOfPersons > 3)
-                            affirmationsection(
-                                'For Fourth Applicant', applicants, 4),
-                          SizedBox(height: 40),
-                          /*  Text(
-                  'Supporting Documentation Submitted, loadndetails are advised to attach the following documents',
-                  style: GoogleFonts.dmSans(
-                      color: blackfont,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500),
-                ),*/
-                          // DocumentTable(),
                         ],
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * .48,
-                          child: ElevatedButton(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all(buttondarkbg),
-                                  padding: MaterialStateProperty.all(
-                                      EdgeInsets.all(15))),
-                              onPressed: () {
-                                myTabController.loanDetails = loadndetails;
-                                //printApplicantDetails();
-                                if (widget._tabController.index <
-                                    widget._tabController.length - 1) {
-                                  widget._tabController.animateTo(
-                                      widget._tabController.index - 1);
-                                } else {
-                                  // Handle the case when the last tab is reached
-                                }
-                                //widget.myTabController.updateNumberOfPersons(numberOfPersons);
-                                //  DefaultTabController.of(context)?.animateTo(1);
-                                // if (_formKey.currentState!.validate()) {
-                                //   // Form is valid, move to the next section
-
-                                // }
-                              },
-                              child: CustomText(
-                                text: 'Previous',
-                                color: whitefont,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                              )),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * .48,
-                          child: ElevatedButton(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all(primary),
-                                  padding: MaterialStateProperty.all(
-                                      EdgeInsets.all(15))),
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  if (validateTenure(loadndetails)) {
-                                    myTabController.loanDetails = loadndetails;
-                                    //printApplicantDetails();
-                                    if (widget._tabController.index <
-                                        widget._tabController.length - 1) {
-                                      widget._tabController.animateTo(
-                                          widget._tabController.index + 1);
-                                    } else {
-                                      // Handle the case when the last tab is reached
-                                    }
-                                  } else {
-                                    warning('Select Tenure');
-                                  }
-                                }
-
-                                //widget.myTabController.updateNumberOfPersons(numberOfPersons);
-                                //  DefaultTabController.of(context)?.animateTo(1);
-                                // if (_formKey.currentState!.validate()) {
-                                //   // Form is valid, move to the next section
-
-                                // }
-                              },
-                              child: CustomText(
-                                text: 'Next',
-                                color: whitefont,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                              )),
-                        ),
-                      ],
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

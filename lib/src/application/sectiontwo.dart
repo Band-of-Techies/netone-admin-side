@@ -203,75 +203,82 @@ class _SectionTwoState extends State<SectionTwo>
               padding: EdgeInsets.all(20),
               child: Form(
                 key: _formKey,
-                child: ListView(
-                  children: [
-                    CustomText(
-                      text: 'Employment Details',
-                      color: AppColors.mainbackground,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    employmentDetails('Applicant 1', applicantDetailsLists[0]),
-                    if (numberOfPersons > 1)
+                child: RawScrollbar(
+                  thumbVisibility: true,
+                  thumbColor: AppColors.mainColor,
+                  radius: Radius.circular(20),
+                  thickness: 5,
+                  child: ListView(
+                    children: [
+                      CustomText(
+                        text: 'Employment Details',
+                        color: AppColors.mainbackground,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
                       employmentDetails(
-                          'Applicant 2', applicantDetailsLists[1]),
-                    if (numberOfPersons > 2)
-                      employmentDetails(
-                          'Applicant 3', applicantDetailsLists[2]),
-                    if (numberOfPersons > 3)
-                      employmentDetails(
-                          'Applicant 4', applicantDetailsLists[3]),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    CustomText(
-                      text: 'Next of Kin Information',
-                      color: AppColors.neutral,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    kinInformation('Applicant 1', applicantDetailsLists[0]),
-                    if (numberOfPersons > 1)
-                      kinInformation('Applicant 2', applicantDetailsLists[1]),
-                    if (numberOfPersons > 2)
-                      kinInformation('Applicant 3', applicantDetailsLists[2]),
-                    if (numberOfPersons > 3)
-                      kinInformation('Applicant 4', applicantDetailsLists[3]),
-                    SizedBox(
-                      child: ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  AppColors.mainColor),
-                              padding: MaterialStateProperty.all(
-                                  EdgeInsets.all(15))),
-                          onPressed: () {
-                            updateData(widget.id!, myTabController,
-                                loanDetail.applicantCount);
-                            //widget.myTabController.updateNumberOfPersons(numberOfPersons);
-                            //  DefaultTabController.of(context)?.animateTo(1);
-                            if (_formKey.currentState!.validate()) {
-                              // Form is valid, move to the next section
-                              myTabController.employmentDetailsList =
-                                  applicantDetailsLists;
-                              myTabController.updateEMplymentandKlin(
-                                  applicantDetailsLists);
-                              // printApplicantDetails();
-                            }
-                          },
-                          child: CustomText(
-                            text: 'Update',
-                            color: AppColors.neutral,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          )),
-                    ),
-                  ],
+                          'Applicant 1', applicantDetailsLists[0]),
+                      if (numberOfPersons > 1)
+                        employmentDetails(
+                            'Applicant 2', applicantDetailsLists[1]),
+                      if (numberOfPersons > 2)
+                        employmentDetails(
+                            'Applicant 3', applicantDetailsLists[2]),
+                      if (numberOfPersons > 3)
+                        employmentDetails(
+                            'Applicant 4', applicantDetailsLists[3]),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      CustomText(
+                        text: 'Next of Kin Information',
+                        color: AppColors.neutral,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      kinInformation('Applicant 1', applicantDetailsLists[0]),
+                      if (numberOfPersons > 1)
+                        kinInformation('Applicant 2', applicantDetailsLists[1]),
+                      if (numberOfPersons > 2)
+                        kinInformation('Applicant 3', applicantDetailsLists[2]),
+                      if (numberOfPersons > 3)
+                        kinInformation('Applicant 4', applicantDetailsLists[3]),
+                      SizedBox(
+                        child: ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    AppColors.mainColor),
+                                padding: MaterialStateProperty.all(
+                                    EdgeInsets.all(15))),
+                            onPressed: () {
+                              updateData(widget.id!, myTabController,
+                                  loanDetail.applicantCount);
+                              //widget.myTabController.updateNumberOfPersons(numberOfPersons);
+                              //  DefaultTabController.of(context)?.animateTo(1);
+                              if (_formKey.currentState!.validate()) {
+                                // Form is valid, move to the next section
+                                myTabController.employmentDetailsList =
+                                    applicantDetailsLists;
+                                myTabController.updateEMplymentandKlin(
+                                    applicantDetailsLists);
+                                // printApplicantDetails();
+                              }
+                            },
+                            child: CustomText(
+                              text: 'Update',
+                              color: AppColors.neutral,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            )),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             )

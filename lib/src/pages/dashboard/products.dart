@@ -249,8 +249,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
                       runSpacing: 8.0, // Adjust the spacing between lines
                       children: [
                         for (int i = 0; i < cats.length; i++)
-                          buildCheckBox(
-                              cats[i]['id'], cats[i]['name'], i, setState),
+                          buildCheckBox(i, cats[i]['name'], i, setState),
                       ],
                     ),
                     SizedBox(

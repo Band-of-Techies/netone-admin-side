@@ -210,166 +210,173 @@ class _ViewApplicationState extends State<ViewApplication> {
             backgroundColor: AppColors.mainbackground,
             body: Padding(
               padding: EdgeInsets.all(20),
-              child: ListView(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .3,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            CustomText(
-                              text: 'Form ID: ${loanDetail.id}',
-                              color: AppColors.neutral,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            CustomText(
-                              text: 'Assigned to: ${loanDetail.agent.name}',
-                              color: AppColors.neutral,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ],
+              child: RawScrollbar(
+                thumbVisibility: true,
+                thumbColor: AppColors.mainColor,
+                radius: Radius.circular(20),
+                thickness: 5,
+                child: ListView(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * .3,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              CustomText(
+                                text: 'Form ID: ${loanDetail.id}',
+                                color: AppColors.neutral,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              CustomText(
+                                text: 'Assigned to: ${loanDetail.agent.name}',
+                                color: AppColors.neutral,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .3,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CustomText(
-                              text:
-                                  'Applicant: ${loanDetail.applicants[0].surname}',
-                              color: AppColors.neutral,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            CustomText(
-                              text:
-                                  'Joint Application: ${loanDetail.applicantCount > 1 ? 'Yes : ${loanDetail.applicantCount}' : 'No'}',
-                              color: AppColors.neutral,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ],
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * .3,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CustomText(
+                                text:
+                                    'Applicant: ${loanDetail.applicants[0].surname}',
+                                color: AppColors.neutral,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              CustomText(
+                                text:
+                                    'Joint Application: ${loanDetail.applicantCount > 1 ? 'Yes : ${loanDetail.applicantCount}' : 'No'}',
+                                color: AppColors.neutral,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .3,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            CustomText(
-                              text: 'Date: ${formatDate(loanDetail.createdAt)}',
-                              color: AppColors.neutral,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            CustomText(
-                              text:
-                                  'Last Updated: ${formatDate(loanDetail.updatedAt)}',
-                              color: AppColors.neutral,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  CustomText(
-                    text: 'Part 1',
-                    color: AppColors.neutral,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  CustomText(
-                    text: 'Applicant Details',
-                    color: AppColors.neutral,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  for (int i = 0; i < loanDetail.applicants.length; i++)
-                    applicantDetails(i, i),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * .3,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              CustomText(
+                                text:
+                                    'Date: ${formatDate(loanDetail.createdAt)}',
+                                color: AppColors.neutral,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              CustomText(
+                                text:
+                                    'Last Updated: ${formatDate(loanDetail.updatedAt)}',
+                                color: AppColors.neutral,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    CustomText(
+                      text: 'Part 1',
+                      color: AppColors.neutral,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    CustomText(
+                      text: 'Applicant Details',
+                      color: AppColors.neutral,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    for (int i = 0; i < loanDetail.applicants.length; i++)
+                      applicantDetails(i, i),
 
-                  // Display other details as needed
+                    // Display other details as needed
 
-                  // Display details from Section Two
-                  CustomText(
-                    text: 'Part 2',
-                    color: AppColors.neutral,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  CustomText(
-                    text: 'Employment Details',
-                    color: AppColors.neutral,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  for (int i = 0; i < loanDetail.applicants.length; i++)
-                    employmentDetals(i, i),
-                  for (int i = 0; i < loanDetail.applicants.length; i++)
-                    employmentKinDetals(i, i),
-                  CustomText(
-                    text: 'Part 3',
-                    color: AppColors.neutral,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  CustomText(
-                    text: 'Loan Details',
-                    color: AppColors.neutral,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  loanDetails(),
-                  SizedBox(
-                    height: 20,
-                  ),
+                    // Display details from Section Two
+                    CustomText(
+                      text: 'Part 2',
+                      color: AppColors.neutral,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    CustomText(
+                      text: 'Employment Details',
+                      color: AppColors.neutral,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    for (int i = 0; i < loanDetail.applicants.length; i++)
+                      employmentDetals(i, i),
+                    for (int i = 0; i < loanDetail.applicants.length; i++)
+                      employmentKinDetals(i, i),
+                    CustomText(
+                      text: 'Part 3',
+                      color: AppColors.neutral,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    CustomText(
+                      text: 'Loan Details',
+                      color: AppColors.neutral,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    loanDetails(),
+                    SizedBox(
+                      height: 20,
+                    ),
 
-                  for (int i = 0; i < loanDetail.applicants.length; i++)
-                    applicantDocuments(i, i),
-                  if (loanDetail.documents.isNotEmpty) additonalDocumnets(),
-                  if (loanDetail.orderdocuments.isNotEmpty) orderDocumnets()
-                ],
+                    for (int i = 0; i < loanDetail.applicants.length; i++)
+                      applicantDocuments(i, i),
+                    if (loanDetail.documents.isNotEmpty) additonalDocumnets(),
+                    if (loanDetail.orderdocuments.isNotEmpty) orderDocumnets()
+                  ],
+                ),
               ),
             ),
           )

@@ -17,6 +17,12 @@ class LoanDetails {
   TextEditingController thirdapplicant = TextEditingController();
   TextEditingController fourthapplicant = TextEditingController();
   dynamic productid;
+  List<int> chosenProductIds = [];
+  List<int> quantity = [];
+  List<String> chosenProductNames = [];
+  double? totalcost = 0;
+  List<double> chosenProductPrice = [];
+  String? loancategory;
   void dispose() {
     descriptionController.dispose();
     costofasset.dispose();

@@ -24,8 +24,11 @@ class LoanRequestDetails {
   final List<Document> documents;
   final List<Document> orderdocuments;
   final List<RequestedProduct> requestedProducts;
+  final Category category;
+  final dynamic original_total_cost;
 
   LoanRequestDetails({
+    required this.original_total_cost,
     required this.requestedProducts,
     required this.orderdocuments,
     required this.requestnumber,
@@ -51,6 +54,7 @@ class LoanRequestDetails {
     required this.applicants,
     required this.applicantCount,
     required this.agent,
+    required this.category,
   });
 
   factory LoanRequestDetails.fromJson(Map<String, dynamic> json) {
@@ -67,6 +71,7 @@ class LoanRequestDetails {
             .toList();
     return LoanRequestDetails(
       orderdocuments: orderdocuments,
+      original_total_cost: json["original_total_cost"] ?? "NA",
       documents: documents,
       id: json['id'] ?? "NA",
       requestnumber: json['request_number'] ?? "NA",
@@ -96,6 +101,7 @@ class LoanRequestDetails {
           )
           .toList(),
       applicantCount: json['applicant_count'] ?? "NA",
+      category: Category.fromJson(json['category'] ?? {}),
     );
   }
 }
@@ -382,6 +388,23 @@ class RequestedProduct {
       productId: json['product_id'] ?? "NA",
       productName: json['product_name'] ?? "NA",
       productDescription: json['product_description'] ?? "NA",
+    );
+  }
+}
+
+class Category {
+  final dynamic id;
+  final String name;
+
+  Category({
+    required this.id,
+    required this.name,
+  });
+
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
+      id: json['id'] ?? "NA",
+      name: json['name'] ?? "NA",
     );
   }
 }

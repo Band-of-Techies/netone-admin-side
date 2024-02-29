@@ -46,40 +46,46 @@ class _AssignToMeState extends State<AssignToMe> {
         ),
         body: isloading == false
             ? loanRequests!.isNotEmpty
-                ? ListView.builder(
-                    itemCount: loanRequests!.length,
-                    itemBuilder: (context, index) {
-                      return AssigntoMeCard(
-                        history: loanRequests![index].history,
-                        gender: loanRequests![index].gender,
-                        updateDataCallback: updateData,
-                        applicantCount: loanRequests![index].applicantCount,
-                        loanid: loanRequests![index].id,
+                ? RawScrollbar(
+                    thumbVisibility: true,
+                    thumbColor: AppColors.mainColor,
+                    radius: Radius.circular(20),
+                    thickness: 5,
+                    child: ListView.builder(
+                      itemCount: loanRequests!.length,
+                      itemBuilder: (context, index) {
+                        return AssigntoMeCard(
+                          history: loanRequests![index].history,
+                          gender: loanRequests![index].gender,
+                          updateDataCallback: updateData,
+                          applicantCount: loanRequests![index].applicantCount,
+                          loanid: loanRequests![index].id,
 
-                        functionstring: 'Select Agent',
-                        productname: loanRequests![index]
-                            .product
-                            .name, // Replace with actual product name from API if available
-                        amount: loanRequests![index].loanAmount,
-                        requestId: loanRequests![index]
-                            .id
-                            .toString(), // Assuming 'id' is unique for each request
-                        customerName: loanRequests![index].firstName,
-                        date: formatDate(loanRequests![index]
-                            .createdAt), // Replace with actual date from API if available
-                        isChecked: false, // Set your own logic for isChecked
-                        onCheckboxChanged: (value) {
-                          // Handle checkbox change, if needed
-                        },
+                          functionstring: 'Select Agent',
+                          productname: loanRequests![index]
+                              .product
+                              .name, // Replace with actual product name from API if available
+                          amount: loanRequests![index].loanAmount,
+                          requestId: loanRequests![index]
+                              .id
+                              .toString(), // Assuming 'id' is unique for each request
+                          customerName: loanRequests![index].firstName,
+                          date: formatDate(loanRequests![index]
+                              .createdAt), // Replace with actual date from API if available
+                          isChecked: false, // Set your own logic for isChecked
+                          onCheckboxChanged: (value) {
+                            // Handle checkbox change, if needed
+                          },
 
-                        onConfirm: () {
-                          // Handle confirmation
-                        },
-                        onVerticalMenuPressed: () {
-                          // Handle vertical menu press
-                        },
-                      );
-                    },
+                          onConfirm: () {
+                            // Handle confirmation
+                          },
+                          onVerticalMenuPressed: () {
+                            // Handle vertical menu press
+                          },
+                        );
+                      },
+                    ),
                   )
                 : Center(
                     child: CustomText(text: 'No Request Found'),

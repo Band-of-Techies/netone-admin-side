@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:netone_loanmanagement_admin/src/compontents/widgets.dart';
+import 'package:netone_loanmanagement_admin/src/createapplication/constants/colors.dart';
 import 'package:netone_loanmanagement_admin/src/createapplication/createapp.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/agents.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/assigntome.dart';
@@ -381,216 +382,230 @@ class _DashboardContentState extends State<DashboardContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: (role == 'Admin' && role != 'Agent')
-          ? IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MyApp()),
-                );
-              },
+      floatingActionButton: (role == 'Agent' && role != 'Admin')
+          ? CircleAvatar(
+              backgroundColor: primary,
+              child: IconButton(
+                icon: Icon(
+                  Icons.add,
+                  color: whitefont,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyApp()),
+                  );
+                },
+              ),
             )
           : SizedBox(),
       backgroundColor: AppColors.mainbackground,
-      body: ListView(children: [
-        Wrap(
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width * .35,
-              height: 300,
-              child: Row(
-                children: <Widget>[
-                  const SizedBox(
-                    height: 18,
-                  ),
-                  Expanded(
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: PieChart(
-                        PieChartData(
-                          pieTouchData: PieTouchData(
-                            touchCallback:
-                                (FlTouchEvent event, pieTouchResponse) {
-                              setState(() {
-                                if (!event.isInterestedForInteractions ||
-                                    pieTouchResponse == null ||
-                                    pieTouchResponse.touchedSection == null) {
-                                  touchedIndex = -1;
-                                  return;
-                                }
-                                touchedIndex = pieTouchResponse
-                                    .touchedSection!.touchedSectionIndex;
-                              });
-                            },
-                          ),
-                          borderData: FlBorderData(
-                            show: false,
-                          ),
-                          sectionsSpace: 0,
-                          centerSpaceRadius: 80,
-                          sections: showingSections(),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Indicator(
-                        color: AppColors.mainColor,
-                        text: 'First',
-                        isSquare: true,
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Indicator(
-                        color: AppColors.sidebarbackground,
-                        text: 'Second',
-                        isSquare: true,
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Indicator(
-                        color: AppColors.neutral,
-                        text: 'Third',
-                        isSquare: true,
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Indicator(
-                        color: AppColors.textLight,
-                        text: 'Fourth',
-                        isSquare: true,
-                      ),
-                      SizedBox(
-                        height: 18,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    width: 28,
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * .4,
-              height: 300,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: RawScrollbar(
+        thumbVisibility: true,
+        thumbColor: AppColors.mainColor,
+        radius: Radius.circular(20),
+        thickness: 5,
+        child: ListView(children: [
+          Wrap(
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * .35,
+                height: 300,
+                child: Row(
                   children: <Widget>[
                     const SizedBox(
-                      height: 38,
+                      height: 18,
                     ),
                     Expanded(
-                      child: BarChart(
-                        BarChartData(
-                          maxY: 20,
-                          barTouchData: BarTouchData(
-                            touchTooltipData: BarTouchTooltipData(
-                              tooltipBgColor: Colors.grey,
-                              getTooltipItem: (a, b, c, d) => null,
-                            ),
-                            touchCallback: (FlTouchEvent event, response) {
-                              if (response == null || response.spot == null) {
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: PieChart(
+                          PieChartData(
+                            pieTouchData: PieTouchData(
+                              touchCallback:
+                                  (FlTouchEvent event, pieTouchResponse) {
                                 setState(() {
-                                  touchedGroupIndex = -1;
-                                  showingBarGroups = List.of(rawBarGroups);
-                                });
-                                return;
-                              }
-
-                              touchedGroupIndex =
-                                  response.spot!.touchedBarGroupIndex;
-
-                              setState(() {
-                                if (!event.isInterestedForInteractions) {
-                                  touchedGroupIndex = -1;
-                                  showingBarGroups = List.of(rawBarGroups);
-                                  return;
-                                }
-                                showingBarGroups = List.of(rawBarGroups);
-                                if (touchedGroupIndex != -1) {
-                                  var sum = 0.0;
-                                  for (final rod
-                                      in showingBarGroups[touchedGroupIndex]
-                                          .barRods) {
-                                    sum += rod.toY;
+                                  if (!event.isInterestedForInteractions ||
+                                      pieTouchResponse == null ||
+                                      pieTouchResponse.touchedSection == null) {
+                                    touchedIndex = -1;
+                                    return;
                                   }
-                                  final avg = sum /
-                                      showingBarGroups[touchedGroupIndex]
-                                          .barRods
-                                          .length;
-
-                                  showingBarGroups[touchedGroupIndex] =
-                                      showingBarGroups[touchedGroupIndex]
-                                          .copyWith(
-                                    barRods: showingBarGroups[touchedGroupIndex]
-                                        .barRods
-                                        .map((rod) {
-                                      return rod.copyWith(
-                                          toY: avg, color: widget.avgColor);
-                                    }).toList(),
-                                  );
-                                }
-                              });
-                            },
+                                  touchedIndex = pieTouchResponse
+                                      .touchedSection!.touchedSectionIndex;
+                                });
+                              },
+                            ),
+                            borderData: FlBorderData(
+                              show: false,
+                            ),
+                            sectionsSpace: 0,
+                            centerSpaceRadius: 80,
+                            sections: showingSections(),
                           ),
-                          titlesData: FlTitlesData(
-                            show: true,
-                            rightTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            topTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            bottomTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                getTitlesWidget: bottomTitles,
-                                reservedSize: 42,
-                              ),
-                            ),
-                            leftTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                reservedSize: 28,
-                                interval: 1,
-                                getTitlesWidget: leftTitles,
-                              ),
-                            ),
-                          ),
-                          borderData: FlBorderData(
-                            show: false,
-                          ),
-                          barGroups: showingBarGroups,
-                          gridData: const FlGridData(show: false),
                         ),
                       ),
                     ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Indicator(
+                          color: AppColors.mainColor,
+                          text: 'First',
+                          isSquare: true,
+                        ),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Indicator(
+                          color: AppColors.sidebarbackground,
+                          text: 'Second',
+                          isSquare: true,
+                        ),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Indicator(
+                          color: AppColors.neutral,
+                          text: 'Third',
+                          isSquare: true,
+                        ),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Indicator(
+                          color: AppColors.textLight,
+                          text: 'Fourth',
+                          isSquare: true,
+                        ),
+                        SizedBox(
+                          height: 18,
+                        ),
+                      ],
+                    ),
                     const SizedBox(
-                      height: 12,
+                      width: 28,
                     ),
                   ],
                 ),
               ),
-            )
-          ],
-        ),
-      ]),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * .4,
+                height: 300,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      const SizedBox(
+                        height: 38,
+                      ),
+                      Expanded(
+                        child: BarChart(
+                          BarChartData(
+                            maxY: 20,
+                            barTouchData: BarTouchData(
+                              touchTooltipData: BarTouchTooltipData(
+                                tooltipBgColor: Colors.grey,
+                                getTooltipItem: (a, b, c, d) => null,
+                              ),
+                              touchCallback: (FlTouchEvent event, response) {
+                                if (response == null || response.spot == null) {
+                                  setState(() {
+                                    touchedGroupIndex = -1;
+                                    showingBarGroups = List.of(rawBarGroups);
+                                  });
+                                  return;
+                                }
+
+                                touchedGroupIndex =
+                                    response.spot!.touchedBarGroupIndex;
+
+                                setState(() {
+                                  if (!event.isInterestedForInteractions) {
+                                    touchedGroupIndex = -1;
+                                    showingBarGroups = List.of(rawBarGroups);
+                                    return;
+                                  }
+                                  showingBarGroups = List.of(rawBarGroups);
+                                  if (touchedGroupIndex != -1) {
+                                    var sum = 0.0;
+                                    for (final rod
+                                        in showingBarGroups[touchedGroupIndex]
+                                            .barRods) {
+                                      sum += rod.toY;
+                                    }
+                                    final avg = sum /
+                                        showingBarGroups[touchedGroupIndex]
+                                            .barRods
+                                            .length;
+
+                                    showingBarGroups[touchedGroupIndex] =
+                                        showingBarGroups[touchedGroupIndex]
+                                            .copyWith(
+                                      barRods:
+                                          showingBarGroups[touchedGroupIndex]
+                                              .barRods
+                                              .map((rod) {
+                                        return rod.copyWith(
+                                            toY: avg, color: widget.avgColor);
+                                      }).toList(),
+                                    );
+                                  }
+                                });
+                              },
+                            ),
+                            titlesData: FlTitlesData(
+                              show: true,
+                              rightTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              topTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              bottomTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  getTitlesWidget: bottomTitles,
+                                  reservedSize: 42,
+                                ),
+                              ),
+                              leftTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  reservedSize: 28,
+                                  interval: 1,
+                                  getTitlesWidget: leftTitles,
+                                ),
+                              ),
+                            ),
+                            borderData: FlBorderData(
+                              show: false,
+                            ),
+                            barGroups: showingBarGroups,
+                            gridData: const FlGridData(show: false),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ]),
+      ),
     );
   }
 
   @override
   void initState() {
     super.initState();
+    gettokens();
     final barGroup1 = makeGroupData(0, 5, 12);
     final barGroup2 = makeGroupData(1, 16, 12);
     final barGroup3 = makeGroupData(2, 18, 5);

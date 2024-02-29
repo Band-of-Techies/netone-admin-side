@@ -39,11 +39,15 @@ class WonsButton extends StatelessWidget {
             onSurface: color ?? AppColors.background,
             elevation: 0.0,
             shadowColor: Colors.transparent,
-            padding: EdgeInsets.symmetric(vertical: verticalPadding ?? 15, horizontal: horizontalPadding ?? 0),
+            padding: EdgeInsets.symmetric(
+                vertical: verticalPadding ?? 15,
+                horizontal: horizontalPadding ?? 0),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius ?? 10),
               side: BorderSide(
-                  color: onPressed == null ? Colors.transparent : borderColor ?? color ?? AppColors.background),
+                  color: onPressed == null
+                      ? Colors.transparent
+                      : borderColor ?? color ?? AppColors.background),
             ),
             minimumSize: Size(width, height)),
         child: text != null ? Text(text!, style: buttonTextStyle()) : child);
@@ -59,8 +63,3 @@ class WonsButton extends StatelessWidget {
     );
   }
 }
-
-Widget visibilityToggle(Function? onToggle, bool _isHidden) => InkWell(
-      onTap: onToggle != null ? () => onToggle() : null,
-      child: Icon(_isHidden ? Icons.visibility : Icons.visibility_off, color: AppColors.primary),
-    );

@@ -204,50 +204,56 @@ class _SectionOneState extends State<SectionOne>
               padding: const EdgeInsets.all(20.0),
               child: Form(
                 key: _formKey,
-                child: ListView(
-                  children: [
-                    applicantDetails(1, applicants[0]),
-                    if (widget.myTabController.numberOfPersons > 1)
-                      applicantDetails(2, applicants[1]),
-                    if (widget.myTabController.numberOfPersons > 2)
-                      applicantDetails(3, applicants[2]),
-                    if (widget.myTabController.numberOfPersons > 3)
-                      applicantDetails(4, applicants[3]),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(AppColors.mainColor),
-                            padding:
-                                MaterialStateProperty.all(EdgeInsets.all(15))),
-                        onPressed: () {
-                          print(myTabController
-                              .applicants[0].surnameController.text);
-                          updateData(widget.id!, myTabController,
-                              loanDetail.applicantCount);
-                          /*  if (_formKey.currentState!.validate()) {
-                            // Form is valid, move to the next section
-                            if (validateGender(applicants) &&
-                                validateOwnership(applicants)) {
-                              //printApplicantDetails();
-
-                               
-                              print('update');
-                            } else {
-                              warning('Complete Gender and Ownership');
-                              // Handle the case when the last tab is reached
-                            }
-                          }*/
-                        },
-                        child: CustomText(
-                          text: 'Update',
-                          color: AppColors.neutral,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        )),
-                  ],
+                child: RawScrollbar(
+                  thumbVisibility: true,
+                  thumbColor: AppColors.mainColor,
+                  radius: Radius.circular(20),
+                  thickness: 5,
+                  child: ListView(
+                    children: [
+                      applicantDetails(1, applicants[0]),
+                      if (widget.myTabController.numberOfPersons > 1)
+                        applicantDetails(2, applicants[1]),
+                      if (widget.myTabController.numberOfPersons > 2)
+                        applicantDetails(3, applicants[2]),
+                      if (widget.myTabController.numberOfPersons > 3)
+                        applicantDetails(4, applicants[3]),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  AppColors.mainColor),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.all(15))),
+                          onPressed: () {
+                            print(myTabController
+                                .applicants[0].surnameController.text);
+                            updateData(widget.id!, myTabController,
+                                loanDetail.applicantCount);
+                            /*  if (_formKey.currentState!.validate()) {
+                              // Form is valid, move to the next section
+                              if (validateGender(applicants) &&
+                                  validateOwnership(applicants)) {
+                                //printApplicantDetails();
+                  
+                                 
+                                print('update');
+                              } else {
+                                warning('Complete Gender and Ownership');
+                                // Handle the case when the last tab is reached
+                              }
+                            }*/
+                          },
+                          child: CustomText(
+                            text: 'Update',
+                            color: AppColors.neutral,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          )),
+                    ],
+                  ),
                 ),
               ),
             )

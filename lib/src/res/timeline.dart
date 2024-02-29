@@ -53,61 +53,67 @@ class Timeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: padding,
-      separatorBuilder: (_, __) => SizedBox(height: itemGap),
-      physics: physics,
-      shrinkWrap: shrinkWrap,
-      itemCount: itemCount,
-      controller: controller,
-      reverse: reverse,
-      primary: primary,
-      itemBuilder: (context, index) {
-        final child = children[index];
-        final _indicators = indicators;
+    return RawScrollbar(
+      thumbVisibility: true,
+      thumbColor: AppColors.mainColor,
+      radius: Radius.circular(20),
+      thickness: 5,
+      child: ListView.separated(
+        padding: padding,
+        separatorBuilder: (_, __) => SizedBox(height: itemGap),
+        physics: physics,
+        shrinkWrap: shrinkWrap,
+        itemCount: itemCount,
+        controller: controller,
+        reverse: reverse,
+        primary: primary,
+        itemBuilder: (context, index) {
+          final child = children[index];
+          final _indicators = indicators;
 
-        Widget? indicator;
-        if (_indicators != null) {
-          indicator = _indicators[index];
-        }
+          Widget? indicator;
+          if (_indicators != null) {
+            indicator = _indicators[index];
+          }
 
-        final isFirst = index == 0;
-        final isLast = index == itemCount - 1;
+          final isFirst = index == 0;
+          final isLast = index == itemCount - 1;
 
-        final timelineTile = <Widget>[
-          CustomPaint(
-            foregroundPainter: _TimelinePainter(
-              hideDefaultIndicator: indicator != null,
-              lineColor: lineColor,
-              indicatorColor: indicatorColor,
-              indicatorSize: indicatorSize,
-              indicatorStyle: indicatorStyle,
-              isFirst: isFirst,
-              isLast: isLast,
-              lineGap: lineGap,
-              strokeCap: strokeCap,
-              strokeWidth: strokeWidth,
-              style: style,
-              itemGap: itemGap,
+          final timelineTile = <Widget>[
+            CustomPaint(
+              foregroundPainter: _TimelinePainter(
+                hideDefaultIndicator: indicator != null,
+                lineColor: lineColor,
+                indicatorColor: indicatorColor,
+                indicatorSize: indicatorSize,
+                indicatorStyle: indicatorStyle,
+                isFirst: isFirst,
+                isLast: isLast,
+                lineGap: lineGap,
+                strokeCap: strokeCap,
+                strokeWidth: strokeWidth,
+                style: style,
+                itemGap: itemGap,
+              ),
+              child: SizedBox(
+                height: double.infinity,
+                width: indicatorSize,
+                child: indicator,
+              ),
             ),
-            child: SizedBox(
-              height: double.infinity,
-              width: indicatorSize,
-              child: indicator,
-            ),
-          ),
-          SizedBox(width: gutterSpacing),
-          Expanded(child: child),
-        ];
+            SizedBox(width: gutterSpacing),
+            Expanded(child: child),
+          ];
 
-        return IntrinsicHeight(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children:
-                isLeftAligned ? timelineTile : timelineTile.reversed.toList(),
-          ),
-        );
-      },
+          return IntrinsicHeight(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children:
+                  isLeftAligned ? timelineTile : timelineTile.reversed.toList(),
+            ),
+          );
+        },
+      ),
     );
   }
 }

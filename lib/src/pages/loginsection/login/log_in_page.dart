@@ -44,6 +44,8 @@ class _FormSectionState extends State<_FormSection> {
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
   bool rememberMe = false;
+  bool _isHidden = true; // Add this variable to your widget state
+  bool isloading = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -72,13 +74,13 @@ class _FormSectionState extends State<_FormSection> {
           const Align(
             alignment: Alignment.centerLeft,
             child: CustomText(
-              text: 'Username',
+              text: 'Email',
               fontSize: 16,
             ),
           ),
           const SizedBox(height: 9),
           InputText(
-            labelText: "Username",
+            labelText: "Email",
             keyboardType: TextInputType.visiblePassword,
             controller: username,
             onChanged: (value) {},
@@ -103,45 +105,19 @@ class _FormSectionState extends State<_FormSection> {
             onChanged: (value) {},
             onSaved: (val) {},
             textInputAction: TextInputAction.done,
-            isPassword: true,
+            isPassword: _isHidden,
             enabled: true,
-            suffixIcon: visibilityToggle(togglePasswordVisibility, true),
+            suffixIcon: visibilityToggle(togglePasswordVisibility),
           ),
           const SizedBox(height: 25),
-          Row(
-            children: [
-              SizedBox(
-                  width: 20,
-                  child: Theme(
-                      data: ThemeData(unselectedWidgetColor: AppColors.neutral),
-                      child: Checkbox(
-                        activeColor: AppColors.mainColor,
-                        value: rememberMe,
-                        onChanged: (newValue) {
-                          setState(() {
-                            rememberMe = newValue ?? false;
-                          });
-                        },
-                      ))),
-              const SizedBox(width: 10),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: CustomText(
-                  text: 'Remember Me',
-                  fontSize: 16,
-                ),
-              ),
-              const Spacer(),
-            ],
-          ),
           const SizedBox(height: 40),
           WonsButton(
             height: 50,
             width: 348,
             verticalPadding: 0,
             color: AppColors.primary,
-            child: const CustomText(
-              text: 'Login',
+            child: CustomText(
+              text: isloading == true ? 'Loading' : 'Login',
               fontSize: 18,
               fontWeight: FontWeight.w700,
             ),
@@ -155,8 +131,22 @@ class _FormSectionState extends State<_FormSection> {
     );
   }
 
-  togglePasswordVisibility() {}
+  void togglePasswordVisibility() {
+    setState(() {
+      _isHidden = !_isHidden;
+    });
+  }
+
+  Widget visibilityToggle(Function? onToggle) => InkWell(
+        onTap: onToggle != null ? () => onToggle() : null,
+        child: Icon(_isHidden ? Icons.visibility : Icons.visibility_off,
+            color: AppColors.primary),
+      );
+
   Future<void> loginUser(String email, String password) async {
+    setState(() {
+      isloading = true;
+    });
     try {
       final response = await Dio().post(
         'https://loan-managment.onrender.com/users/sign_in',
@@ -173,12 +163,17 @@ class _FormSectionState extends State<_FormSection> {
         await prefs.setString('token', response.data['token']);
         await prefs.setString('email', email);
         await prefs.setString('role', response.data['role']);
-
+        setState(() {
+          isloading = false;
+        });
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => DashboardScreen()),
         );
       } else {
+        setState(() {
+          isloading = false;
+        });
         warning('Invalid Username or password');
         // Handle other status codes or error responses
         // print('Login failed: ${response.statusCode}');
@@ -188,6 +183,7 @@ class _FormSectionState extends State<_FormSection> {
     } catch (error) {
       // Handle network errors or exceptions
       print('Error: $error');
+      warning('Invalid Username or password');
       // You might want to show an error message to the user
     }
   }

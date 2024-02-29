@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, use_key_in_widget_constructors, sort_child_properties_last
-
-import 'dart:convert';
+/*
 import 'dart:io';
 import 'dart:js' as js;
 import 'dart:typed_data';
@@ -52,13 +51,6 @@ class _SectionThreeState extends State<SectionThree>
   String? categoryId; // Define categoryId as a String variable
   String? prodcutname;
   String? productid;
-  List<int> chosenids = [];
-  List<int> chosenProductIds = [];
-  List<String> chosenProductNames = [];
-  double? totalcost = 0;
-  List<double> chosenProductPrice = [];
-  String? loancategory;
-
   List<String> tenureOptions = [
     '3 months',
     '6 months',
@@ -78,7 +70,7 @@ class _SectionThreeState extends State<SectionThree>
     applicants = myTabController.applicants;
     return Scaffold(
       backgroundColor: AppColors.mainbackground,
-      body: isloadiing == true
+      body: (products.isEmpty || products == null) && isloadiing == false
           ? Center(
               child: CircularProgressIndicator(color: AppColors.mainColor),
             )
@@ -159,79 +151,28 @@ class _SectionThreeState extends State<SectionThree>
   @override
   void initState() {
     super.initState();
-    fetchCategories();
+    fetchProducts();
     fetchData(widget.id);
   }
 
-  void fetchCategories() async {
-    final String apiUrl = 'https://loan-managment.onrender.com/categories';
+  void fetchProducts() async {
+    final String apiUrl = 'https://loan-managment.onrender.com/products';
 
     try {
       final dio = Dio();
       final response = await dio.get(
         apiUrl,
-        options: Options(headers: {
-          // Add any custom headers if needed
-
-          // Add CORS headers to the request
-          'Access-Control-Allow-Origin': '*', // Or specify a specific origin
-          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-          'Access-Control-Allow-Headers':
-              'Origin, Content-Type, Accept, Authorization, X-Requested-With',
-        }),
+        options: Options(),
       );
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = response.data;
 
         setState(() {
-          categories =
-              responseData.map((data) => Categories.fromJson(data)).toList();
+          products =
+              responseData.map((data) => ProductList.fromJson(data)).toList();
         });
         ;
-      } else {
-        // Handle error, show a message, or perform other actions on failure
-        print(
-            'Failed to fetch categories. Status code: ${response.statusCode}');
-      }
-    } catch (error) {
-      // Handle exceptions
-      print('Error during API call: $error');
-    }
-  }
-
-  void fetchProducts(String id) async {
-    final String apiUrl =
-        'https://loan-managment.onrender.com/products?category_id=$id';
-
-    try {
-      final dio = Dio();
-      final response = await dio.get(
-        apiUrl,
-        options: Options(headers: {
-          // Add any custom headers if needed
-          // Add CORS headers to the request
-          'Access-Control-Allow-Origin': '*', // Or specify a specific origin
-          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-          'Access-Control-Allow-Headers':
-              'Origin, Content-Type, Accept, Authorization, X-Requested-With',
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = response.data;
-        print(response.data);
-
-        // Parse the list of products
-        List<ProductList> parsedProducts = [];
-
-        for (var item in responseData) {
-          parsedProducts.add(ProductList.fromJson(item));
-        }
-
-        setState(() {
-          products = parsedProducts;
-        });
       } else {
         // Handle error, show a message, or perform other actions on failure
         print('Failed to fetch products. Status code: ${response.statusCode}');
@@ -268,36 +209,22 @@ class _SectionThreeState extends State<SectionThree>
         setState(() {
           // Move this block here
           this.loanDetail = loanDetail;
-          for (int j = 0; j < loanDetail.requestedProducts.length; j++) {
-            if (!loadndetails.chosenProductIds
-                .contains(loanDetail.requestedProducts[j].productId)) {
-              loadndetails.chosenProductNames
-                  .add(loanDetail.requestedProducts[j].productName);
+          for (int j = 0; j < response.data['requested_products'].length; j++) {
+            loadndetails.chosenProductNames
+                .add(response.data['requested_products'][j]['product_name']);
 
-              loadndetails.chosenProductIds
-                  .add(loanDetail.requestedProducts[j].productId);
+            loadndetails.chosenProductIds
+                .add(response.data['requested_products'][j]['product_id']);
 
-              loadndetails.quantity
-                  .add(loanDetail.requestedProducts[j].quantity);
-            }
-            if (!chosenProductIds
-                .contains(loanDetail.requestedProducts[j].productId)) {
-              chosenProductNames
-                  .add((loanDetail.requestedProducts[j].productName));
-              chosenids.add(loanDetail.requestedProducts[j].id);
-              chosenProductIds.add(loanDetail.requestedProducts[j].productId);
-              quantity.add(loanDetail.requestedProducts[j].quantity);
-            }
+            loadndetails.quantity
+                .add(response.data['requested_products'][j]['quantity']);
+            loadndetails.costofasset.text = loanDetail.costOfAsset;
+            loadndetails.insurancecost.text = loanDetail.insuranceCost;
+            loadndetails.advancepayment.text = loanDetail.advancePayment;
+            loadndetails.loanamaountapplied.text = loanDetail.loanAmount;
+            loadndetails.tenure = loanDetail.loanTenure;
+            loadndetails.descriptionController.text = loanDetail.description;
           }
-          loadndetails.loancategory = loanDetail.category.name;
-          loadndetails.totalcost = double.parse(loanDetail.original_total_cost);
-          totalcost = double.parse(loanDetail.original_total_cost);
-          loadndetails.costofasset.text = loanDetail.original_total_cost;
-          loadndetails.insurancecost.text = loanDetail.insuranceCost;
-          loadndetails.advancepayment.text = loanDetail.advancePayment;
-          loadndetails.loanamaountapplied.text = loanDetail.loanAmount;
-          loadndetails.tenure = loanDetail.loanTenure;
-          loadndetails.descriptionController.text = loanDetail.description;
           for (int i = 0; i < loanDetail.applicantCount; i++) {
             applicants[i].applicantid = loanDetail.applicants[i].id;
             applicants[i].loanapplicantname.text =
@@ -305,7 +232,6 @@ class _SectionThreeState extends State<SectionThree>
             applicants[i].loanapplicantpercentage.text =
                 loanDetail.applicants[i].loansharepercent;
           }
-          isloadiing = false;
         });
       } else {
         // Handle error response
@@ -328,11 +254,11 @@ class _SectionThreeState extends State<SectionThree>
         SizedBox(
           height: 10,
         ),
-        Column(
-          children: [
-            if (widget.myTabController.applicants[i].selectedFiles.isNotEmpty)
-              Container(
-                  child: Wrap(
+        if (widget.myTabController.applicants[i].selectedFiles.isNotEmpty)
+          Container(
+              width: MediaQuery.of(context).size.width * .7,
+              height: 120,
+              child: Row(
                 children: List.generate(
                   widget.myTabController.applicants[i].selectedFiles.length,
                   (index) {
@@ -472,79 +398,76 @@ class _SectionThreeState extends State<SectionThree>
                   },
                 ),
               )),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  'Add Files More Applicant ${i + 1}',
-                  style: GoogleFonts.dmSans(
-                      color: AppColors.neutral,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700),
-                ),
-                SizedBox(width: 30),
-                if (widget.myTabController.applicants[i].selectedFiles.length <
-                    10)
-                  Row(
-                    children: [
-                      ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(AppColors.mainColor),
-                            padding:
-                                MaterialStateProperty.all(EdgeInsets.all(15))),
-                        onPressed: () async {
-                          FilePickerResult? result =
-                              await FilePicker.platform.pickFiles(
-                            allowMultiple: false,
-                            type: FileType.custom,
-                            allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
-                          );
+        SizedBox(height: 20),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              'Add Files More Applicant ${i + 1}',
+              style: GoogleFonts.dmSans(
+                  color: AppColors.neutral,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700),
+            ),
+            SizedBox(width: 30),
+            if (widget.myTabController.applicants[i].selectedFiles.length < 3)
+              Row(
+                children: [
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(AppColors.mainColor),
+                        padding: MaterialStateProperty.all(EdgeInsets.all(15))),
+                    onPressed: () async {
+                      FilePickerResult? result =
+                          await FilePicker.platform.pickFiles(
+                        allowMultiple: false,
+                        type: FileType.custom,
+                        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+                      );
 
-                          if (result != null) {
-                            if (result.files.first.size > 1024 * 1024) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('The file size exceeds limit'),
-                                ),
-                              );
-                            } else {
-                              setState(() {
-                                widget
-                                    .myTabController.applicants[i].selectedFiles
-                                    .addAll(result.files
-                                        .map((file) => file.bytes!));
-                                widget.myTabController.applicants[i]
-                                    .selectedFilesnames
-                                    .addAll(
-                                        result.files.map((file) => file.name));
-                              });
-                            }
-                          }
-                        },
-                        child: Text(
-                          'Pick Files',
-                          style: GoogleFonts.dmSans(
-                              color: AppColors.neutral,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        '** Supported format: PDF or JPEG/PNG, (Max Size: 1MB per File)',
-                        style: GoogleFonts.dmSans(
-                            color: AppColors.neutral,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      /* if (widget
+                      if (result != null) {
+                        if (result.files.first.size > 1024 * 1024) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('The file size exceeds limit'),
+                            ),
+                          );
+                        } else {
+                          setState(() {
+                            widget.myTabController.applicants[i].selectedFiles
+                                .addAll(
+                                    result.files.map((file) => file.bytes!));
+                            widget.myTabController.applicants[i]
+                                .selectedFilesnames
+                                .addAll(result.files.map((file) => file.name));
+                          });
+                        }
+                      }
+                    },
+                    child: Text(
+                      'Pick Files',
+                      style: GoogleFonts.dmSans(
+                          color: AppColors.neutral,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text(
+                    '** Supported format: PDF or JPEG/PNG, (Max Size: 1MB per File)',
+                    style: GoogleFonts.dmSans(
+                        color: AppColors.neutral,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  /* if (widget
                       .myTabController.applicants[i].selectedFiles.isNotEmpty)
                     SizedBox(
                       child: ElevatedButton(
@@ -563,13 +486,10 @@ class _SectionThreeState extends State<SectionThree>
                             fontWeight: FontWeight.w700,
                           )),
                     ),*/
-                    ],
-                  ),
-              ],
-            ),
+                ],
+              ),
           ],
         ),
-        SizedBox(height: 20),
         SizedBox(
           height: 30,
         )
@@ -1049,7 +969,7 @@ class _SectionThreeState extends State<SectionThree>
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              'Loan Category Applied for : ${loadndetails.loancategory}',
+              'Loan Product Applied for :',
               style: GoogleFonts.dmSans(
                   color: AppColors.neutral,
                   fontSize: 14,
@@ -1062,238 +982,84 @@ class _SectionThreeState extends State<SectionThree>
         SizedBox(
           height: 20,
         ),
-        /* for (int i = 0; i < chosenProductIds.length; i++)
-          Column(
-            children: [
-              if (i < chosenProductNames.length)
-                Row(
-                  children: [
-                    Text(
-                      ' ${loadndetails.chosenProductNames[i]} - QTY: ${loadndetails.quantity[i]}',
-                      style: GoogleFonts.dmSans(
-                        color: AppColors.mainColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    IconButton(
-                        onPressed: () {
-                          showDeleteConfirmationDialog(context,
-                              loadndetails.chosenProductIds[i], widget.id!);
-                        },
-                        icon: Icon(
-                          Icons.delete,
-                          color: AppColors.primary,
-                        ))
-                  ],
-                ),
-            ],
-          ),*/
-        SizedBox(
-          height: 20,
-        ),
-        /* Row(
-          children: [
-            SizedBox(
-              width: 400,
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton2<Categories>(
-                  isExpanded: true,
-                  hint: Text(
-                    categoryName ?? 'Choose Category',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 15,
-                      color: AppColors.neutral,
-                      height: .5,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  items: categories.map((category) {
-                    return DropdownMenuItem(
-                      value: category,
-                      child: Text(
-                        category.name,
-                        style: GoogleFonts.dmSans(color: AppColors.mainColor),
-                      ),
-                    );
-                  }).toList(),
-                  value: categoryName != null
-                      ? categories.firstWhere(
-                          (element) => element.name == categoryName,
-                          orElse: () => categories.first,
-                        )
-                      : null,
-                  onChanged: (Categories? value) {
-                    setState(() {
-                      loancategory = value!.name;
-                      categoryName = value.name;
-                      categoryId = value.id.toString();
-                      fetchProducts(categoryId!);
-                      chosenProductIds = [];
-                      chosenProductNames = [];
-                      quantity = [];
-                    });
-                  },
-                  buttonStyleData: ButtonStyleData(
-                    decoration: BoxDecoration(
-                      color: AppColors.mainbackground,
-                      border: Border.all(
-                        color: categoryName == null ? Colors.red : Colors.grey,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 20,
-            ),
-            if (products.isNotEmpty)
-              SizedBox(
-                width: 400,
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton2<ProductList>(
-                    isExpanded: true,
-                    hint: Text(
-                      prodcutname ?? 'Choose Product',
-                      style: GoogleFonts.dmSans(
-                        fontSize: 15,
-                        color: AppColors.neutral,
-                        height: .5,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    items: products.map((product) {
-                      return DropdownMenuItem(
-                        value: product,
-                        child: Text(
-                          product.name,
-                          style: GoogleFonts.dmSans(color: AppColors.primary),
-                        ),
-                      );
-                    }).toList(),
-                    value: prodcutname != null
-                        ? products.firstWhere(
-                            (element) => element.name == prodcutname,
-                            orElse: () => products.first,
-                          )
-                        : null,
-                    onChanged: (ProductList? value) {
-                      setState(() {
-                        if (!chosenProductIds.contains(value!.id)) {
-                          chosenProductIds.add(value.id);
-                          chosenProductNames.add(value.name);
-                          quantity.add(1);
-                          chosenProductPrice.add(value.price);
-                          totalcost = totalcost! + value.price;
-                          loadndetails.costofasset.text = totalcost.toString();
-                        }
-                      });
-                    },
-                    buttonStyleData: ButtonStyleData(
-                      decoration: BoxDecoration(
-                        color: AppColors.mainbackground,
-                        border: Border.all(
-                          color:
-                              categoryName == null ? Colors.red : Colors.grey,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),*/
-        SizedBox(
-          height: 30,
-        ),
-        if (chosenProductIds.isNotEmpty)
-          for (int i = 0; i < chosenProductIds.length; i++)
+        if (loadndetails.chosenProductIds.isNotEmpty)
+          for (int i = 0; i < loadndetails.chosenProductIds.length; i++)
             Column(
               children: [
                 Row(
                   children: [
-                    Text(
-                      chosenProductNames[i],
-                      style: GoogleFonts.dmSans(
-                        color: AppColors.neutral,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
+                    if (i < loadndetails.chosenProductNames.length)
+                      Text(
+                        loadndetails.chosenProductNames[i],
+                        style: GoogleFonts.dmSans(
+                          color: AppColors.mainColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
                     SizedBox(width: 50),
-                    CircleAvatar(
-                      backgroundColor: AppColors.primary,
-                      child: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            if (quantity[i] > 1) {
-                              quantity[i] = quantity[i] - 1;
-                              print(quantity[i]);
-                              //  totalcost = totalcost! - chosenProductPrice[i];
-                              loadndetails.costofasset.text =
-                                  totalcost.toString();
-                              updateQuantity(widget.id!, quantity[i],
-                                  chosenProductIds[i], chosenids[i]);
-                            }
-                          });
-                        },
-                        icon: Icon(Icons.minimize_sharp),
+                    if (i < loadndetails.quantity.length)
+                      CircleAvatar(
+                        backgroundColor: AppColors.mainColor,
+                        child: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              if (loadndetails.quantity[i] > 1) {
+                                loadndetails.quantity[i]--;
+                                loadndetails.totalcost =
+                                    loadndetails.totalcost! -
+                                        loadndetails.chosenProductPrice[i];
+                                loadndetails.costofasset.text =
+                                    loadndetails.totalcost.toString();
+                              }
+                            });
+                          },
+                          icon: Icon(Icons.minimize_sharp),
+                        ),
                       ),
-                    ),
                     SizedBox(width: 20),
-                    Text(
-                      quantity[i].toString(),
-                      style: GoogleFonts.dmSans(
-                        color: AppColors.neutral,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
+                    if (i < loadndetails.quantity.length)
+                      Text(
+                        loadndetails.quantity[i].toString(),
+                        style: GoogleFonts.dmSans(
+                          color: AppColors.mainColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
                     SizedBox(width: 20),
-                    CircleAvatar(
-                      backgroundColor: AppColors.primary,
-                      child: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            if (quantity[i] < 10) {
-                              quantity[i] = quantity[i] + 1;
-
-                              //   totalcost = totalcost! + chosenProductPrice[i];
-                              loadndetails.costofasset.text =
-                                  totalcost.toString();
-                              updateQuantity(widget.id!, quantity[i],
-                                  chosenProductIds[i], chosenids[i]);
-                            }
-                          });
-                        },
-                        icon: Icon(Icons.add),
+                    if (i < loadndetails.quantity.length)
+                      CircleAvatar(
+                        backgroundColor: AppColors.mainColor,
+                        child: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              if (loadndetails.quantity[i] < 10) {
+                                loadndetails.quantity[i]++;
+                                loadndetails.totalcost =
+                                    loadndetails.totalcost! +
+                                        loadndetails.chosenProductPrice[i];
+                                loadndetails.costofasset.text =
+                                    loadndetails.totalcost.toString();
+                              }
+                            });
+                          },
+                          icon: Icon(Icons.add),
+                        ),
                       ),
-                    ),
                     SizedBox(width: 20),
                     IconButton(
                       onPressed: () {
-                        showDeleteConfirmationDialog(
-                            context, chosenids[i], widget.id!);
                         setState(() {
                           double approxcost =
-                              chosenProductPrice[i] * quantity[i];
+                              loadndetails.chosenProductPrice[i] *
+                                  loadndetails.quantity[i];
 
                           loadndetails.costofasset.text =
-                              (totalcost! - approxcost).toString();
-                          chosenProductNames.removeAt(i);
-                          quantity.removeAt(i);
-                          chosenProductIds.removeAt(i);
-                          chosenids.removeAt(i);
+                              (loadndetails.totalcost! - approxcost).toString();
+                          loadndetails.chosenProductNames.removeAt(i);
+                          loadndetails.quantity.removeAt(i);
+                          loadndetails.chosenProductIds.removeAt(i);
                         });
                       },
                       icon: Icon(Icons.delete),
@@ -1305,7 +1071,7 @@ class _SectionThreeState extends State<SectionThree>
         SizedBox(
           height: 40,
         ),
-        /*  if (prodicutid != null)
+        if (prodicutid != null)
           SizedBox(
             child: ElevatedButton(
                 style: ButtonStyle(
@@ -1324,7 +1090,7 @@ class _SectionThreeState extends State<SectionThree>
           ),
         SizedBox(
           height: 40,
-        ),*/
+        ),
         TextFormField(
           controller: loadndetails.descriptionController,
           decoration: InputDecoration(
@@ -1448,156 +1214,45 @@ class _SectionThreeState extends State<SectionThree>
     }
   }
 
-  Future<void> showDeleteConfirmationDialog(
-      BuildContext context, int productid, int loanid) async {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: AppColors.sidebarbackground,
-          title: CustomText(
-            text: 'Confirm Deletion',
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: AppColors.mainColor,
-          ),
-          content: CustomText(
-            text: 'Are you sure you want to delete this product?',
-            color: AppColors.neutral,
-          ),
-          actions: [
-            // Cancel Button
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: CustomText(
-                text: 'Cancel',
-                color: AppColors.neutral,
-              ),
-            ),
-            // Confirm Button
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-                // Call deleteData when confirmed
-                productDelete(loanid, productid);
-              },
-              child: CustomText(
-                text: 'Confirm',
-                color: AppColors.neutral,
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> productDelete(int id, int productid) async {
-    // Define the URL
+  Future<void> updateProduct(String id) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isloadiing = true;
       token = prefs.getString('token');
+      email = prefs.getString('email');
     });
-    String url = 'https://loan-managment.onrender.com/loan_requests/$id';
-
-    // Define the request body
-    Map<String, dynamic> requestBody = {
-      "loan_request": {
-        "loan_request_products_attributes": [
-          {"id": productid, "_destroy": true}
-        ]
-      }
-    };
-
-    // Convert the request body to a JSON string
-    String requestBodyJson = jsonEncode(requestBody);
-
-    // Set up the headers
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token', // Include the token in the header
-    };
+    final String apiUrl =
+        'https://loan-managment.onrender.com/loan_requests/${widget.id}';
 
     try {
-      // Send the POST request
-      final response = await http.patch(
-        Uri.parse(url),
-        headers: headers,
-        body: requestBodyJson,
-      );
+      var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
+      String accessToken = token!;
+      request.headers['Authorization'] = 'Bearer $accessToken';
+      request.fields['loan_request[product_id]'] = id;
 
-      // Check if the request was successful (status code 200)
-      if (response.statusCode == 200) {
-        print('DELETE request successful!');
-        print('Response body: ${response.body}');
+      var response = await request.send();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Request was successful
+        print('Form submitted successfully');
         setState(() {
           isloadiing = false;
         });
+        warning('Form Submitted');
         fetchData(widget.id);
+        //  clearAllFields();
       } else {
-        print(
-            'Failed to send DELETE request. Status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
+        // Request failed
+        print('Form submission failed with status: ${response.statusCode}');
         setState(() {
           isloadiing = false;
         });
+        warning('Error: Cannot Submit Form');
       }
     } catch (e) {
-      print('Error sending DELETE request: $e');
-    }
-  }
-
-  Future<void> updateQuantity(
-      int id, int quantity, int productId, int listId) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isloadiing = true;
-      token = prefs.getString('token');
-    });
-
-    String url = 'https://loan-managment.onrender.com/loan_requests/$id';
-
-    Map<String, dynamic> requestBody = {
-      "loan_request": {
-        "loan_request_products_attributes": [
-          {"id": listId, "quantity": quantity, "product_id": productId}
-        ]
-      }
-    };
-
-    String requestBodyJson = jsonEncode(requestBody);
-
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
-    };
-
-    try {
-      final response = await http.patch(
-        Uri.parse(url),
-        headers: headers,
-        body: requestBodyJson,
-      );
-
-      if (response.statusCode == 200) {
-        print('Quantity update successful!');
-        print('Response body: ${response.body}');
-        setState(() {
-          isloadiing = false;
-        });
-        fetchData(widget.id);
-      } else {
-        print('Status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
-        setState(() {
-          isloadiing = false;
-        });
-      }
-    } catch (e) {
-      print('Error sending update quantity request: $e');
+      print("Error: $e");
+      warning('Error: Cannot Submit Form');
     }
   }
 }
+*/*/
