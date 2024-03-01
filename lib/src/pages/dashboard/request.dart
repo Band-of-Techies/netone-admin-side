@@ -25,11 +25,13 @@ class _RequestsSectionState extends State<RequestsSection> {
   String? errorMessage;
   String? email;
   String? token;
+  ScrollController _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.mainbackground,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: AppColors.mainbackground,
           actions: [
             CustomTextFormField(
@@ -46,50 +48,63 @@ class _RequestsSectionState extends State<RequestsSection> {
         ),
         body: isloading == false
             ? loanRequests!.isNotEmpty
-                ? RawScrollbar(
-                    thumbVisibility: true,
-                    thumbColor: AppColors.mainColor,
-                    radius: Radius.circular(20),
-                    thickness: 5,
-                    child: ListView.builder(
-                      itemCount: loanRequests!.length,
-                      itemBuilder: (context, index) {
-                        return RequestItem(
-                          history: loanRequests![index].history,
-                          gender: loanRequests![index].gender,
-                          updateDataCallback: updateData,
-                          applicantCount: loanRequests![index].applicantCount,
-                          loanid: loanRequests![index].id,
-                          agent:
-                              'Not Assigned', // Replace with actual agent information from API if available
-                          functionstring: 'Select Agent',
-                          productname: loanRequests![index]
-                              .product
-                              .name, // Replace with actual product name from API if available
-                          amount: loanRequests![index].loanAmount,
-                          requestId: loanRequests![index]
-                              .id
-                              .toString(), // Assuming 'id' is unique for each request
-                          customerName: loanRequests![index].firstName,
-                          date: formatDate(loanRequests![index]
-                              .createdAt), // Replace with actual date from API if available
-                          isChecked: false, // Set your own logic for isChecked
-                          onCheckboxChanged: (value) {
-                            // Handle checkbox change, if needed
-                          },
-                          agents:
-                              agentList, // Replace with actual agent list from API if available
-                          selectedAgent:
-                              seletedagent, // Replace with actual selected agent from API if available
+                ? Theme(
+                    data: Theme.of(context).copyWith(
+                      scrollbarTheme: ScrollbarThemeData(
+                        thumbColor: MaterialStateProperty.all(
+                            AppColors.mainColor), // Set thumb color
+                        trackColor: MaterialStateProperty.all(
+                            Colors.grey), // Set track color
+                      ),
+                    ),
+                    child: Scrollbar(
+                      thumbVisibility: true,
+                      controller: _scrollController,
+                      thickness: 5, // Adjust thickness as needed
+                      // Adjust hover thickness to match the actual thickness
+                      radius: Radius.circular(10), // Adj
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        itemCount: loanRequests!.length,
+                        itemBuilder: (context, index) {
+                          return RequestItem(
+                            history: loanRequests![index].history,
+                            gender: loanRequests![index].gender,
+                            updateDataCallback: updateData,
+                            applicantCount: loanRequests![index].applicantCount,
+                            loanid: loanRequests![index].id,
+                            agent:
+                                'Not Assigned', // Replace with actual agent information from API if available
+                            functionstring: 'Select Agent',
+                            productname: loanRequests![index]
+                                .product
+                                .name, // Replace with actual product name from API if available
+                            amount: loanRequests![index].loanAmount,
+                            requestId: loanRequests![index]
+                                .id
+                                .toString(), // Assuming 'id' is unique for each request
+                            customerName: loanRequests![index].firstName,
+                            date: formatDate(loanRequests![index]
+                                .createdAt), // Replace with actual date from API if available
+                            isChecked:
+                                false, // Set your own logic for isChecked
+                            onCheckboxChanged: (value) {
+                              // Handle checkbox change, if needed
+                            },
+                            agents:
+                                agentList, // Replace with actual agent list from API if available
+                            selectedAgent:
+                                seletedagent, // Replace with actual selected agent from API if available
 
-                          onConfirm: () {
-                            // Handle confirmation
-                          },
-                          onVerticalMenuPressed: () {
-                            // Handle vertical menu press
-                          },
-                        );
-                      },
+                            onConfirm: () {
+                              // Handle confirmation
+                            },
+                            onVerticalMenuPressed: () {
+                              // Handle vertical menu press
+                            },
+                          );
+                        },
+                      ),
                     ),
                   )
                 : Center(
@@ -119,7 +134,7 @@ class _RequestsSectionState extends State<RequestsSection> {
   }
 
   void fetchData() async {
-    print(11);
+    //print(11);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isloading = true;
@@ -145,14 +160,14 @@ class _RequestsSectionState extends State<RequestsSection> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Response');
-        print(response.data);
+        // print(response.data);
         setState(() {
           // Convert each item in the array to a LoanRequest object
           loanRequests = (response.data['loan_requests'] as List<dynamic>)
               .map((json) => LoanRequest.fromJson(json))
               .toList();
         });
-        print('Loan $loanRequests');
+        //  print('Loan $loanRequests');
       } else {
         print('Error: ${response.statusCode} - ${response.statusMessage}');
         setState(() {

@@ -377,6 +377,7 @@ class _DashboardContentState extends State<DashboardContent> {
   String? role;
   int touchedGroupIndex = -1;
   String? email;
+  ScrollController _scrollController = ScrollController();
   String? token;
 
   @override
@@ -400,204 +401,217 @@ class _DashboardContentState extends State<DashboardContent> {
             )
           : SizedBox(),
       backgroundColor: AppColors.mainbackground,
-      body: RawScrollbar(
-        thumbVisibility: true,
-        thumbColor: AppColors.mainColor,
-        radius: Radius.circular(20),
-        thickness: 5,
-        child: ListView(children: [
-          Wrap(
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * .35,
-                height: 300,
-                child: Row(
-                  children: <Widget>[
-                    const SizedBox(
-                      height: 18,
-                    ),
-                    Expanded(
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: PieChart(
-                          PieChartData(
-                            pieTouchData: PieTouchData(
-                              touchCallback:
-                                  (FlTouchEvent event, pieTouchResponse) {
-                                setState(() {
-                                  if (!event.isInterestedForInteractions ||
-                                      pieTouchResponse == null ||
-                                      pieTouchResponse.touchedSection == null) {
-                                    touchedIndex = -1;
-                                    return;
-                                  }
-                                  touchedIndex = pieTouchResponse
-                                      .touchedSection!.touchedSectionIndex;
-                                });
-                              },
-                            ),
-                            borderData: FlBorderData(
-                              show: false,
-                            ),
-                            sectionsSpace: 0,
-                            centerSpaceRadius: 80,
-                            sections: showingSections(),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Indicator(
-                          color: AppColors.mainColor,
-                          text: 'First',
-                          isSquare: true,
-                        ),
-                        SizedBox(
-                          height: 4,
-                        ),
-                        Indicator(
-                          color: AppColors.sidebarbackground,
-                          text: 'Second',
-                          isSquare: true,
-                        ),
-                        SizedBox(
-                          height: 4,
-                        ),
-                        Indicator(
-                          color: AppColors.neutral,
-                          text: 'Third',
-                          isSquare: true,
-                        ),
-                        SizedBox(
-                          height: 4,
-                        ),
-                        Indicator(
-                          color: AppColors.textLight,
-                          text: 'Fourth',
-                          isSquare: true,
-                        ),
-                        SizedBox(
-                          height: 18,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 28,
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * .4,
-                height: 300,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: Theme(
+        data: Theme.of(context).copyWith(
+          scrollbarTheme: ScrollbarThemeData(
+            thumbColor: MaterialStateProperty.all(
+                AppColors.mainColor), // Set thumb color
+            trackColor:
+                MaterialStateProperty.all(Colors.grey), // Set track color
+          ),
+        ),
+        child: Scrollbar(
+          thumbVisibility: true,
+          controller: _scrollController,
+          thickness: 5, // Adjust thickness as needed
+          // Adjust hover thickness to match the actual thickness
+          radius: Radius.circular(10), // Adj
+          child: ListView(children: [
+            Wrap(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * .35,
+                  height: 300,
+                  child: Row(
                     children: <Widget>[
                       const SizedBox(
-                        height: 38,
+                        height: 18,
                       ),
                       Expanded(
-                        child: BarChart(
-                          BarChartData(
-                            maxY: 20,
-                            barTouchData: BarTouchData(
-                              touchTooltipData: BarTouchTooltipData(
-                                tooltipBgColor: Colors.grey,
-                                getTooltipItem: (a, b, c, d) => null,
-                              ),
-                              touchCallback: (FlTouchEvent event, response) {
-                                if (response == null || response.spot == null) {
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: PieChart(
+                            PieChartData(
+                              pieTouchData: PieTouchData(
+                                touchCallback:
+                                    (FlTouchEvent event, pieTouchResponse) {
                                   setState(() {
-                                    touchedGroupIndex = -1;
-                                    showingBarGroups = List.of(rawBarGroups);
-                                  });
-                                  return;
-                                }
-
-                                touchedGroupIndex =
-                                    response.spot!.touchedBarGroupIndex;
-
-                                setState(() {
-                                  if (!event.isInterestedForInteractions) {
-                                    touchedGroupIndex = -1;
-                                    showingBarGroups = List.of(rawBarGroups);
-                                    return;
-                                  }
-                                  showingBarGroups = List.of(rawBarGroups);
-                                  if (touchedGroupIndex != -1) {
-                                    var sum = 0.0;
-                                    for (final rod
-                                        in showingBarGroups[touchedGroupIndex]
-                                            .barRods) {
-                                      sum += rod.toY;
+                                    if (!event.isInterestedForInteractions ||
+                                        pieTouchResponse == null ||
+                                        pieTouchResponse.touchedSection ==
+                                            null) {
+                                      touchedIndex = -1;
+                                      return;
                                     }
-                                    final avg = sum /
-                                        showingBarGroups[touchedGroupIndex]
-                                            .barRods
-                                            .length;
-
-                                    showingBarGroups[touchedGroupIndex] =
-                                        showingBarGroups[touchedGroupIndex]
-                                            .copyWith(
-                                      barRods:
-                                          showingBarGroups[touchedGroupIndex]
-                                              .barRods
-                                              .map((rod) {
-                                        return rod.copyWith(
-                                            toY: avg, color: widget.avgColor);
-                                      }).toList(),
-                                    );
-                                  }
-                                });
-                              },
+                                    touchedIndex = pieTouchResponse
+                                        .touchedSection!.touchedSectionIndex;
+                                  });
+                                },
+                              ),
+                              borderData: FlBorderData(
+                                show: false,
+                              ),
+                              sectionsSpace: 0,
+                              centerSpaceRadius: 80,
+                              sections: showingSections(),
                             ),
-                            titlesData: FlTitlesData(
-                              show: true,
-                              rightTitles: const AxisTitles(
-                                sideTitles: SideTitles(showTitles: false),
-                              ),
-                              topTitles: const AxisTitles(
-                                sideTitles: SideTitles(showTitles: false),
-                              ),
-                              bottomTitles: AxisTitles(
-                                sideTitles: SideTitles(
-                                  showTitles: true,
-                                  getTitlesWidget: bottomTitles,
-                                  reservedSize: 42,
-                                ),
-                              ),
-                              leftTitles: AxisTitles(
-                                sideTitles: SideTitles(
-                                  showTitles: true,
-                                  reservedSize: 28,
-                                  interval: 1,
-                                  getTitlesWidget: leftTitles,
-                                ),
-                              ),
-                            ),
-                            borderData: FlBorderData(
-                              show: false,
-                            ),
-                            barGroups: showingBarGroups,
-                            gridData: const FlGridData(show: false),
                           ),
                         ),
                       ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Indicator(
+                            color: AppColors.mainColor,
+                            text: 'First',
+                            isSquare: true,
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Indicator(
+                            color: AppColors.sidebarbackground,
+                            text: 'Second',
+                            isSquare: true,
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Indicator(
+                            color: AppColors.neutral,
+                            text: 'Third',
+                            isSquare: true,
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Indicator(
+                            color: AppColors.textLight,
+                            text: 'Fourth',
+                            isSquare: true,
+                          ),
+                          SizedBox(
+                            height: 18,
+                          ),
+                        ],
+                      ),
                       const SizedBox(
-                        height: 12,
+                        width: 28,
                       ),
                     ],
                   ),
                 ),
-              )
-            ],
-          ),
-        ]),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * .4,
+                  height: 300,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        const SizedBox(
+                          height: 38,
+                        ),
+                        Expanded(
+                          child: BarChart(
+                            BarChartData(
+                              maxY: 20,
+                              barTouchData: BarTouchData(
+                                touchTooltipData: BarTouchTooltipData(
+                                  tooltipBgColor: Colors.grey,
+                                  getTooltipItem: (a, b, c, d) => null,
+                                ),
+                                touchCallback: (FlTouchEvent event, response) {
+                                  if (response == null ||
+                                      response.spot == null) {
+                                    setState(() {
+                                      touchedGroupIndex = -1;
+                                      showingBarGroups = List.of(rawBarGroups);
+                                    });
+                                    return;
+                                  }
+
+                                  touchedGroupIndex =
+                                      response.spot!.touchedBarGroupIndex;
+
+                                  setState(() {
+                                    if (!event.isInterestedForInteractions) {
+                                      touchedGroupIndex = -1;
+                                      showingBarGroups = List.of(rawBarGroups);
+                                      return;
+                                    }
+                                    showingBarGroups = List.of(rawBarGroups);
+                                    if (touchedGroupIndex != -1) {
+                                      var sum = 0.0;
+                                      for (final rod
+                                          in showingBarGroups[touchedGroupIndex]
+                                              .barRods) {
+                                        sum += rod.toY;
+                                      }
+                                      final avg = sum /
+                                          showingBarGroups[touchedGroupIndex]
+                                              .barRods
+                                              .length;
+
+                                      showingBarGroups[touchedGroupIndex] =
+                                          showingBarGroups[touchedGroupIndex]
+                                              .copyWith(
+                                        barRods:
+                                            showingBarGroups[touchedGroupIndex]
+                                                .barRods
+                                                .map((rod) {
+                                          return rod.copyWith(
+                                              toY: avg, color: widget.avgColor);
+                                        }).toList(),
+                                      );
+                                    }
+                                  });
+                                },
+                              ),
+                              titlesData: FlTitlesData(
+                                show: true,
+                                rightTitles: const AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false),
+                                ),
+                                topTitles: const AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false),
+                                ),
+                                bottomTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    getTitlesWidget: bottomTitles,
+                                    reservedSize: 42,
+                                  ),
+                                ),
+                                leftTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    reservedSize: 28,
+                                    interval: 1,
+                                    getTitlesWidget: leftTitles,
+                                  ),
+                                ),
+                              ),
+                              borderData: FlBorderData(
+                                show: false,
+                              ),
+                              barGroups: showingBarGroups,
+                              gridData: const FlGridData(show: false),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ]),
+        ),
       ),
     );
   }

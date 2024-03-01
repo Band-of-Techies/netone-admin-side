@@ -24,6 +24,7 @@ class _OrderConfirmedStatusState extends State<OrderConfirmedStatus> {
   final Dio dio = Dio();
   List<LoanRequest>? loanRequests;
   String? errorMessage;
+  ScrollController _scrollController = ScrollController();
   bool isloading = true;
   String? email;
   String? token;
@@ -32,6 +33,7 @@ class _OrderConfirmedStatusState extends State<OrderConfirmedStatus> {
     return Scaffold(
         backgroundColor: AppColors.mainbackground,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: AppColors.mainbackground,
           actions: [
             CustomTextFormField(
@@ -48,51 +50,63 @@ class _OrderConfirmedStatusState extends State<OrderConfirmedStatus> {
         ),
         body: isloading == false
             ? loanRequests!.isNotEmpty
-                ? RawScrollbar(
-                    thumbVisibility: true,
-                    thumbColor: AppColors.mainColor,
-                    radius: Radius.circular(20),
-                    thickness: 5,
-                    child: ListView.builder(
-                      itemCount: loanRequests!.length,
-                      itemBuilder: (context, index) {
-                        return AgentRequestItem(
-                          history: loanRequests![index].history,
-                          gender: loanRequests![index].gender,
-                          status: 3,
-                          updateDataCallback: updateData,
-                          applicantCount: loanRequests![index].applicantCount,
-                          loanid: loanRequests![index].id,
-                          agent: loanRequests![index]
-                              .agent
-                              .name, // Replace with actual agent information from API if available
-                          functionstring: 'Select Status',
-                          productname: loanRequests![index]
-                              .product
-                              .name, // Replace with actual product name from API if available
-                          amount: loanRequests![index].loanAmount,
-                          requestId: loanRequests![index]
-                              .id
-                              .toString(), // Assuming 'id' is unique for each request
-                          customerName: loanRequests![index].firstName,
-                          date: formatDate(loanRequests![index]
-                              .createdAt), // Replace with actual date from API if available
-                          isChecked: false, // Set your own logic for isChecked
-                          onCheckboxChanged: (value) {
-                            // Handle checkbox change, if needed
-                          },
-                          agents:
-                              orderstatus, // Replace with actual agent list from API if available
-                          // Replace with actual selected agent from API if available
+                ? Theme(
+                    data: Theme.of(context).copyWith(
+                      scrollbarTheme: ScrollbarThemeData(
+                        thumbColor: MaterialStateProperty.all(
+                            AppColors.mainColor), // Set thumb color
+                        trackColor: MaterialStateProperty.all(
+                            Colors.grey), // Set track color
+                      ),
+                    ),
+                    child: Scrollbar(
+                      thumbVisibility: true,
+                      controller: _scrollController,
+                      thickness: 5, // Adjust thickness as needed
+                      // Adjust hover thickness to match the actual thickness
+                      radius: Radius.circular(10), // Adj
+                      child: ListView.builder(
+                        itemCount: loanRequests!.length,
+                        itemBuilder: (context, index) {
+                          return AgentRequestItem(
+                            history: loanRequests![index].history,
+                            gender: loanRequests![index].gender,
+                            status: 3,
+                            updateDataCallback: updateData,
+                            applicantCount: loanRequests![index].applicantCount,
+                            loanid: loanRequests![index].id,
+                            agent: loanRequests![index]
+                                .agent
+                                .name, // Replace with actual agent information from API if available
+                            functionstring: 'Select Status',
+                            productname: loanRequests![index]
+                                .product
+                                .name, // Replace with actual product name from API if available
+                            amount: loanRequests![index].loanAmount,
+                            requestId: loanRequests![index]
+                                .id
+                                .toString(), // Assuming 'id' is unique for each request
+                            customerName: loanRequests![index].firstName,
+                            date: formatDate(loanRequests![index]
+                                .createdAt), // Replace with actual date from API if available
+                            isChecked:
+                                false, // Set your own logic for isChecked
+                            onCheckboxChanged: (value) {
+                              // Handle checkbox change, if needed
+                            },
+                            agents:
+                                orderstatus, // Replace with actual agent list from API if available
+                            // Replace with actual selected agent from API if available
 
-                          onConfirm: () {
-                            // Handle confirmation
-                          },
-                          onVerticalMenuPressed: () {
-                            // Handle vertical menu press
-                          },
-                        );
-                      },
+                            onConfirm: () {
+                              // Handle confirmation
+                            },
+                            onVerticalMenuPressed: () {
+                              // Handle vertical menu press
+                            },
+                          );
+                        },
+                      ),
                     ),
                   )
                 : const Center(

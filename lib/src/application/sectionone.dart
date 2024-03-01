@@ -228,10 +228,10 @@ class _SectionOneState extends State<SectionOne>
                               padding: MaterialStateProperty.all(
                                   EdgeInsets.all(15))),
                           onPressed: () {
-                            print(myTabController
+                            /*  print(myTabController
                                 .applicants[0].surnameController.text);
                             updateData(widget.id!, myTabController,
-                                loanDetail.applicantCount);
+                                loanDetail.applicantCount);*/
                             /*  if (_formKey.currentState!.validate()) {
                               // Form is valid, move to the next section
                               if (validateGender(applicants) &&
@@ -771,32 +771,6 @@ class _SectionOneState extends State<SectionOne>
     }
   }
 
-  void printApplicantDetails() {
-    for (int i = 0; i < numberOfPersons; i++) {
-      print('Applicant ${i + 1} Details:');
-      print('Surname: ${applicants[i].surnameController.text}');
-      print('Middle Name: ${applicants[i].middleNameController.text}');
-      print('First Name: ${applicants[i].firstNameController.text}');
-      print('Gender: ${applicants[i].gender}');
-      print('Date of Birth: ${applicants[i].dobController}');
-      print('NRC Number: ${applicants[i].nrcController.text}');
-      print('Telephone: ${applicants[i].telephoneController.text}');
-      print('Mobile: ${applicants[i].mobileController.text}');
-      print('Email Address: ${applicants[i].emailController.text}');
-      print(
-          'Driver License Number: ${applicants[i].licenseNumberController.text}');
-      print('License Expiry Date: ${applicants[i].licenseExpiryController}');
-      print(
-          'Residential Address: ${applicants[i].residentialAddressController.text}');
-      print('Ownership: ${applicants[i].ownership}');
-
-      print('Postal Address: ${applicants[i].postalAddressController.text}');
-      print('Town: ${applicants[i].townController}');
-      print('Province: ${applicants[i].provinceController}');
-      print('\n');
-    }
-  }
-
   Future<void> _selectLicenseExpiryDate(
       BuildContext context, ApplicantDetails applicant) async {
     final DateTime? picked = await showDatePicker(
@@ -1007,7 +981,7 @@ class _SectionOneState extends State<SectionOne>
 
         // Add other applicant details as needed
       }
-      print(request.fields);
+      // print(request.fields);
       var response = await request.send();
 
       if (response.statusCode == 200 || response.statusCode == 201) {

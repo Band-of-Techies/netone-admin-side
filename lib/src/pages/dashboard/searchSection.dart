@@ -35,6 +35,7 @@ class _SearchStatusState extends State<SearchStatus> {
   final Dio dio = Dio();
   String? errorMessage;
   String? searchValue;
+  ScrollController _scrollController = ScrollController();
   String? searchdates;
   DateTime? endselecteddate;
   List<Map<String, dynamic>> agentList = [];
@@ -49,309 +50,323 @@ class _SearchStatusState extends State<SearchStatus> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.mainbackground,
-        body: RawScrollbar(
-          thumbVisibility: true,
-          thumbColor: AppColors.mainColor,
-          radius: Radius.circular(20),
-          thickness: 5,
-          child: ListView(
-            children: [
-              Column(
-                children: [
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .795,
-                        child: SearchTextFormField(
-                          labeltext: 'Search',
-                          controller: requestid,
-                          onsubmit: () async {
-                            setState(() {
-                              searchValue = requestid.text;
-                            });
-                            await searchData();
-                          },
+        body: Theme(
+          data: Theme.of(context).copyWith(
+            scrollbarTheme: ScrollbarThemeData(
+              thumbColor: MaterialStateProperty.all(
+                  AppColors.mainColor), // Set thumb color
+              trackColor:
+                  MaterialStateProperty.all(Colors.grey), // Set track color
+            ),
+          ),
+          child: Scrollbar(
+            thumbVisibility: true,
+            controller: _scrollController,
+            thickness: 5, // Adjust thickness as needed
+            // Adjust hover thickness to match the actual thickness
+            radius: Radius.circular(10), // Adj
+            child: ListView(
+              children: [
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * .795,
+                          child: SearchTextFormField(
+                            labeltext: 'Search',
+                            controller: requestid,
+                            onsubmit: () async {
+                              setState(() {
+                                searchValue = requestid.text;
+                              });
+                              await searchData();
+                            },
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  CustomText(fontSize: 12, text: 'OR'),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                          width: 350,
-                          child: GestureDetector(
-                            onTap: () async {
-                              await _selectDate(context);
-                            },
-                            child: AbsorbPointer(
-                              child: TextFormField(
-                                readOnly: true,
-                                controller: startdate,
-                                decoration: InputDecoration(
-                                  labelText: 'Start Date',
-                                  labelStyle: GoogleFonts.dmSans(
-                                    color: AppColors.neutral,
-                                    height: 0.5,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                    borderSide: BorderSide(
-                                        color: AppColors.neutral, width: 0.5),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                    borderSide: BorderSide(
-                                        color: AppColors.neutral, width: 0.5),
-                                  ),
-                                ),
-                                style: GoogleFonts.dmSans(
-                                  color: AppColors.neutral,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          )),
-                      SizedBox(
-                          width: 350,
-                          child: GestureDetector(
-                            onTap: () async {
-                              if (startdate.text != null &&
-                                  startdate.text != 'null' &&
-                                  startdate.text != '') {
-                                await _enddate(context);
-                              } else {
-                                warning('Choose Start Date');
-                              }
-                            },
-                            child: AbsorbPointer(
-                              child: TextFormField(
-                                readOnly: true,
-                                controller: enddate,
-                                decoration: InputDecoration(
-                                  labelText: 'End Date',
-                                  labelStyle: GoogleFonts.dmSans(
-                                    color: AppColors.neutral,
-                                    height: 0.5,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                    borderSide: BorderSide(
-                                        color: AppColors.neutral, width: .5),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                    borderSide: BorderSide(
-                                        color: AppColors.neutral, width: .5),
-                                  ),
-                                ),
-                                style: GoogleFonts.dmSans(
-                                  color: AppColors.neutral,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          )),
-                      SizedBox(
-                        width: 350,
-                        child: DropdownButtonFormField2<String>(
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            focusColor: AppColors.neutral,
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppColors.neutral, width: .5)),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppColors.neutral, width: .5)),
-                            // Add Horizontal padding using menuItemStyleData.padding so it matches
-                            // the menu padding when button's width is not specified.
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 16),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(color: AppColors.neutral),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            // Add more decoration..
-                          ),
-                          hint: Text(
-                            'Choose Product',
-                            style: GoogleFonts.dmSans(
-                                fontSize: 14, color: AppColors.neutral),
-                          ),
-                          items: productslist
-                              .map((item) => DropdownMenuItem<String>(
-                                    value: item,
-                                    child: CustomText(
-                                      fontSize: 14,
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    CustomText(fontSize: 12, text: 'OR'),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                            width: 350,
+                            child: GestureDetector(
+                              onTap: () async {
+                                await _selectDate(context);
+                              },
+                              child: AbsorbPointer(
+                                child: TextFormField(
+                                  readOnly: true,
+                                  controller: startdate,
+                                  decoration: InputDecoration(
+                                    labelText: 'Start Date',
+                                    labelStyle: GoogleFonts.dmSans(
                                       color: AppColors.neutral,
-                                      text: item,
+                                      height: 0.5,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                  ))
-                              .toList(),
-                          onChanged: (value) {
-                            //Do something when selected item is changed.
-                          },
-                          onSaved: (value) {
-                            selectedProduct = value.toString();
-                          },
-                          buttonStyleData: const ButtonStyleData(
-                            padding: EdgeInsets.only(right: 8),
-                          ),
-                          iconStyleData: const IconStyleData(
-                            icon: Icon(
-                              Icons.arrow_drop_down,
-                              color: AppColors.neutral,
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(4.0),
+                                      borderSide: BorderSide(
+                                          color: AppColors.neutral, width: 0.5),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                      borderSide: BorderSide(
+                                          color: AppColors.neutral, width: 0.5),
+                                    ),
+                                  ),
+                                  style: GoogleFonts.dmSans(
+                                    color: AppColors.neutral,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            )),
+                        SizedBox(
+                            width: 350,
+                            child: GestureDetector(
+                              onTap: () async {
+                                if (startdate.text != null &&
+                                    startdate.text != 'null' &&
+                                    startdate.text != '') {
+                                  await _enddate(context);
+                                } else {
+                                  warning('Choose Start Date');
+                                }
+                              },
+                              child: AbsorbPointer(
+                                child: TextFormField(
+                                  readOnly: true,
+                                  controller: enddate,
+                                  decoration: InputDecoration(
+                                    labelText: 'End Date',
+                                    labelStyle: GoogleFonts.dmSans(
+                                      color: AppColors.neutral,
+                                      height: 0.5,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(4.0),
+                                      borderSide: BorderSide(
+                                          color: AppColors.neutral, width: .5),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                      borderSide: BorderSide(
+                                          color: AppColors.neutral, width: .5),
+                                    ),
+                                  ),
+                                  style: GoogleFonts.dmSans(
+                                    color: AppColors.neutral,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            )),
+                        SizedBox(
+                          width: 350,
+                          child: DropdownButtonFormField2<String>(
+                            isExpanded: true,
+                            decoration: InputDecoration(
+                              focusColor: AppColors.neutral,
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: AppColors.neutral, width: .5)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: AppColors.neutral, width: .5)),
+                              // Add Horizontal padding using menuItemStyleData.padding so it matches
+                              // the menu padding when button's width is not specified.
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 16),
+                              border: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: AppColors.neutral),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              // Add more decoration..
                             ),
-                            iconSize: 24,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            decoration: BoxDecoration(
-                              color: AppColors.sidebarbackground,
-                              borderRadius: BorderRadius.circular(8),
+                            hint: Text(
+                              'Choose Product',
+                              style: GoogleFonts.dmSans(
+                                  fontSize: 14, color: AppColors.neutral),
                             ),
-                          ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            items: productslist
+                                .map((item) => DropdownMenuItem<String>(
+                                      value: item,
+                                      child: CustomText(
+                                        fontSize: 14,
+                                        color: AppColors.neutral,
+                                        text: item,
+                                      ),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              //Do something when selected item is changed.
+                            },
+                            onSaved: (value) {
+                              selectedProduct = value.toString();
+                            },
+                            buttonStyleData: const ButtonStyleData(
+                              padding: EdgeInsets.only(right: 8),
+                            ),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: AppColors.neutral,
+                              ),
+                              iconSize: 24,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                color: AppColors.sidebarbackground,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            menuItemStyleData: const MenuItemStyleData(
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  isloading == false
-                      ? loanRequests.isNotEmpty
-                          ? Column(
-                              children: [
-                                for (int index = 0;
-                                    index < loanRequests.length;
-                                    index++)
-                                  (loanRequests[index].agent.id == "NA")
-                                      ? RequestItem(
-                                          history: loanRequests[index].history,
-                                          gender: loanRequests[index].gender,
-                                          updateDataCallback: updateData,
-                                          applicantCount: loanRequests[index]
-                                              .applicantCount,
-                                          loanid: loanRequests[index].id,
-                                          agent:
-                                              'Not Assigned', // Replace with actual agent information from API if available
-                                          functionstring: 'Select Agent',
-                                          productname: loanRequests[index]
-                                              .product
-                                              .name, // Replace with actual product name from API if available
-                                          amount:
-                                              loanRequests[index].loanAmount,
-                                          requestId: loanRequests[index]
-                                              .id
-                                              .toString(), // Assuming 'id' is unique for each request
-                                          customerName:
-                                              loanRequests[index].firstName,
-                                          date: formatDate(loanRequests[index]
-                                              .createdAt), // Replace with actual date from API if available
-                                          isChecked:
-                                              false, // Set your own logic for isChecked
-                                          onCheckboxChanged: (value) {
-                                            // Handle checkbox change, if needed
-                                          },
-                                          agents:
-                                              agentList, // Replace with actual agent list from API if available
-                                          selectedAgent:
-                                              seletedagent, // Replace with actual selected agent from API if available
+                      ],
+                    ),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    isloading == false
+                        ? loanRequests.isNotEmpty
+                            ? Column(
+                                children: [
+                                  for (int index = 0;
+                                      index < loanRequests.length;
+                                      index++)
+                                    (loanRequests[index].agent.id == "NA")
+                                        ? RequestItem(
+                                            history:
+                                                loanRequests[index].history,
+                                            gender: loanRequests[index].gender,
+                                            updateDataCallback: updateData,
+                                            applicantCount: loanRequests[index]
+                                                .applicantCount,
+                                            loanid: loanRequests[index].id,
+                                            agent:
+                                                'Not Assigned', // Replace with actual agent information from API if available
+                                            functionstring: 'Select Agent',
+                                            productname: loanRequests[index]
+                                                .product
+                                                .name, // Replace with actual product name from API if available
+                                            amount:
+                                                loanRequests[index].loanAmount,
+                                            requestId: loanRequests[index]
+                                                .id
+                                                .toString(), // Assuming 'id' is unique for each request
+                                            customerName:
+                                                loanRequests[index].firstName,
+                                            date: formatDate(loanRequests[index]
+                                                .createdAt), // Replace with actual date from API if available
+                                            isChecked:
+                                                false, // Set your own logic for isChecked
+                                            onCheckboxChanged: (value) {
+                                              // Handle checkbox change, if needed
+                                            },
+                                            agents:
+                                                agentList, // Replace with actual agent list from API if available
+                                            selectedAgent:
+                                                seletedagent, // Replace with actual selected agent from API if available
 
-                                          onConfirm: () {
-                                            // Handle confirmation
-                                          },
-                                          onVerticalMenuPressed: () {
-                                            // Handle vertical menu press
-                                          },
-                                        )
-                                      : AgentRequestItem(
-                                          history: loanRequests[index].history,
-                                          status: 2,
-                                          gender: loanRequests[index].gender,
-                                          updateDataCallback: updateData,
-                                          applicantCount: loanRequests[index]
-                                              .applicantCount,
-                                          loanid: loanRequests[index].id,
-                                          agent: loanRequests[index]
-                                              .agent
-                                              .name, // Replace with actual agent information from API if available
-                                          functionstring: 'Select Status',
-                                          productname: loanRequests[index]
-                                              .product
-                                              .name, // Replace with actual product name from API if available
-                                          amount:
-                                              loanRequests[index].loanAmount,
-                                          requestId: loanRequests[index]
-                                              .id
-                                              .toString(), // Assuming 'id' is unique for each request
-                                          customerName:
-                                              loanRequests[index].firstName,
-                                          date: formatDate(loanRequests[index]
-                                              .createdAt), // Replace with actual date from API if available
-                                          isChecked:
-                                              false, // Set your own logic for isChecked
-                                          onCheckboxChanged: (value) {
-                                            // Handle checkbox change, if needed
-                                          },
-                                          agents: loanRequests[index]
-                                                      .requestSystemStatus ==
-                                                  'pending'
-                                              ? netonestatuslist
-                                              : loanRequests[index]
-                                                          .requestBankStatus ==
-                                                      'pending'
-                                                  ? bankstauslist
-                                                  : loanRequests[index]
-                                                              .requestOrderStatus ==
-                                                          "pending"
-                                                      ? orderstatus
-                                                      : loanRequests[index]
-                                                                  .requestOrderStatus ==
-                                                              "delivered"
-                                                          ? orderdeliverstatus
-                                                          : [], // Replace with actual agent list from API if available
-                                          // Replace with actual selected agent from API if available
+                                            onConfirm: () {
+                                              // Handle confirmation
+                                            },
+                                            onVerticalMenuPressed: () {
+                                              // Handle vertical menu press
+                                            },
+                                          )
+                                        : AgentRequestItem(
+                                            history:
+                                                loanRequests[index].history,
+                                            status: 2,
+                                            gender: loanRequests[index].gender,
+                                            updateDataCallback: updateData,
+                                            applicantCount: loanRequests[index]
+                                                .applicantCount,
+                                            loanid: loanRequests[index].id,
+                                            agent: loanRequests[index]
+                                                .agent
+                                                .name, // Replace with actual agent information from API if available
+                                            functionstring: 'Select Status',
+                                            productname: loanRequests[index]
+                                                .product
+                                                .name, // Replace with actual product name from API if available
+                                            amount:
+                                                loanRequests[index].loanAmount,
+                                            requestId: loanRequests[index]
+                                                .id
+                                                .toString(), // Assuming 'id' is unique for each request
+                                            customerName:
+                                                loanRequests[index].firstName,
+                                            date: formatDate(loanRequests[index]
+                                                .createdAt), // Replace with actual date from API if available
+                                            isChecked:
+                                                false, // Set your own logic for isChecked
+                                            onCheckboxChanged: (value) {
+                                              // Handle checkbox change, if needed
+                                            },
+                                            agents: loanRequests[index]
+                                                        .requestSystemStatus ==
+                                                    'pending'
+                                                ? netonestatuslist
+                                                : loanRequests[index]
+                                                            .requestBankStatus ==
+                                                        'pending'
+                                                    ? bankstauslist
+                                                    : loanRequests[index]
+                                                                .requestOrderStatus ==
+                                                            "pending"
+                                                        ? orderstatus
+                                                        : loanRequests[index]
+                                                                    .requestOrderStatus ==
+                                                                "delivered"
+                                                            ? orderdeliverstatus
+                                                            : [], // Replace with actual agent list from API if available
+                                            // Replace with actual selected agent from API if available
 
-                                          onConfirm: () {
-                                            // Handle confirmation
-                                          },
-                                          onVerticalMenuPressed: () {
-                                            // Handle vertical menu press
-                                          },
-                                        )
-                              ],
-                            )
-                          : const Center(
-                              child: CustomText(text: 'No Request Found'),
-                            )
-                      : const Center(
-                          child: CircularProgressIndicator(
-                          color: AppColors.mainColor,
-                        ))
-                ],
-              ),
-            ],
+                                            onConfirm: () {
+                                              // Handle confirmation
+                                            },
+                                            onVerticalMenuPressed: () {
+                                              // Handle vertical menu press
+                                            },
+                                          )
+                                ],
+                              )
+                            : const Center(
+                                child: CustomText(text: 'No Request Found'),
+                              )
+                        : const Center(
+                            child: CircularProgressIndicator(
+                            color: AppColors.mainColor,
+                          ))
+                  ],
+                ),
+              ],
+            ),
           ),
         ));
   }

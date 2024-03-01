@@ -17,6 +17,7 @@ class _CustomerSectionState extends State<CustomerSection> {
     return Scaffold(
         backgroundColor: AppColors.mainbackground,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: AppColors.mainbackground,
           actions: [
             CustomTextFormField(
