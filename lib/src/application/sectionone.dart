@@ -296,6 +296,9 @@ class _SectionOneState extends State<SectionOne>
                   if (value == null || value.isEmpty) {
                     return 'Please enter your Surname';
                   }
+                  if (!RegExp(r'^[a-zA-Z]+$').hasMatch(value)) {
+                    return 'Please enter only alphabets';
+                  }
                   return null;
                 },
               )),
@@ -305,8 +308,10 @@ class _SectionOneState extends State<SectionOne>
                 controller: applicant.middleNameController,
                 labelText: 'Middle Name',
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your Middle Name';
+                  if (value != null && value.isNotEmpty) {
+                    if (!RegExp(r'^[a-zA-Z]+$').hasMatch(value)) {
+                      return 'Please enter only alphabets';
+                    }
                   }
                   return null;
                 },
@@ -319,6 +324,9 @@ class _SectionOneState extends State<SectionOne>
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your First Name';
+                  }
+                  if (!RegExp(r'^[a-zA-Z]+$').hasMatch(value)) {
+                    return 'Please enter only alphabets';
                   }
                   return null;
                 },
@@ -416,10 +424,10 @@ class _SectionOneState extends State<SectionOne>
                   }
 
                   // Define a regex pattern for NRC validation
-                  RegExp nrcPattern = RegExp(r'^[0-9/ ]+$');
+                  RegExp nrcPattern = RegExp(r'^\d{6}/\d{2}/\d$');
 
                   if (!nrcPattern.hasMatch(value)) {
-                    return 'NRC Number can only contain numbers, space, and "/"';
+                    return 'Invalid NRC Number format (123456/78/9)';
                   }
 
                   return null;
@@ -437,11 +445,10 @@ class _SectionOneState extends State<SectionOne>
                 controller: applicant.telephoneController,
                 labelText: 'Telephone',
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your Telephone';
-                  }
-                  if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                    return 'Please enter only numeric digits';
+                  if (value != null && value.isNotEmpty) {
+                    if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                      return 'Please enter only numeric digits';
+                    }
                   }
                   return null;
                 },
@@ -452,13 +459,16 @@ class _SectionOneState extends State<SectionOne>
                 controller: applicant.mobileController,
                 labelText: 'Mobile',
                 validator: (value) {
-                  // You might want to add more comprehensive mobile validation
                   if (value == null || value.isEmpty) {
                     return 'Please enter your Mobile Number';
                   }
-                  if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                    return 'Please enter only numeric digits';
+
+                  // Validate if the value starts with '+260' and contains only numeric digits afterwards
+                  RegExp mobilePattern = RegExp(r'^\+260\d{9}$');
+                  if (!mobilePattern.hasMatch(value)) {
+                    return 'Start with +260 followed by 9 digits';
                   }
+
                   return null;
                 },
               )),
@@ -476,8 +486,11 @@ class _SectionOneState extends State<SectionOne>
                 return 'Please enter your Email Address';
               }
               // Basic email validation using a regular expression
+              if (!isValidEmail(value)) {
+                return 'Please enter a valid Email Address';
+              }
 
-              if (!value.contains('@') || !value.contains('.com')) {
+              if (!value.contains('@')) {
                 return 'Please enter a valid Email Address';
               }
               return null;
@@ -769,6 +782,14 @@ class _SectionOneState extends State<SectionOne>
         ),
       );
     }
+  }
+
+  bool isValidEmail(String email) {
+    // Regular expression for a basic email validation
+    final RegExp emailRegex =
+        RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+
+    return emailRegex.hasMatch(email);
   }
 
   Future<void> _selectLicenseExpiryDate(

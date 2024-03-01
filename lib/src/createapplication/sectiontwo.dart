@@ -589,7 +589,7 @@ class _SectionTwoState extends State<SectionTwo>
                   }
 
                   // Validate if the value contains only letters, digits, and hyphens
-                  RegExp jobTitlePattern = RegExp(r'^[a-zA-Z0-9\-]+$');
+                  RegExp jobTitlePattern = RegExp(r'^[a-zA-Z0-9\- ]+$');
                   if (!jobTitlePattern.hasMatch(value)) {
                     return 'Can only contain letters, digits, and -';
                   }

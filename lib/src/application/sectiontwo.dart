@@ -288,56 +288,6 @@ class _SectionTwoState extends State<SectionTwo>
     );
   }
 
-  void printApplicantDetails() {
-    for (int i = 0; i < widget.myTabController.numberOfPersons; i++) {
-      print('Applicant ${i + 1} Details:');
-
-      // Kin Information
-      print('Name: ${applicantDetailsLists[i].nameController.text}');
-      print(
-          'Other Names: ${applicantDetailsLists[i].otherNamesController.text}');
-      print(
-          'Physical Address: ${applicantDetailsLists[i].physicalAddressControlleremployment.text}');
-      print(
-          'Postal Address: ${applicantDetailsLists[i].postalAddressControllerEmployment.text}');
-      print(
-          'Cell Number: ${applicantDetailsLists[i].cellNumberController.text}');
-      print(
-          'Email Address: ${applicantDetailsLists[i].emailAddressController.text}');
-      print(
-          'Additional Field 1: ${applicantDetailsLists[i].physicalAddressControllernextofkin.text}');
-      print(
-          'Additional Field 2: ${applicantDetailsLists[i].postalAddressControllerforKline.text}');
-
-      // Employment Details
-      print('Job Title: ${applicantDetailsLists[i].jobTitleController.text}');
-      print('Ministry: ${applicantDetailsLists[i].ministryController.text}');
-
-      print('Town: ${applicantDetailsLists[i].townController}');
-      print('Province: ${applicantDetailsLists[i].provinceController}');
-
-      // Additional Fields for employmentDetails
-      print(
-          'Gross Salary: ${applicantDetailsLists[i].grossSalaryController.text}');
-      print(
-          'Current Net Salary: ${applicantDetailsLists[i].currentNetSalaryController.text}');
-      print('Salary Scale: ${applicantDetailsLists[i].salaryScaleController}');
-      print(
-          'Preferred Year of Retirement: ${applicantDetailsLists[i].preferredYearOfRetirementController}');
-      print(
-          'Employee Number: ${applicantDetailsLists[i].employeeNumberController.text}');
-      print(
-          'Years in Employment: ${applicantDetailsLists[i].yearsInEmploymentController}');
-
-      // Employment Type
-      print('Employment Type: ${applicantDetailsLists[i].employmentType}');
-      print('Employment Exp: ${applicantDetailsLists[i].expiryDateController}');
-      // Additional Fields as needed
-
-      print('\n');
-    }
-  }
-
   Container kinInformation(
       String message, EmployemntandKlinDetails applicantDetailsList) {
     return Container(
@@ -380,6 +330,12 @@ class _SectionTwoState extends State<SectionTwo>
                   child: FormTextField(
                 controller: applicantDetailsList.otherNamesController,
                 labelText: 'Other Names',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter other name';
+                  }
+                  return null;
+                },
               )),
             ],
           ),
@@ -395,7 +351,7 @@ class _SectionTwoState extends State<SectionTwo>
                   labelText: 'Physical Address',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter physical address';
+                      return null;
                     }
                     return null;
                   },
@@ -411,7 +367,7 @@ class _SectionTwoState extends State<SectionTwo>
                   labelText: 'Postal Address',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter postal addres';
+                      return null;
                     }
                     return null;
                   },
@@ -429,9 +385,16 @@ class _SectionTwoState extends State<SectionTwo>
                   controller: applicantDetailsList.cellNumberController,
                   labelText: 'Cell Number',
                   validator: (value) {
-                    if (!RegExp(r'^[0-9]+$').hasMatch(value!)) {
-                      return 'Please enter only numeric digits';
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your Cell Number';
                     }
+
+                    // Validate if the value starts with '+260' and contains only numeric digits afterwards
+                    RegExp mobilePattern = RegExp(r'^\+260\d{9}$');
+                    if (!mobilePattern.hasMatch(value)) {
+                      return 'Start with +260 followed by 9 digits';
+                    }
+
                     return null;
                   },
                 ),
@@ -445,14 +408,17 @@ class _SectionTwoState extends State<SectionTwo>
                     labelText: 'Email Address',
                     validator: (value) {
                       // You might want to add more comprehensive email validation
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your Email Address';
+                      if (value!.isEmpty || value == null) {
+                        return null;
                       }
-                      // Basic email validation using a regular expression
+                      if (value != null || value!.isNotEmpty) {
+                        {
+                          if (!isValidEmail(value)) {
+                            return 'Please enter a valid Email Address';
+                          }
+                        }
+                      }
 
-                      if (!value.contains('@') || !value.contains('.com')) {
-                        return 'Please enter a valid Email Address';
-                      }
                       return null;
                     }),
               ),
@@ -461,6 +427,14 @@ class _SectionTwoState extends State<SectionTwo>
         ],
       ),
     );
+  }
+
+  bool isValidEmail(String email) {
+    // Regular expression for a basic email validation
+    final RegExp emailRegex =
+        RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+
+    return emailRegex.hasMatch(email);
   }
 
   Container employmentDetails(
@@ -495,8 +469,15 @@ class _SectionTwoState extends State<SectionTwo>
                 labelText: 'Job Title',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter job';
+                    return null; // Allow null values
                   }
+
+                  // Validate if the value contains only letters, digits, and hyphens
+                  RegExp jobTitlePattern = RegExp(r'^[a-zA-Z0-9\- ]+$');
+                  if (!jobTitlePattern.hasMatch(value)) {
+                    return 'Can only contain letters, digits, and -';
+                  }
+
                   return null;
                 },
               )),
@@ -507,8 +488,15 @@ class _SectionTwoState extends State<SectionTwo>
                 labelText: 'Minsitry',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter ministy';
+                    return null; // Allow null values
                   }
+
+                  // Validate if the value contains only letters, digits, and hyphens
+                  RegExp jobTitlePattern = RegExp(r'^[a-zA-Z0-9\-]+$');
+                  if (!jobTitlePattern.hasMatch(value)) {
+                    return 'Can only contain letters, digits, and -';
+                  }
+
                   return null;
                 },
               )),
@@ -526,7 +514,7 @@ class _SectionTwoState extends State<SectionTwo>
                 labelText: 'Physical Address',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter physical address';
+                    return null;
                   }
                   return null;
                 },
@@ -541,6 +529,7 @@ class _SectionTwoState extends State<SectionTwo>
                   if (value == null || value.isEmpty) {
                     return 'Please enter postal address';
                   }
+
                   return null;
                 },
               )),
@@ -692,7 +681,7 @@ class _SectionTwoState extends State<SectionTwo>
                     return 'Please enter gross salary';
                   }
                   if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                    return 'Please enter only numeric digits';
+                    return 'Please enter only digits';
                   }
                   return null;
                 },
@@ -707,7 +696,7 @@ class _SectionTwoState extends State<SectionTwo>
                     return 'Please enter current net salary';
                   }
                   if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                    return 'Please enter only numeric digits';
+                    return 'Please enter only digits';
                   }
                   return null;
                 },

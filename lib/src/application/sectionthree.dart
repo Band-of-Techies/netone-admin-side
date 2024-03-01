@@ -600,10 +600,13 @@ class _SectionThreeState extends State<SectionThree>
                 controller: loadndetails.costofasset,
                 labelText: 'Total cost of asset',
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter total cost of asset';
+                  if (value != null && value.isNotEmpty) {
+                    // Validate if the value contains only numbers
+                    if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                      return 'Can only contain numbers';
+                    }
                   }
-                  return null;
+                  return null; // Return null to indicate no error
                 },
               ),
               SizedBox(
@@ -613,10 +616,13 @@ class _SectionThreeState extends State<SectionThree>
                 controller: loadndetails.insurancecost,
                 labelText: 'Total Insurance cost',
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter total insurance cost';
+                  if (value != null && value.isNotEmpty) {
+                    // Validate if the value contains only numbers
+                    if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                      return 'Can contain only digits';
+                    }
                   }
-                  return null;
+                  return null; // Return null to indicate no error
                 },
               ),
               SizedBox(
@@ -626,10 +632,13 @@ class _SectionThreeState extends State<SectionThree>
                 controller: loadndetails.advancepayment,
                 labelText: 'Less advance payment',
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter less advance payment';
+                  if (value != null && value.isNotEmpty) {
+                    // Validate if the value contains only numbers
+                    if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                      return 'Can contain only digits';
+                    }
                   }
-                  return null;
+                  return null; // Return null to indicate no error
                 },
               ),
               SizedBox(
@@ -639,10 +648,13 @@ class _SectionThreeState extends State<SectionThree>
                 controller: loadndetails.loanamaountapplied,
                 labelText: 'Loan amount applied for',
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter loan amount applied for';
+                  if (value != null && value.isNotEmpty) {
+                    // Validate if the value contains only numbers
+                    if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                      return 'Can contain only digits';
+                    }
                   }
-                  return null;
+                  return null; // Return null to indicate no error
                 },
               ),
               SizedBox(
