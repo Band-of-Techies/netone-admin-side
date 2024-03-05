@@ -25,6 +25,7 @@ class _AgentStatusState extends State<AgentStatus> {
   String? createddate;
   String? emailpref;
   String? token;
+  bool isloading = true;
   bool isEditing = true;
   @override
   Widget build(BuildContext context) {
@@ -43,90 +44,102 @@ class _AgentStatusState extends State<AgentStatus> {
           _showAddAgentPopup(context);
         },
       ),
-      body: agentsList != null && agentsList.isNotEmpty
-          ? Wrap(children: [
-              for (int i = 0; i < agentsList.length; i++)
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    margin: EdgeInsets.all(10),
-                    width: MediaQuery.of(context).size.width * .35,
-                    height: MediaQuery.of(context).size.height * .1,
-                    decoration: BoxDecoration(
-                        color: AppColors.sidebarbackground,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Stack(
-                      children: [
-                        Row(
+      body: isloading == true
+          ? Center(
+              child: CircularProgressIndicator(color: AppColors.mainColor),
+            )
+          : agentsList != null && agentsList.isNotEmpty
+              ? Wrap(children: [
+                  for (int i = 0; i < agentsList.length; i++)
+                    GestureDetector(
+                      onTap: () {
+                        _showEditAgentPupup(agentsList[i]['id'], context,
+                            agentsList[i]['name'], agentsList[i]['email']);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        width: MediaQuery.of(context).size.width * .35,
+                        height: MediaQuery.of(context).size.height * .1,
+                        decoration: BoxDecoration(
+                            color: AppColors.sidebarbackground,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Stack(
                           children: [
-                            Container(
-                              margin: EdgeInsets.only(right: 10),
-                              width: 120,
-                              height: MediaQuery.of(context).size.height * .18,
-                              decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                    scale: .5,
-                                    opacity: .7,
-                                    image: AssetImage(
-                                        '../../assets/png/agent.png'), // Replace 'your_image.png' with the path to your image asset
-                                    fit: BoxFit.contain,
-                                  ),
-                                  color: AppColors.mainColor,
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      bottomLeft: Radius.circular(10))),
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
+                            Row(
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(right: 10),
+                                  width: 120,
+                                  height:
+                                      MediaQuery.of(context).size.height * .18,
+                                  decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        scale: .5,
+                                        opacity: .7,
+                                        image: AssetImage(
+                                            '../../assets/png/agent.png'), // Replace 'your_image.png' with the path to your image asset
+                                        fit: BoxFit.contain,
+                                      ),
+                                      color: AppColors.mainColor,
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          bottomLeft: Radius.circular(10))),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      CustomText(text: agentsList[i]['name']),
+                                      Row(
+                                        children: [
+                                          CustomText(
+                                              text: agentsList[i]['name']),
+                                          SizedBox(
+                                            width: 30,
+                                          ),
+                                          CustomText(
+                                            text: agentsList[i]['role'],
+                                            fontSize: 12,
+                                          ),
+                                        ],
+                                      ),
                                       SizedBox(
-                                        width: 30,
+                                        height: 10,
                                       ),
                                       CustomText(
-                                        text: agentsList[i]['role'],
+                                        text: agentsList[i]['email'],
                                         fontSize: 12,
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomText(
-                                    text: agentsList[i]['email'],
-                                    fontSize: 12,
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
+                            Positioned(
+                                right: 5,
+                                top: 5,
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: AppColors.mainbackground,
+                                  ),
+                                  onPressed: () {
+                                    _showDeleteConfirmationDialog(context,
+                                        agentsList[i]['id'].toString());
+                                    // Show the confirmation dialog
+                                  },
+                                ))
                           ],
                         ),
-                        Positioned(
-                            right: 5,
-                            top: 5,
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: AppColors.mainbackground,
-                              ),
-                              onPressed: () {
-                                _showDeleteConfirmationDialog(
-                                    context, agentsList[i]['id'].toString());
-                                // Show the confirmation dialog
-                              },
-                            ))
-                      ],
-                    ),
+                      ),
+                    )
+                ])
+              : Center(
+                  child: CustomText(
+                    text: "No agents found",
                   ),
-                )
-            ])
-          : Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            ),
+                ),
     );
   }
 
@@ -183,6 +196,7 @@ class _AgentStatusState extends State<AgentStatus> {
     setState(() {
       token = prefs.getString('token');
       emailpref = prefs.getString('email');
+      isloading = true;
     });
     try {
       // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
@@ -200,15 +214,22 @@ class _AgentStatusState extends State<AgentStatus> {
       if (response.statusCode == 200) {
         setState(() {
           agentsList = List<Map<String, dynamic>>.from(response.data['users']);
+          isloading = false;
         });
       } else {
         // If the request fails, you can throw an exception or handle it accordingly
-        throw Exception('Failed to load user data');
+        setState(() {
+          isloading = false;
+        });
+        print('Failed to load user data');
       }
     } catch (error) {
+      setState(() {
+        isloading = false;
+      });
       // Handle Dio errors or network errors
       print('Error: $error');
-      throw Exception('Failed to load user data');
+      print('Failed to load user data');
     }
   }
 
@@ -218,6 +239,7 @@ class _AgentStatusState extends State<AgentStatus> {
     setState(() {
       token = prefs.getString('token');
       emailpref = prefs.getString('email');
+      isloading = true;
     });
     try {
       final response = await Dio().post(
@@ -243,14 +265,82 @@ class _AgentStatusState extends State<AgentStatus> {
         fetchDataAndBuildUI();
         Navigator.pop(context);
         print('Success: ${response.data}');
+        emailController.clear();
+        usernameController.clear();
+        passwordController.clear();
+        confirmPasswordController.clear();
       } else {
         warning('Email already exist');
         // Request failed with an error status code
         print('Error: ${response.statusCode}, ${response.data}');
+        emailController.clear();
+        usernameController.clear();
+        passwordController.clear();
+        confirmPasswordController.clear();
+        setState(() {
+          isEditing = false;
+        });
       }
     } catch (error) {
       // Handle Dio errors or network errors
       warning('Error');
+      emailController.clear();
+      usernameController.clear();
+      passwordController.clear();
+      confirmPasswordController.clear();
+      setState(() {
+        isEditing = false;
+      });
+    }
+  }
+
+  Future<void> edituser(int id, String name, String password,
+      String confirmPassword, String email) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+      emailpref = prefs.getString('email');
+      isloading = true;
+    });
+    try {
+      final response = await Dio().patch(
+        'https://loan-managment.onrender.com/users/$id',
+        data: {
+          'user': {
+            'name': name,
+            'password': password,
+            'password_confirmation': confirmPassword,
+            'email': email,
+          },
+        },
+        options: Options(
+          headers: {
+            'Authorization': token!,
+          },
+        ),
+      );
+      print(response.data);
+      // Check if the response status code is in the success range (200-299)
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Successful request
+        fetchDataAndBuildUI();
+        Navigator.pop(context);
+        passwordController.clear();
+        confirmPasswordController.clear();
+        print('Success: ${response.data}');
+      } else {
+        warning('Cannot edit user');
+        // Request failed with an error status code
+        print('Error: ${response.statusCode}, ${response.data}');
+        passwordController.clear();
+        confirmPasswordController.clear();
+      }
+    } catch (error) {
+      // Handle Dio errors or network errors
+      print(error);
+      warning('Error');
+      passwordController.clear();
+      confirmPasswordController.clear();
     }
   }
 
@@ -307,6 +397,7 @@ class _AgentStatusState extends State<AgentStatus> {
     setState(() {
       token = prefs.getString('token');
       emailpref = prefs.getString('email');
+      isloading = true;
     });
     try {
       print(agentid);
@@ -427,6 +518,92 @@ class _AgentStatusState extends State<AgentStatus> {
               },
               child: CustomText(
                 text: 'Add',
+                fontSize: 16,
+                color: AppColors.neutral,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showEditAgentPupup(
+      int userid, BuildContext context, String username, String email) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.sidebarbackground,
+          title: CustomText(text: 'Update Password'),
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width * .4,
+            child: Form(
+              key: _formKeycreateagent,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Add your form fields or content for adding a product
+                  SizedBox(height: 10),
+                  CustomText(text: "Username: $username"),
+                  SizedBox(height: 10),
+                  CustomText(text: "Email: $email"),
+                  SizedBox(height: 30),
+                  buildEditableField(
+                    'Password',
+                    passwordController,
+                    (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a password';
+                      }
+                      return null; // Return null if validation passes
+                    },
+                  ),
+                  SizedBox(height: 30),
+                  buildEditableField(
+                    'Confirm Password',
+                    confirmPasswordController,
+                    (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please confirm your password';
+                      } else if (value != passwordController.text) {
+                        return 'Passwords do not match';
+                      }
+                      return null; // Return null if validation passes
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Close the popup
+                Navigator.of(context).pop();
+              },
+              child: CustomText(
+                text: 'Cancel',
+                fontSize: 16,
+                color: AppColors.mainColor,
+              ),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(AppColors.mainColor)),
+              onPressed: () async {
+                if (_formKeycreateagent.currentState!.validate()) {
+                  edituser(userid, username, passwordController.text,
+                      confirmPasswordController.text, email);
+                }
+              },
+              child: CustomText(
+                text: 'Update',
                 fontSize: 16,
                 color: AppColors.neutral,
               ),

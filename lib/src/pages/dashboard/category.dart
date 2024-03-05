@@ -19,7 +19,7 @@ class _CategoryStatusState extends State<CategoryStatus> {
   TextEditingController catname = TextEditingController();
   TextEditingController catdesc = TextEditingController();
   List<dynamic> cats = []; // List to store product data
-
+  bool isloading = true;
   String? email;
   String? token;
   @override
@@ -39,109 +39,115 @@ class _CategoryStatusState extends State<CategoryStatus> {
         },
       ),
       backgroundColor: AppColors.mainbackground,
-      body: cats != null && cats.isNotEmpty
-          ? Wrap(children: [
-              for (int i = 0; i < cats.length; i++)
-                GestureDetector(
-                  onTap: () {
-                    _showAddProductPopup(
-                        context, true, cats[i]['id'].toString());
-                    setState(() {
-                      catname.text = cats[i]['name'];
-                      catdesc.text = cats[i]['description'];
-                    });
-                  },
-                  child: Container(
-                    margin: EdgeInsets.all(10),
-                    width: MediaQuery.of(context).size.width * .35,
-                    height: MediaQuery.of(context).size.height * .18,
-                    decoration: BoxDecoration(
-                        color: AppColors.sidebarbackground,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Stack(
-                      children: [
-                        Row(
+      body: isloading == true
+          ? Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
+          : cats != null && cats.isNotEmpty
+              ? Wrap(children: [
+                  for (int i = 0; i < cats.length; i++)
+                    GestureDetector(
+                      onTap: () {
+                        _showAddProductPopup(
+                            context, true, cats[i]['id'].toString());
+                        setState(() {
+                          catname.text = cats[i]['name'];
+                          catdesc.text = cats[i]['description'];
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        width: MediaQuery.of(context).size.width * .35,
+                        height: MediaQuery.of(context).size.height * .18,
+                        decoration: BoxDecoration(
+                            color: AppColors.sidebarbackground,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Stack(
                           children: [
-                            Container(
-                              margin: EdgeInsets.only(right: 10),
-                              width: 120,
-                              height: MediaQuery.of(context).size.height * .18,
-                              decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                    scale: .5,
-                                    opacity: .7,
-                                    image: AssetImage(
-                                        '../../assets/png/in-stock.png'), // Replace 'your_image.png' with the path to your image asset
-                                    fit: BoxFit.contain,
-                                  ),
-                                  color: AppColors.mainColor,
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      bottomLeft: Radius.circular(10))),
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
+                            Row(
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(right: 10),
+                                  width: 120,
+                                  height:
+                                      MediaQuery.of(context).size.height * .18,
+                                  decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        scale: .5,
+                                        opacity: .7,
+                                        image: AssetImage(
+                                            '../../assets/png/in-stock.png'), // Replace 'your_image.png' with the path to your image asset
+                                        fit: BoxFit.contain,
+                                      ),
+                                      color: AppColors.mainColor,
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          bottomLeft: Radius.circular(10))),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      CustomText(text: cats[i]['name']),
+                                      Row(
+                                        children: [
+                                          CustomText(text: cats[i]['name']),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                        ],
+                                      ),
                                       SizedBox(
-                                        width: 20,
+                                        height: 10,
+                                      ),
+                                      CustomText(
+                                        text:
+                                            'Created: ${formatDate(cats[i]['created_at'])}',
+                                        fontSize: 12,
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      CustomText(
+                                        text:
+                                            'Updated: ${formatDate(cats[i]['updated_at'])}',
+                                        fontSize: 12,
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      CustomText(
+                                        text: cats[i]['description'],
+                                        fontSize: 12,
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomText(
-                                    text:
-                                        'Created: ${formatDate(cats[i]['created_at'])}',
-                                    fontSize: 12,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomText(
-                                    text:
-                                        'Updated: ${formatDate(cats[i]['updated_at'])}',
-                                    fontSize: 12,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomText(
-                                    text: cats[i]['description'],
-                                    fontSize: 12,
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
+                            Positioned(
+                                right: 5,
+                                top: 5,
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: AppColors.mainbackground,
+                                  ),
+                                  onPressed: () {
+                                    // Show the confirmation dialog
+                                    _showDeleteConfirmationDialog(
+                                        context, cats[i]['id'].toString());
+                                  },
+                                ))
                           ],
                         ),
-                        Positioned(
-                            right: 5,
-                            top: 5,
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: AppColors.mainbackground,
-                              ),
-                              onPressed: () {
-                                // Show the confirmation dialog
-                                _showDeleteConfirmationDialog(
-                                    context, cats[i]['id'].toString());
-                              },
-                            ))
-                      ],
-                    ),
-                  ),
-                )
-            ])
-          : Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            ),
+                      ),
+                    )
+                ])
+              : Center(
+                  child: CustomText(text: "No Categories found"),
+                ),
     );
   }
 
@@ -183,6 +189,7 @@ class _CategoryStatusState extends State<CategoryStatus> {
     setState(() {
       token = prefs.getString('token');
       email = prefs.getString('email');
+      isloading = true;
     });
     try {
       print(productId);
@@ -319,6 +326,7 @@ class _CategoryStatusState extends State<CategoryStatus> {
     setState(() {
       token = prefs.getString('token');
       email = prefs.getString('email');
+      isloading = true;
     });
     try {
       // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
@@ -336,15 +344,22 @@ class _CategoryStatusState extends State<CategoryStatus> {
       if (response.statusCode == 200) {
         setState(() {
           cats = response.data;
+          isloading = false;
         });
         print(response.data);
       } else {
         // Handle API error
         print('Failed to fetch products. Status code: ${response.statusCode}');
+        setState(() {
+          isloading = false;
+        });
       }
     } catch (error) {
       // Handle Dio errors or network errors
       print('Error: $error');
+      setState(() {
+        isloading = false;
+      });
     }
   }
 
@@ -363,6 +378,7 @@ class _CategoryStatusState extends State<CategoryStatus> {
       setState(() {
         token = prefs.getString('token');
         email = prefs.getString('email');
+        isloading = true;
       });
       // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
       String bearerToken = token!;
@@ -418,6 +434,7 @@ class _CategoryStatusState extends State<CategoryStatus> {
       setState(() {
         token = prefs.getString('token');
         email = prefs.getString('email');
+        isloading = true;
       });
       // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
       String bearerToken = token!;

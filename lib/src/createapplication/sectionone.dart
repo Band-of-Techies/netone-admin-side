@@ -377,7 +377,7 @@ class _SectionOneState extends State<SectionOne>
                   if (value == null || value.isEmpty) {
                     return 'Please enter your Surname';
                   }
-                  if (!RegExp(r'^[a-zA-Z]+$').hasMatch(value)) {
+                  if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
                     return 'Please enter only alphabets';
                   }
                   return null;
@@ -390,7 +390,7 @@ class _SectionOneState extends State<SectionOne>
                   labelText: 'Middle Name',
                   validator: (value) {
                     if (value != null && value.isNotEmpty) {
-                      if (!RegExp(r'^[a-zA-Z]+$').hasMatch(value)) {
+                      if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
                         return 'Please enter only alphabets';
                       }
                     }
@@ -407,7 +407,7 @@ class _SectionOneState extends State<SectionOne>
                   if (value == null || value.isEmpty) {
                     return 'Please enter your First Name';
                   }
-                  if (!RegExp(r'^[a-zA-Z]+$').hasMatch(value)) {
+                  if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
                     return 'Please enter only alphabets';
                   }
                   return null;

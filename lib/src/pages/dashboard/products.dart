@@ -22,7 +22,9 @@ class _ProductsStatusState extends State<ProductsStatus> {
   TextEditingController productdesc = TextEditingController();
   List<dynamic> products = []; // List to store product data
   List<dynamic> cats = [];
+  bool isloading = true;
   String? catid;
+  String? selectid;
   String? catname;
   String? email;
   String? token;
@@ -43,121 +45,128 @@ class _ProductsStatusState extends State<ProductsStatus> {
         },
       ),
       backgroundColor: AppColors.mainbackground,
-      body: products != null && products.isNotEmpty
-          ? Wrap(children: [
-              for (int i = 0; i < products.length; i++)
-                GestureDetector(
-                  onTap: () {
-                    _showAddProductPopup(
-                        context, true, products[i]['id'].toString());
-                    setState(() {
-                      productname.text = products[i]['name'];
-                      productdesc.text = products[i]['description'];
-                      productprice.text = products[i]['price'];
-                    });
-                  },
-                  child: Container(
-                    margin: EdgeInsets.all(10),
-                    width: MediaQuery.of(context).size.width * .35,
-                    height: MediaQuery.of(context).size.height * .2,
-                    decoration: BoxDecoration(
-                        color: AppColors.sidebarbackground,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Stack(
-                      children: [
-                        Row(
+      body: isloading == true
+          ? Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
+          : products != null && products.isNotEmpty
+              ? Wrap(children: [
+                  for (int i = 0; i < products.length; i++)
+                    GestureDetector(
+                      onTap: () {
+                        _showAddProductPopup(
+                            context, true, products[i]['id'].toString());
+                        setState(() {
+                          productname.text = products[i]['name'];
+                          productdesc.text = products[i]['description'];
+                          productprice.text = products[i]['price'];
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        width: MediaQuery.of(context).size.width * .35,
+                        height: MediaQuery.of(context).size.height * .2,
+                        decoration: BoxDecoration(
+                            color: AppColors.sidebarbackground,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Stack(
                           children: [
-                            Container(
-                              margin: EdgeInsets.only(right: 10),
-                              width: 120,
-                              height: MediaQuery.of(context).size.height * .2,
-                              decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                    scale: .5,
-                                    opacity: .7,
-                                    image: AssetImage(
-                                        '../../assets/png/in-stock.png'), // Replace 'your_image.png' with the path to your image asset
-                                    fit: BoxFit.contain,
-                                  ),
-                                  color: AppColors.mainColor,
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      bottomLeft: Radius.circular(10))),
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      CustomText(text: products[i]['name']),
-                                      SizedBox(
-                                        width: 20,
+                            Row(
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(right: 10),
+                                  width: 120,
+                                  height:
+                                      MediaQuery.of(context).size.height * .2,
+                                  decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        scale: .5,
+                                        opacity: .7,
+                                        image: AssetImage(
+                                            '../../assets/png/in-stock.png'), // Replace 'your_image.png' with the path to your image asset
+                                        fit: BoxFit.contain,
                                       ),
-                                      CustomText(text: products[i]['price']),
+                                      color: AppColors.mainColor,
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          bottomLeft: Radius.circular(10))),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          CustomText(text: products[i]['name']),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          CustomText(
+                                              text: products[i]['price']),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      CustomText(
+                                        text: products[i]['category']['name'] ==
+                                                null
+                                            ? 'Category: NA'
+                                            : 'Category: ${(products[i]['category']['name'])}',
+                                        fontSize: 12,
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      CustomText(
+                                        text:
+                                            'Created: ${formatDate(products[i]['created_at'])}',
+                                        fontSize: 12,
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      CustomText(
+                                        text:
+                                            'Updated: ${formatDate(products[i]['updated_at'])}',
+                                        fontSize: 12,
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      CustomText(
+                                        text: products[i]['description'],
+                                        fontSize: 12,
+                                      ),
                                     ],
                                   ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomText(
-                                    text: products[i]['category']['name'] ==
-                                            null
-                                        ? 'Category: NA'
-                                        : 'Category: ${(products[i]['category']['name'])}',
-                                    fontSize: 12,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomText(
-                                    text:
-                                        'Created: ${formatDate(products[i]['created_at'])}',
-                                    fontSize: 12,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomText(
-                                    text:
-                                        'Updated: ${formatDate(products[i]['updated_at'])}',
-                                    fontSize: 12,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomText(
-                                    text: products[i]['description'],
-                                    fontSize: 12,
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
+                            Positioned(
+                                right: 5,
+                                top: 5,
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: AppColors.mainbackground,
+                                  ),
+                                  onPressed: () {
+                                    // Show the confirmation dialog
+                                    _showDeleteConfirmationDialog(
+                                        context, products[i]['id'].toString());
+                                  },
+                                ))
                           ],
                         ),
-                        Positioned(
-                            right: 5,
-                            top: 5,
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: AppColors.mainbackground,
-                              ),
-                              onPressed: () {
-                                // Show the confirmation dialog
-                                _showDeleteConfirmationDialog(
-                                    context, products[i]['id'].toString());
-                              },
-                            ))
-                      ],
-                    ),
-                  ),
-                )
-            ])
-          : Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            ),
+                      ),
+                    )
+                ])
+              : Center(
+                  child: CustomText(text: "No products found"),
+                ),
     );
   }
 
@@ -199,6 +208,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
     setState(() {
       token = prefs.getString('token');
       email = prefs.getString('email');
+      isloading = true;
     });
     try {
       print(productId);
@@ -374,7 +384,8 @@ class _ProductsStatusState extends State<ProductsStatus> {
     return InkWell(
       onTap: () {
         setState(() {
-          catid = id.toString();
+          catid = cats[i]['id'].toString();
+          selectid = id.toString();
           catname = title;
           print(catid);
           print(catname);
@@ -390,7 +401,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        backgroundColor: catid == id.toString()
+        backgroundColor: selectid == id.toString()
             ? AppColors.mainColor
             : AppColors.sidebarbackground,
       ),
@@ -402,6 +413,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
     setState(() {
       token = prefs.getString('token');
       email = prefs.getString('email');
+      isloading = true;
     });
     try {
       // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
@@ -417,12 +429,21 @@ class _ProductsStatusState extends State<ProductsStatus> {
       );
 
       if (response.statusCode == 200) {
-        products = response.data;
+        setState(() {
+          products = response.data;
+          isloading = false;
+        });
       } else {
+        setState(() {
+          isloading = false;
+        });
         // Handle API error
         print('Failed to fetch products. Status code: ${response.statusCode}');
       }
     } catch (error) {
+      setState(() {
+        isloading = false;
+      });
       // Handle Dio errors or network errors
       print('Error: $error');
     }
@@ -433,6 +454,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
     setState(() {
       token = prefs.getString('token');
       email = prefs.getString('email');
+      isloading = true;
     });
     try {
       // Replace 'YOUR_BEARER_TOKEN' with your actual Bearer token
