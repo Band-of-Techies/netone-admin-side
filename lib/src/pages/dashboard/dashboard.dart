@@ -64,7 +64,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Image.asset(
-                  '../../assets/png/netone.png',
+                  '../assets/png/netone.png',
                   width: 150,
                   height: 150,
                   scale: .6,

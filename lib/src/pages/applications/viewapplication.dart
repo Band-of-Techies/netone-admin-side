@@ -19,6 +19,15 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'dart:async';
+import 'dart:convert';
+import 'dart:ui' as ui;
+
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+
 class ViewApplication extends StatefulWidget {
   final int loanRequestId;
 
@@ -32,6 +41,8 @@ class _ViewApplicationState extends State<ViewApplication> {
   late LoanRequestDetails loanDetail;
   List<String> currentstatusList = ['Approve', 'Reject'];
   String? currentstatus;
+  GlobalKey globalKey = GlobalKey();
+  Uint8List? _pdfBytes;
   List<Uint8List> selectedFiles = [];
   List<String> selectedFilesnames = [];
   bool isloadiing = true;
@@ -146,6 +157,63 @@ class _ViewApplicationState extends State<ViewApplication> {
                         )),*/
                     SizedBox(
                       width: 20,
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Print PDF'),
+                              content: Center(
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width * .5,
+                                  child: ListView(
+                                    children: [
+                                      RepaintBoundary(
+                                        key: globalKey,
+                                        child: Stack(
+                                          children: [
+                                            Image.asset(
+                                              'assets/form1.jpg',
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(height: 100),
+                                      Image.asset(
+                                        'assets/form2.jpg',
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    await _generatePdf();
+                                    _downloadPdf();
+                                  },
+                                  child: Text('Print'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        icon: Icon(
+                          Icons.print,
+                          size: 20,
+                          color: AppColors.neutral,
+                        )),
+                    SizedBox(
+                      width: 10,
                     ),
                     IconButton(
                         onPressed: () {
@@ -389,6 +457,178 @@ class _ViewApplicationState extends State<ViewApplication> {
           );
   }
 
+  Future<void> _generatePdf() async {
+    final image1 = await _captureWidgetAsImage(globalKey);
+    final image2 = await loadImage('assets/form2.jpg');
+
+    final pdf = pw.Document();
+
+    final page1 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image1),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].surname,
+                left: 165,
+                top: 248,
+              ),
+            CustomPositionedText(
+              text: 'Middle',
+              left: 340,
+              top: 248,
+            ),
+            CustomPositionedText(
+              text: 'First',
+              left: 487,
+              top: 254,
+            ),
+            CustomPositionedText(
+              text: 'DD/MM/YY',
+              left: 335,
+              top: 275,
+            ),
+            CustomPositionedText(
+              text: 'NRCNO',
+              left: 487,
+              top: 275,
+            ),
+            CustomPositionedText(
+              text: 'M',
+              left: 155,
+              top: 275,
+            ),
+            CustomPositionedText(
+              text: 'F',
+              left: 155,
+              top: 285,
+            ),
+            CustomPositionedText(
+              text: 'OFFICETELEPHONE',
+              left: 155,
+              top: 305,
+            ),
+            CustomPositionedText(
+              text: 'MOBILENUMBER',
+              left: 487,
+              top: 303,
+            ),
+            CustomPositionedText(
+              text: 'EMAILADDRESS',
+              left: 165,
+              top: 330,
+            ),
+            CustomPositionedText(
+              text: 'DRIVERLICENSE',
+              left: 165,
+              top: 355,
+            ),
+            CustomPositionedText(
+              text: 'DRIVERLICENSEEXP',
+              left: 430,
+              top: 355,
+            ),
+            CustomPositionedText(
+              text: 'RESEDENTIALADDRESS',
+              left: 165,
+              top: 380,
+            ),
+            CustomPositionedText(
+              text: 'O',
+              left: 151,
+              top: 400,
+            ),
+            CustomPositionedText(
+              text: 'L',
+              left: 205,
+              top: 400,
+            ),
+            CustomPositionedText(
+              text: 'HOWLONGTHISPLACE',
+              left: 450,
+              top: 400,
+            ),
+            CustomPositionedText(
+              text: 'POSTALADDRESS',
+              left: 165,
+              top: 420,
+            ),
+            CustomPositionedText(
+              text: 'TOWN',
+              left: 165,
+              top: 440,
+            ),
+            CustomPositionedText(
+              text: 'PROVINCE',
+              left: 430,
+              top: 440,
+            ),
+          ],
+        );
+      },
+    );
+
+    final page2 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image2),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+            pw.Positioned(
+              left: 150,
+              top: 257,
+              child: pw.Text(
+                'Job: Your Job Name',
+                style: pw.TextStyle(fontSize: 12, color: PdfColors.black),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    pdf.addPage(page1);
+    pdf.addPage(page2);
+
+    final Uint8List pdfBytes = await pdf.save();
+    setState(() {
+      _pdfBytes = pdfBytes;
+    });
+  }
+
+  Future<Uint8List> _captureWidgetAsImage(GlobalKey key) async {
+    RenderRepaintBoundary boundary =
+        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    return byteData!.buffer.asUint8List();
+  }
+
+  Future<Uint8List> loadImage(String path) async {
+    final ByteData data = await rootBundle.load(path);
+    return data.buffer.asUint8List();
+  }
+
+  void _downloadPdf() {
+    html.AnchorElement(
+        href:
+            'data:application/octet-stream;base64,' + base64Encode(_pdfBytes!))
+      ..setAttribute('download', 'generated_pdf.pdf')
+      ..click();
+  }
+
   Future<void> showDeleteConfirmationDialog(BuildContext context) async {
     return showDialog(
       context: context,
@@ -431,6 +671,22 @@ class _ViewApplicationState extends State<ViewApplication> {
           ],
         );
       },
+    );
+  }
+
+  CustomPositionedText(
+      {required String text, required double left, required double top}) {
+    return pw.Positioned(
+      left: left,
+      top: top,
+      child: pw.Text(
+        text,
+        style: pw.TextStyle(
+          fontSize: 6,
+          color: PdfColors.black,
+          fontWeight: pw.FontWeight.normal,
+        ),
+      ),
     );
   }
 
