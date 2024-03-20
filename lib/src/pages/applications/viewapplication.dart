@@ -438,7 +438,19 @@ class _ViewApplicationState extends State<ViewApplication> {
                     SizedBox(
                       height: 20,
                     ),
-
+                    CustomText(
+                      text: 'Bank Details',
+                      color: AppColors.neutral,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    bankdetails(),
+                    SizedBox(
+                      height: 20,
+                    ),
                     for (int i = 0; i < loanDetail.applicants.length; i++)
                       applicantDocuments(i, i),
                     if (loanDetail.documents.isNotEmpty) additonalDocumnets(),
@@ -1818,6 +1830,57 @@ class _ViewApplicationState extends State<ViewApplication> {
           ),
         ],
       ),
+    );
+  }
+
+  Container bankdetails() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      padding: EdgeInsets.fromLTRB(20, 25, 20, 25),
+      decoration: BoxDecoration(
+          color: AppColors.sidebarbackground,
+          borderRadius: BorderRadius.circular(20)),
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Wrap(
+              children: [
+                CustomText(
+                  fontSize: 15,
+                  text: 'Bank Name: Name of bank',
+                ),
+                SizedBox(
+                  width: 30,
+                ),
+                CustomText(
+                  fontSize: 15,
+                  text: 'Branch Name: Name of Branch',
+                ),
+                SizedBox(
+                  width: 30,
+                ),
+                CustomText(
+                  fontSize: 15,
+                  text: 'Sort code: Sort code',
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 40,
+            ),
+            CustomText(
+              fontSize: 15,
+              text: 'Branch Acc No: Acc No',
+            ),
+            SizedBox(
+              height: 40,
+            ),
+            CustomText(
+              fontSize: 15,
+              text: 'Name and Full Address',
+            ),
+          ]),
     );
   }
 

@@ -30,9 +30,9 @@ class App extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data == true) {
-              return MyHomePage();
+              return DashboardScreen();
             } else {
-              return MyHomePage();
+              return LoginPage();
             }
           } else {
             // You can return a loading indicator if needed

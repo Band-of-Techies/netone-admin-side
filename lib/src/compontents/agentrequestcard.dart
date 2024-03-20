@@ -66,6 +66,28 @@ class _AgentRequestItemState extends State<AgentRequestItem> {
   String? seletedagent;
   List<Uint8List> selectedFiles = [];
   List<String> selectedFilesnames = [];
+
+  List<Uint8List> purchaseorderfiles = [];
+  List<String> purchaseorderfilename = [];
+
+  List<Uint8List> deliveryrecipetFile = [];
+  List<String> deliveryrecipetFilename = [];
+
+  List<Uint8List> warrentyfiles = [];
+  List<String> warrentyfilename = [];
+
+  List<Uint8List> antifraudfiles = [];
+  List<String> antifraudfilesname = [];
+
+  List<Uint8List> authorizationfiles = [];
+  List<String> authorizationfilename = [];
+
+  List<Uint8List> taxfiles = [];
+  List<String> taxfilename = [];
+
+  List<Uint8List> swapFiles = [];
+  List<String> swapFilesNames = [];
+
   TextEditingController rejectionController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -356,294 +378,153 @@ class _AgentRequestItemState extends State<AgentRequestItem> {
                                   builder: (context, setState) {
                                 return AlertDialog(
                                   backgroundColor: AppColors.sidebarbackground,
-                                  title: SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * .4,
-                                    child: Row(
+                                  title: CustomText(
+                                    text: 'Attatch Proof',
+                                    fontSize: 20,
+                                  ),
+                                  content: SingleChildScrollView(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.center,
                                       children: [
-                                        CustomText(
-                                          text: 'Attatch Proof',
-                                          fontSize: 20,
+                                        if (purchaseorderfilename.isNotEmpty)
+                                          viewfiles(
+                                              context,
+                                              setState,
+                                              purchaseorderfiles,
+                                              purchaseorderfilename),
+                                        uploadButton(
+                                            context: context,
+                                            setState: setState,
+                                            newfiles: purchaseorderfiles,
+                                            newfilesname: purchaseorderfilename,
+                                            buttonText: 'Purchase Order'),
+                                        SizedBox(
+                                          height: 20,
                                         ),
-                                        TextButton.icon(
-                                          onPressed: () async {
-                                            FilePickerResult? result =
-                                                await FilePicker.platform
-                                                    .pickFiles(
-                                              allowMultiple: false,
-                                              type: FileType.custom,
-                                              allowedExtensions: [
-                                                'pdf',
-                                                'jpg',
-                                                'jpeg',
-                                                'png'
-                                              ],
-                                            );
-
-                                            if (result != null) {
-                                              if (result.files.first.size >
-                                                  1024 * 1024) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                        'The file size exceeds limit'),
-                                                  ),
-                                                );
-                                              } else {
-                                                setState(() {
-                                                  selectedFiles.addAll(
-                                                      result.files.map((file) =>
-                                                          file.bytes!));
-                                                  selectedFilesnames.addAll(
-                                                      result.files.map(
-                                                          (file) => file.name));
-                                                });
-                                              }
-                                              print(selectedFiles);
+                                        if (deliveryrecipetFile.isNotEmpty)
+                                          viewfiles(
+                                              context,
+                                              setState,
+                                              deliveryrecipetFile,
+                                              deliveryrecipetFilename),
+                                        uploadButton(
+                                            context: context,
+                                            setState: setState,
+                                            newfiles: deliveryrecipetFile,
+                                            newfilesname:
+                                                deliveryrecipetFilename,
+                                            buttonText: 'Delivery Receipt'),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        if (warrentyfiles.isNotEmpty)
+                                          viewfiles(context, setState,
+                                              warrentyfiles, warrentyfilename),
+                                        uploadButton(
+                                            context: context,
+                                            setState: setState,
+                                            newfiles: warrentyfiles,
+                                            newfilesname: warrentyfilename,
+                                            buttonText: 'Warrenty Form'),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        if (antifraudfiles.isNotEmpty)
+                                          viewfiles(
+                                              context,
+                                              setState,
+                                              antifraudfiles,
+                                              antifraudfilesname),
+                                        uploadButton(
+                                            context: context,
+                                            setState: setState,
+                                            newfiles: antifraudfiles,
+                                            newfilesname: antifraudfilesname,
+                                            buttonText: 'Anti-Fraud'),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        if (authorizationfiles.isNotEmpty)
+                                          viewfiles(
+                                              context,
+                                              setState,
+                                              authorizationfiles,
+                                              authorizationfilename),
+                                        uploadButton(
+                                            context: context,
+                                            setState: setState,
+                                            newfiles: authorizationfiles,
+                                            newfilesname: authorizationfilename,
+                                            buttonText: 'Authorization'),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        if (taxfiles.isNotEmpty)
+                                          viewfiles(context, setState, taxfiles,
+                                              taxfilename),
+                                        uploadButton(
+                                            context: context,
+                                            setState: setState,
+                                            newfiles: taxfiles,
+                                            newfilesname: taxfilename,
+                                            buttonText: 'Tax Invoice'),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        if (swapFiles.isNotEmpty)
+                                          viewfiles(context, setState,
+                                              swapFiles, swapFilesNames),
+                                        uploadButton(
+                                            context: context,
+                                            setState: setState,
+                                            newfiles: swapFiles,
+                                            newfilesname: swapFilesNames,
+                                            buttonText: 'Swap Agreement'),
+                                        SizedBox(height: 20),
+                                        ElevatedButton(
+                                          style: ButtonStyle(
+                                              padding:
+                                                  MaterialStateProperty.all(
+                                                      EdgeInsets.fromLTRB(
+                                                          20, 5, 20, 5)),
+                                              shape: MaterialStateProperty.all(
+                                                RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0), // Adjust the border radius as needed
+                                                ),
+                                              ),
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                      AppColors.mainColor)),
+                                          onPressed: () {
+                                            // Handle rejection button click
+                                            Navigator.of(context)
+                                                .pop(); // Close the dialog
+                                            if (purchaseorderfiles.isNotEmpty &&
+                                                deliveryrecipetFile
+                                                    .isNotEmpty &&
+                                                warrentyfiles.isNotEmpty &&
+                                                antifraudfiles.isNotEmpty &&
+                                                taxfiles.isNotEmpty) {
+                                              updateWithDoc(
+                                                widget.loanid,
+                                                seletedagent!,
+                                              );
+                                            } else {
+                                              warning('Add delivery proof');
                                             }
                                           },
-                                          icon: Icon(
-                                            Icons.add,
-                                            color: AppColors.mainColor,
+                                          child: CustomText(
+                                            text: 'Submit and Approve',
                                           ),
-                                          label: CustomText(
-                                            text: 'Add Files',
-                                            color: AppColors.neutral,
-                                          ),
-                                        )
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      if (selectedFiles.isNotEmpty)
-                                        Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .7,
-                                            child: Wrap(
-                                              children: List.generate(
-                                                selectedFiles.length,
-                                                (index) {
-                                                  var fileBytes =
-                                                      selectedFiles[index];
-                                                  var fileName =
-                                                      selectedFilesnames[index];
-                                                  String fileExtension =
-                                                      fileName
-                                                          .split('.')
-                                                          .last
-                                                          .toLowerCase();
-
-                                                  return Container(
-                                                    margin: EdgeInsets.all(10),
-                                                    width: 300,
-                                                    height: 80,
-                                                    child: Stack(
-                                                      children: [
-                                                        Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            // Display Image for image files
-
-                                                            (fileExtension !=
-                                                                    'pdf')
-                                                                ? GestureDetector(
-                                                                    onTap: () {
-                                                                      // Open image in a new tab
-                                                                      final blob =
-                                                                          html.Blob([
-                                                                        fileBytes
-                                                                      ], 'image/*');
-                                                                      final url = html
-                                                                              .Url
-                                                                          .createObjectUrlFromBlob(
-                                                                              blob);
-                                                                      html.window.open(
-                                                                          url,
-                                                                          '_blank');
-                                                                    },
-                                                                    child:
-                                                                        Container(
-                                                                      width:
-                                                                          300,
-                                                                      height:
-                                                                          50,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        border: Border.all(
-                                                                            color:
-                                                                                AppColors.neutral),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(5),
-                                                                        color: AppColors
-                                                                            .neutral,
-                                                                      ),
-                                                                      child: Image
-                                                                          .memory(
-                                                                        fileBytes,
-                                                                        width:
-                                                                            300, // Set the width of the image as per your requirement
-                                                                        height:
-                                                                            50, // Set the height of the image as per your requirement
-                                                                        fit: BoxFit
-                                                                            .cover, // Adjust this based on your image requirements
-                                                                      ),
-                                                                    ),
-                                                                  )
-                                                                : GestureDetector(
-                                                                    onTap: () {
-                                                                      // Open PDF in a new tab
-                                                                      final blob =
-                                                                          html.Blob([
-                                                                        Uint8List.fromList(
-                                                                            fileBytes)
-                                                                      ], 'application/pdf');
-                                                                      final url = html
-                                                                              .Url
-                                                                          .createObjectUrlFromBlob(
-                                                                              blob);
-                                                                      html.window.open(
-                                                                          url,
-                                                                          '_blank');
-                                                                    },
-                                                                    child:
-                                                                        Container(
-                                                                      width:
-                                                                          300,
-                                                                      height:
-                                                                          50,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        border: Border.all(
-                                                                            color:
-                                                                                AppColors.mainColor),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(5),
-                                                                        color: AppColors
-                                                                            .neutral,
-                                                                      ),
-                                                                      child:
-                                                                          Row(
-                                                                        children: [
-                                                                          SizedBox(
-                                                                            width:
-                                                                                20,
-                                                                          ),
-                                                                          Icon(
-                                                                            Icons.picture_as_pdf,
-                                                                            color:
-                                                                                Colors.red,
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                            SizedBox(
-                                                                height:
-                                                                    8.0), // Add spacing between image and text
-
-                                                            // Display file name with overflow handling
-                                                            Flexible(
-                                                              child: Text(
-                                                                fileName,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                // Adjust the maximum lines based on your UI requirements
-                                                                style:
-                                                                    GoogleFonts
-                                                                        .dmSans(
-                                                                  fontSize: 14,
-                                                                  color: AppColors
-                                                                      .neutral,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        Positioned(
-                                                          top: 12,
-                                                          right: 5,
-                                                          child:
-                                                              GestureDetector(
-                                                            onTap: () {
-                                                              // Handle the close icon tap
-                                                              setState(() {
-                                                                selectedFiles
-                                                                    .removeAt(
-                                                                        index);
-                                                                selectedFilesnames
-                                                                    .removeAt(
-                                                                        index);
-                                                              });
-                                                            },
-                                                            child: CircleAvatar(
-                                                              radius: 12,
-                                                              backgroundColor:
-                                                                  AppColors
-                                                                      .mainColor,
-                                                              child: Icon(
-                                                                Icons.close,
-                                                                size: 15,
-                                                                color: AppColors
-                                                                    .neutral,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            )),
-                                      SizedBox(height: 20),
-                                      ElevatedButton(
-                                        style: ButtonStyle(
-                                            padding: MaterialStateProperty.all(
-                                                EdgeInsets.fromLTRB(
-                                                    20, 5, 20, 5)),
-                                            shape: MaterialStateProperty.all(
-                                              RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(
-                                                    8.0), // Adjust the border radius as needed
-                                              ),
-                                            ),
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    AppColors.mainColor)),
-                                        onPressed: () {
-                                          // Handle rejection button click
-                                          Navigator.of(context)
-                                              .pop(); // Close the dialog
-                                          if (selectedFiles.isNotEmpty) {
-                                            updateWithDoc(
-                                              widget.loanid,
-                                              seletedagent!,
-                                            );
-                                          } else {
-                                            warning('Add delivery proof');
-                                          }
-                                        },
-                                        child: CustomText(
-                                          text: 'Submit and Approve',
-                                        ),
-                                      ),
-                                    ],
                                   ),
                                 );
                               });
@@ -680,6 +561,197 @@ class _AgentRequestItemState extends State<AgentRequestItem> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Container viewfiles(BuildContext context, StateSetter setState,
+      List<Uint8List>? newfiles, List<String> newfilenames) {
+    return Container(
+        width: MediaQuery.of(context).size.width * .7,
+        margin: EdgeInsets.only(bottom: 10),
+        child: Wrap(
+          children: List.generate(
+            newfiles!.length,
+            (index) {
+              var fileBytes = newfiles[index];
+              var fileName = newfilenames[index];
+              String fileExtension = fileName.split('.').last.toLowerCase();
+
+              return Container(
+                margin: EdgeInsets.all(10),
+                width: 300,
+                height: 80,
+                child: Stack(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Display Image for image files
+
+                        (fileExtension != 'pdf')
+                            ? GestureDetector(
+                                onTap: () {
+                                  // Open image in a new tab
+                                  final blob =
+                                      html.Blob([fileBytes], 'image/*');
+                                  final url =
+                                      html.Url.createObjectUrlFromBlob(blob);
+                                  html.window.open(url, '_blank');
+                                },
+                                child: Container(
+                                  width: 300,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: AppColors.neutral),
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppColors.neutral,
+                                  ),
+                                  child: Image.memory(
+                                    fileBytes,
+                                    width:
+                                        300, // Set the width of the image as per your requirement
+                                    height:
+                                        50, // Set the height of the image as per your requirement
+                                    fit: BoxFit
+                                        .cover, // Adjust this based on your image requirements
+                                  ),
+                                ),
+                              )
+                            : GestureDetector(
+                                onTap: () {
+                                  // Open PDF in a new tab
+                                  final blob = html.Blob(
+                                      [Uint8List.fromList(fileBytes)],
+                                      'application/pdf');
+                                  final url =
+                                      html.Url.createObjectUrlFromBlob(blob);
+                                  html.window.open(url, '_blank');
+                                },
+                                child: Container(
+                                  width: 300,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: AppColors.mainColor),
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppColors.neutral,
+                                  ),
+                                  child: Row(
+                                    children: const [
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Icon(
+                                        Icons.picture_as_pdf,
+                                        color: Colors.red,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                        SizedBox(
+                            height: 8.0), // Add spacing between image and text
+
+                        // Display file name with overflow handling
+                        Flexible(
+                          child: Text(
+                            fileName,
+                            overflow: TextOverflow.ellipsis,
+                            // Adjust the maximum lines based on your UI requirements
+                            style: GoogleFonts.dmSans(
+                              fontSize: 14,
+                              color: AppColors.neutral,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      top: 12,
+                      right: 5,
+                      child: GestureDetector(
+                        onTap: () {
+                          // Handle the close icon tap
+                          setState(() {
+                            newfiles.removeAt(index);
+                            newfilenames.removeAt(index);
+                          });
+                        },
+                        child: CircleAvatar(
+                          radius: 12,
+                          backgroundColor: AppColors.mainColor,
+                          child: Icon(
+                            Icons.close,
+                            size: 15,
+                            color: AppColors.neutral,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+        ));
+  }
+
+  TextButton uploadButton({
+    required BuildContext context,
+    required Function setState,
+    List<Uint8List>? newfiles,
+    List<String>? newfilesname,
+    required String buttonText,
+  }) {
+    return TextButton.icon(
+      onPressed: () async {
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          allowMultiple: false,
+          type: FileType.custom,
+          allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+        );
+
+        if (result != null) {
+          if (result.files.first.size > 1024 * 1024) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('The file size exceeds limit'),
+              ),
+            );
+          } else {
+            setState(() {
+              newfiles!.addAll(result.files.map((file) => file.bytes!));
+              newfilesname!.addAll(result.files.map((file) => file.name));
+            });
+          }
+          print(newfiles);
+        }
+      },
+      icon: Icon(
+        Icons.add,
+        color: AppColors.neutral,
+      ),
+      style: ButtonStyle(
+        minimumSize: MaterialStateProperty.all<Size>(
+            Size(200, 40)), // Define minimum size
+        maximumSize: MaterialStateProperty.all<Size>(Size(200, 40)),
+        // Change background color as needed
+        shape: MaterialStateProperty.all<OutlinedBorder>(
+          RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(10.0), // Adjust border radius as needed
+            side: BorderSide(
+                color: AppColors.neutral), // Change border color as needed
+          ),
+        ),
+      ),
+      label: CustomText(
+        text: buttonText,
+        color: AppColors.neutral,
       ),
     );
   }
