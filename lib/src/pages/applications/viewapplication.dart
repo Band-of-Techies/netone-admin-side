@@ -902,8 +902,169 @@ class _ViewApplicationState extends State<ViewApplication> {
               },
             ),
           ),
+          SizedBox(
+            height: 20,
+          ),
+          if (loanDetail.applicants[applicantkey].documents.length > 0)
+            loadDocFiles(applicantkey, 'Payslip 1',
+                loanDetail.applicants[applicantkey].documents),
+          SizedBox(
+            height: 20,
+          ),
+          if (loanDetail.applicants[applicantkey].documents.length > 0)
+            loadDocFiles(applicantkey, 'Payslip 2',
+                loanDetail.applicants[applicantkey].documents),
+          if (loanDetail.applicants[applicantkey].documents.length > 0)
+            loadDocFiles(applicantkey, 'Payslip 3',
+                loanDetail.applicants[applicantkey].documents),
+          if (loanDetail.applicants[applicantkey].documents.length > 0)
+            loadDocFiles(applicantkey, 'Introductory Letter',
+                loanDetail.applicants[applicantkey].documents),
+          if (loanDetail.applicants[applicantkey].documents.length > 0)
+            loadDocFiles(applicantkey, 'Bank Statement',
+                loanDetail.applicants[applicantkey].documents),
+          if (loanDetail.applicants[applicantkey].documents.length > 0)
+            loadDocFiles(applicantkey, 'NRC',
+                loanDetail.applicants[applicantkey].documents),
         ],
       ),
+    );
+  }
+
+  Row loadDocFiles(
+      int applicantkey, String text, List<Document> documentstoload) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        CustomText(text: '$text: '),
+        Wrap(
+          children: List.generate(
+            documentstoload.length,
+            (index) {
+              return Container(
+                margin: EdgeInsets.all(10),
+                width: 300,
+                height: 90,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Display Image for image files
+                    isImage(documentstoload[index].contentType)
+                        ? GestureDetector(
+                            onTap: () {
+                              String imageUrl = documentstoload[index].url;
+                              js.context.callMethod('open', [imageUrl]);
+                            },
+                            child: Container(
+                              width: 300,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: AppColors.mainbackground),
+                                borderRadius: BorderRadius.circular(5),
+                                color: AppColors.neutral,
+                              ),
+                              child: Image.network(
+                                documentstoload[index].url,
+                                width:
+                                    300, // Set the width of the image as per your requirement
+                                height:
+                                    50, // Set the height of the image as per your requirement
+                                fit: BoxFit
+                                    .cover, // Adjust this based on your image requirements
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    width: 300,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: AppColors.neutral),
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: AppColors.neutral,
+                                    ),
+                                    child: Center(
+                                      child: Text('Image Not Found'),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          )
+                        : documentstoload[index].contentType.contains('pdf')
+                            ? GestureDetector(
+                                onTap: () {
+                                  String pdfUrl = documentstoload[index].url;
+                                  js.context.callMethod('open', [pdfUrl]);
+                                },
+                                child: Container(
+                                  width: 300,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: AppColors.neutral),
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppColors.neutral,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Icon(
+                                        Icons.picture_as_pdf,
+                                        color: Colors.red,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                width: 300,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: AppColors.neutral),
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: AppColors.neutral,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Icon(
+                                      Icons.enhanced_encryption,
+                                      color: Colors.red,
+                                    ),
+                                    CustomText(text: 'Unreadable Format')
+                                  ],
+                                ),
+                              ),
+
+                    SizedBox(height: 8.0), // Add spacing between image and text
+
+                    // Display file name with overflow handling
+                    Flexible(
+                      child: Text(
+                        'Document  ${index + 1}',
+
+                        // Adjust the maximum lines based on your UI requirements
+                        style: GoogleFonts.dmSans(
+                          color: AppColors.neutral,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -1878,7 +2039,7 @@ class _ViewApplicationState extends State<ViewApplication> {
             ),
             CustomText(
               fontSize: 15,
-              text: 'Name and Full Address',
+              text: 'Name and Full Address: Name and address',
             ),
           ]),
     );
