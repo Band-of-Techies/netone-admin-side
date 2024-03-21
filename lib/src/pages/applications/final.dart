@@ -1616,14 +1616,14 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
       },
     );
 
-    pdf.addPage(page1);
+    /* pdf.addPage(page1);
     pdf.addPage(page2);
     pdf.addPage(page3);
     pdf.addPage(page4);
     pdf.addPage(page5);
-    pdf.addPage(page6);
+    pdf.addPage(page6);*/
     pdf.addPage(page7);
-    pdf.addPage(page8);
+    /* pdf.addPage(page8);
     pdf.addPage(page9);
     pdf.addPage(page10);
     pdf.addPage(page11);
@@ -1631,7 +1631,7 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
     pdf.addPage(page13);
     pdf.addPage(page14);
     pdf.addPage(page15);
-    pdf.addPage(page16);
+     pdf.addPage(page16);*/
 
     final Uint8List pdfBytes = await pdf.save();
     setState(() {
