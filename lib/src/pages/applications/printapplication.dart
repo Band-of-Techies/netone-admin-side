@@ -1044,7 +1044,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             pw.Positioned(
               left: 60,
-              top: 655,
+              top: 635,
               child: pw.Image(
                 pw.MemoryImage(
                     sign), // Assuming image7 is the image you want to place
@@ -1080,7 +1080,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             pw.Positioned(
               left: 60,
-              top: 120,
+              top: 100,
               child: pw.Image(
                 pw.MemoryImage(
                     sign), // Assuming image7 is the image you want to place
@@ -1100,7 +1100,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             pw.Positioned(
               left: 60,
-              top: 290,
+              top: 270,
               child: pw.Image(
                 pw.MemoryImage(
                     sign), // Assuming image7 is the image you want to place
@@ -1120,7 +1120,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             pw.Positioned(
               left: 60,
-              top: 435,
+              top: 420,
               child: pw.Image(
                 pw.MemoryImage(
                     sign), // Assuming image7 is the image you want to place
@@ -1245,12 +1245,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             pw.Positioned(
               left: 330,
-              top: 260,
+              top: 255,
               child: pw.Image(
                 pw.MemoryImage(
                     sign), // Assuming image7 is the image you want to place
-                width: 70, // Adjust width as needed
-                height: 40, // Adjust height as needed
+                width: 50, // Adjust width as needed
+                height: 20, // Adjust height as needed
               ),
             ),
             CustomPositionedText(
@@ -1265,12 +1265,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             pw.Positioned(
               left: 330,
-              top: 380,
+              top: 370,
               child: pw.Image(
                 pw.MemoryImage(
                     sign), // Assuming image7 is the image you want to place
-                width: 70, // Adjust width as needed
-                height: 40, // Adjust height as needed
+                width: 50, // Adjust width as needed
+                height: 20, // Adjust height as needed
               ),
             ),
             CustomPositionedText(
@@ -1285,12 +1285,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             pw.Positioned(
               left: 330,
-              top: 490,
+              top: 480,
               child: pw.Image(
                 pw.MemoryImage(
                     sign), // Assuming image7 is the image you want to place
-                width: 70, // Adjust width as needed
-                height: 40, // Adjust height as needed
+                width: 50, // Adjust width as needed
+                height: 20, // Adjust height as needed
               ),
             ),
             CustomPositionedText(
@@ -1305,12 +1305,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             pw.Positioned(
               left: 330,
-              top: 610,
+              top: 600,
               child: pw.Image(
                 pw.MemoryImage(
                     sign), // Assuming image7 is the image you want to place
-                width: 70, // Adjust width as needed
-                height: 40, // Adjust height as needed
+                width: 50, // Adjust width as needed
+                height: 20, // Adjust height as needed
               ),
             ),
             CustomPositionedText(

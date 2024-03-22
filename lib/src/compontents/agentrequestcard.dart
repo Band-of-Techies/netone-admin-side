@@ -485,47 +485,53 @@ class _AgentRequestItemState extends State<AgentRequestItem> {
                                             newfilesname: swapFilesNames,
                                             buttonText: 'Swap Agreement'),
                                         SizedBox(height: 20),
-                                        ElevatedButton(
-                                          style: ButtonStyle(
-                                              padding:
-                                                  MaterialStateProperty.all(
-                                                      EdgeInsets.fromLTRB(
-                                                          20, 5, 20, 5)),
-                                              shape: MaterialStateProperty.all(
-                                                RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0), // Adjust the border radius as needed
-                                                ),
-                                              ),
-                                              backgroundColor:
-                                                  MaterialStateProperty.all(
-                                                      AppColors.mainColor)),
-                                          onPressed: () {
-                                            // Handle rejection button click
-                                            Navigator.of(context)
-                                                .pop(); // Close the dialog
-                                            if (purchaseorderfiles.isNotEmpty &&
-                                                deliveryrecipetFile
-                                                    .isNotEmpty &&
-                                                warrentyfiles.isNotEmpty &&
-                                                antifraudfiles.isNotEmpty &&
-                                                taxfiles.isNotEmpty) {
-                                              updateWithDoc(
-                                                widget.loanid,
-                                                seletedagent!,
-                                              );
-                                            } else {
-                                              warning('Add delivery proof');
-                                            }
-                                          },
-                                          child: CustomText(
-                                            text: 'Submit and Approve',
-                                          ),
-                                        ),
                                       ],
                                     ),
                                   ),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: CustomText(
+                                          text: 'Cancel',
+                                        )),
+                                    ElevatedButton(
+                                      style: ButtonStyle(
+                                          padding: MaterialStateProperty.all(
+                                              EdgeInsets.fromLTRB(
+                                                  20, 5, 20, 5)),
+                                          shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                  8.0), // Adjust the border radius as needed
+                                            ),
+                                          ),
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  AppColors.mainColor)),
+                                      onPressed: () {
+                                        // Handle rejection button click
+                                        Navigator.of(context)
+                                            .pop(); // Close the dialog
+                                        if (purchaseorderfiles.isNotEmpty &&
+                                            deliveryrecipetFile.isNotEmpty &&
+                                            warrentyfiles.isNotEmpty &&
+                                            antifraudfiles.isNotEmpty &&
+                                            taxfiles.isNotEmpty) {
+                                          updateWithDoc(
+                                            widget.loanid,
+                                            seletedagent!,
+                                          );
+                                        } else {
+                                          warning('Add delivery proof');
+                                        }
+                                      },
+                                      child: CustomText(
+                                        text: 'Submit and Approve',
+                                      ),
+                                    ),
+                                  ],
                                 );
                               });
                             },

@@ -8,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:netone_loanmanagement_admin/src/createapplication/constants/colors.dart';
 import 'package:netone_loanmanagement_admin/src/pages/applications/editapplication.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/dashboard.dart';
 import 'package:netone_loanmanagement_admin/src/res/apis/loandetails.dart';
@@ -163,29 +164,31 @@ class _ViewApplicationState extends State<ViewApplication> {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: Text('Print PDF'),
-                              content: Center(
-                                child: SizedBox(
-                                  width: MediaQuery.of(context).size.width * .5,
-                                  child: ListView(
-                                    children: [
-                                      RepaintBoundary(
-                                        key: globalKey,
-                                        child: Stack(
-                                          children: [
-                                            Image.asset(
-                                              'assets/form1.jpg',
-                                              fit: BoxFit.contain,
-                                            ),
-                                          ],
+                              title: CustomText(
+                                text: 'Print PDF',
+                                color: primary,
+                              ),
+                              content: Container(
+                                constraints: BoxConstraints(maxHeight: 200),
+                                child: Center(
+                                  child: SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width * .2,
+                                    child: ListView(
+                                      children: [
+                                        RepaintBoundary(
+                                          key: globalKey,
+                                          child: Stack(
+                                            children: [
+                                              Image.asset(
+                                                'assets/form1.jpg',
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 100),
-                                      Image.asset(
-                                        'assets/form2.jpg',
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -198,8 +201,26 @@ class _ViewApplicationState extends State<ViewApplication> {
                                 ),
                                 TextButton(
                                   onPressed: () async {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        content: Container(
+                                          constraints:
+                                              BoxConstraints(maxHeight: 200),
+                                          child: Center(
+                                            child: SizedBox(
+                                                width: 50,
+                                                height: 50,
+                                                child:
+                                                    CircularProgressIndicator()),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+
                                     await _generatePdf();
                                     _downloadPdf();
+                                    Navigator.pop(context);
                                   },
                                   child: Text('Print'),
                                 ),
@@ -472,7 +493,22 @@ class _ViewApplicationState extends State<ViewApplication> {
   Future<void> _generatePdf() async {
     final image1 = await _captureWidgetAsImage(globalKey);
     final image2 = await loadImage('assets/form2.jpg');
-
+    final image3 = await loadImage('assets/form3.jpg');
+    final image4 = await loadImage('assets/form4.jpg');
+    final image5 = await loadImage('assets/form5.jpg');
+    final image6 = await loadImage('assets/form6.jpg');
+    final image7 = await loadImage('assets/form7.jpg');
+    final image8 = await loadImage('assets/form8.jpg');
+    final image9 = await loadImage('assets/form9.jpg');
+    final image10 = await loadImage('assets/form10.jpg');
+    final image11 = await loadImage('assets/form11.jpg');
+    final image12 = await loadImage('assets/form12.jpg');
+    final image13 = await loadImage('assets/form13.jpg');
+    final image14 = await loadImage('assets/form14.jpg');
+    final image15 = await loadImage('assets/form15.jpg');
+    final image16 = await loadImage('assets/quote.jpg');
+    final sign = await loadImage('assets/sign.png');
+    final tick = await loadImage('assets/tick.png');
     final pdf = pw.Document();
 
     final page1 = pw.Page(
@@ -486,45 +522,44 @@ class _ViewApplicationState extends State<ViewApplication> {
                 fit: pw.BoxFit.contain,
               ),
             ),
-            if (loanDetail.applicantCount > 0)
-              CustomPositionedText(
-                text: loanDetail.applicants[0].surname,
-                left: 165,
-                top: 248,
-              ),
             CustomPositionedText(
-              text: 'Middle',
+              text: 'SURNAME',
+              left: 165,
+              top: 248,
+            ),
+            CustomPositionedText(
+              text: 'MIDDLE',
               left: 340,
               top: 248,
             ),
             CustomPositionedText(
-              text: 'First',
+              text: 'FIRST',
               left: 487,
               top: 254,
             ),
             CustomPositionedText(
               text: 'DD/MM/YY',
-              left: 335,
+              left: 340,
               top: 275,
             ),
             CustomPositionedText(
               text: 'NRCNO',
-              left: 487,
+              left: 490,
               top: 275,
             ),
-            CustomPositionedText(
-              text: 'M',
-              left: 155,
-              top: 275,
+            CustomPositionedCheck(
+              tick: tick,
+              left: 161,
+              top: 273,
             ),
-            CustomPositionedText(
-              text: 'F',
-              left: 155,
-              top: 285,
+            CustomPositionedCheck(
+              tick: tick,
+              left: 161,
+              top: 283,
             ),
             CustomPositionedText(
               text: 'OFFICETELEPHONE',
-              left: 155,
+              left: 163,
               top: 305,
             ),
             CustomPositionedText(
@@ -552,15 +587,15 @@ class _ViewApplicationState extends State<ViewApplication> {
               left: 165,
               top: 380,
             ),
-            CustomPositionedText(
-              text: 'O',
-              left: 151,
-              top: 400,
+            CustomPositionedCheck(
+              tick: tick,
+              left: 154,
+              top: 397,
             ),
-            CustomPositionedText(
-              text: 'L',
-              left: 205,
-              top: 400,
+            CustomPositionedCheck(
+              tick: tick,
+              left: 216,
+              top: 397,
             ),
             CustomPositionedText(
               text: 'HOWLONGTHISPLACE',
@@ -582,6 +617,103 @@ class _ViewApplicationState extends State<ViewApplication> {
               left: 430,
               top: 440,
             ),
+
+            //second applicant
+            CustomPositionedText(
+              text: 'SECOND SURNAME',
+              left: 165,
+              top: 535,
+            ),
+            CustomPositionedText(
+              text: 'SECOND MIDDLE',
+              left: 350,
+              top: 534,
+            ),
+            CustomPositionedText(
+              text: 'SECOND FIRST',
+              left: 490,
+              top: 530,
+            ),
+            CustomPositionedText(
+              text: 'SECOND DOB',
+              left: 355,
+              top: 560,
+            ),
+            CustomPositionedText(
+              text: 'SECOND NRC',
+              left: 495,
+              top: 560,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 187,
+              top: 558,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 187,
+              top: 568,
+            ),
+            CustomPositionedText(
+              text: 'SECOND TELEPHONE',
+              left: 165,
+              top: 590,
+            ),
+            CustomPositionedText(
+              text: 'SECOND MOBILR',
+              left: 490,
+              top: 588,
+            ),
+            CustomPositionedText(
+              text: 'SECOND EMAIL',
+              left: 165,
+              top: 620,
+            ),
+            CustomPositionedText(
+              text: 'SECOND DL',
+              left: 165,
+              top: 645,
+            ),
+            CustomPositionedText(
+              text: 'SECOND DLEXP',
+              left: 430,
+              top: 645,
+            ),
+            CustomPositionedText(
+              text: 'SECOND RESEDENTIAL',
+              left: 165,
+              top: 675,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 179,
+              top: 690,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 238,
+              top: 690,
+            ),
+            CustomPositionedText(
+              text: 'SECOND HOWLONG',
+              left: 450,
+              top: 691,
+            ),
+            CustomPositionedText(
+              text: 'SECOND POSTAL',
+              left: 165,
+              top: 710,
+            ),
+            CustomPositionedText(
+              text: 'SECOND TOWN',
+              left: 165,
+              top: 735,
+            ),
+            CustomPositionedText(
+              text: 'SECOND PROVINCE',
+              left: 425,
+              top: 735,
+            ),
           ],
         );
       },
@@ -598,22 +730,1407 @@ class _ViewApplicationState extends State<ViewApplication> {
                 fit: pw.BoxFit.contain,
               ),
             ),
-            pw.Positioned(
-              left: 150,
-              top: 257,
-              child: pw.Text(
-                'Job: Your Job Name',
-                style: pw.TextStyle(fontSize: 12, color: PdfColors.black),
-              ),
+            CustomPositionedText(
+              text: 'THIRD SURNAME',
+              left: 165,
+              top: 80,
+            ),
+            CustomPositionedText(
+              text: 'THIRD MIDDLE',
+              left: 355,
+              top: 78,
+            ),
+            CustomPositionedText(
+              text: 'THIRD FIRST',
+              left: 490,
+              top: 78,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 187,
+              top: 103,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 187,
+              top: 113,
+            ),
+            CustomPositionedText(
+              text: 'THIRD DOB',
+              left: 355,
+              top: 105,
+            ),
+            CustomPositionedText(
+              text: 'THIRD NRC',
+              left: 495,
+              top: 105,
+            ),
+            CustomPositionedText(
+              text: 'THIRD OFFICE TELE',
+              left: 140,
+              top: 135,
+            ),
+            CustomPositionedText(
+              text: 'THIRD MOBILE',
+              left: 480,
+              top: 135,
+            ),
+            CustomPositionedText(
+              text: 'THIRD EMAIL',
+              left: 140,
+              top: 165,
+            ),
+            CustomPositionedText(
+              text: 'THIRD DL',
+              left: 160,
+              top: 190,
+            ),
+            CustomPositionedText(
+              text: 'THIRD DLEXP',
+              left: 440,
+              top: 188,
+            ),
+            CustomPositionedText(
+              text: 'THIRD RESEDENTIAL',
+              left: 133,
+              top: 218,
+            ),
+
+            CustomPositionedCheck(
+              tick: tick,
+              left: 179,
+              top: 236,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 237,
+              top: 236,
+            ),
+            CustomPositionedText(
+              text: 'THIRD HOWLONG',
+              left: 450,
+              top: 240,
+            ),
+            CustomPositionedText(
+              text: 'THIRD POSTAL',
+              left: 130,
+              top: 260,
+            ),
+            CustomPositionedText(
+              text: 'THIRD TOWN',
+              left: 130,
+              top: 285,
+            ),
+            CustomPositionedText(
+              text: 'THIRD PROVINCE',
+              left: 430,
+              top: 285,
+            ),
+
+            //fourth applicant
+            CustomPositionedText(
+              text: 'FOURTH SURNAME',
+              left: 160,
+              top: 370,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH MIDDLE',
+              left: 355,
+              top: 370,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH FIRST',
+              left: 490,
+              top: 370,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 187,
+              top: 394,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 187,
+              top: 404,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH DOB',
+              left: 355,
+              top: 395,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH NRC',
+              left: 490,
+              top: 400,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH TELEPHONE',
+              left: 135,
+              top: 425,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH MOBILE',
+              left: 470,
+              top: 425,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH EMAIL',
+              left: 135,
+              top: 455,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH DL',
+              left: 160,
+              top: 480,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH DLEXP',
+              left: 445,
+              top: 480,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH RESEDNETIAL',
+              left: 160,
+              top: 510,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 180,
+              top: 527,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 237,
+              top: 527,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH HOWLONG',
+              left: 455,
+              top: 530,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH POSTAL',
+              left: 125,
+              top: 550,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH TOWN',
+              left: 125,
+              top: 570,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH PROVINCE',
+              left: 425,
+              top: 572,
             ),
           ],
         );
       },
     );
 
+    final page3 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image3),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+            CustomPositionedText(
+              text: 'JOBTITLE',
+              left: 165,
+              top: 122,
+            ),
+            CustomPositionedText(
+              text: 'MINISTRY',
+              left: 165,
+              top: 142,
+            ),
+            CustomPositionedText(
+              text: 'PADDRESS',
+              left: 165,
+              top: 162,
+            ),
+            CustomPositionedText(
+              text: 'POSTAL',
+              left: 165,
+              top: 182,
+            ),
+            CustomPositionedText(
+              text: 'TOWN',
+              left: 165,
+              top: 202,
+            ),
+            CustomPositionedText(
+              text: 'PROVINCE',
+              left: 428,
+              top: 202,
+            ),
+            CustomPositionedText(
+              text: 'GROSS',
+              left: 165,
+              top: 222,
+            ),
+            CustomPositionedText(
+              text: 'PROVINCE',
+              left: 360,
+              top: 222,
+            ),
+            CustomPositionedText(
+              text: 'SS',
+              left: 535,
+              top: 220,
+            ),
+            CustomPositionedText(
+              text: 'DD/MM/YY',
+              left: 165,
+              top: 245,
+            ),
+            CustomPositionedText(
+              text: 'EN123123',
+              left: 360,
+              top: 250,
+            ),
+            CustomPositionedText(
+              text: '12',
+              left: 558,
+              top: 246,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 150,
+              top: 276,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 287,
+              top: 276,
+            ),
+            CustomPositionedText(
+              text: 'DD/MM/YY',
+              left: 470,
+              top: 275,
+            ),
+            //secondjob
+            CustomPositionedText(
+              text: 'SEOCNDJOB',
+              left: 165,
+              top: 325,
+            ),
+            CustomPositionedText(
+              text: '2MINISTRY',
+              left: 165,
+              top: 345,
+            ),
+            CustomPositionedText(
+              text: '2PHYADD',
+              left: 165,
+              top: 365,
+            ),
+            CustomPositionedText(
+              text: '2POSTAL',
+              left: 165,
+              top: 385,
+            ),
+            CustomPositionedText(
+              text: '2TOWN',
+              left: 165,
+              top: 405,
+            ),
+            CustomPositionedText(
+              text: '2PROVINCE',
+              left: 430,
+              top: 405,
+            ),
+            CustomPositionedText(
+              text: 'GS',
+              left: 165,
+              top: 425,
+            ),
+            CustomPositionedText(
+              text: 'NS',
+              left: 360,
+              top: 425,
+            ),
+            CustomPositionedText(
+              text: 'SS',
+              left: 540,
+              top: 422,
+            ),
+            CustomPositionedText(
+              text: 'DD/MM/YY',
+              left: 165,
+              top: 447,
+            ),
+            CustomPositionedText(
+              text: '2EN',
+              left: 360,
+              top: 448,
+            ),
+            CustomPositionedText(
+              text: '10',
+              left: 560,
+              top: 450,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 145,
+              top: 480,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 281,
+              top: 480,
+            ),
+            CustomPositionedText(
+              text: 'DD/MM/YY',
+              left: 450,
+              top: 480,
+            ),
+            //third applicant
+            CustomPositionedText(
+              text: 'THIRDJOB',
+              left: 165,
+              top: 520,
+            ),
+            CustomPositionedText(
+              text: '3MIN',
+              left: 165,
+              top: 545,
+            ),
+            CustomPositionedText(
+              text: '3PHY',
+              left: 165,
+              top: 570,
+            ),
+            CustomPositionedText(
+              text: '3POS',
+              left: 165,
+              top: 590,
+            ),
+            CustomPositionedText(
+              text: '3TOWN',
+              left: 165,
+              top: 610,
+            ),
+            CustomPositionedText(
+              text: '3PROV',
+              left: 420,
+              top: 611,
+            ),
+            CustomPositionedText(
+              text: '3GS',
+              left: 105,
+              top: 634,
+            ),
+            CustomPositionedText(
+              text: 'CNS',
+              left: 358,
+              top: 632,
+            ),
+            CustomPositionedText(
+              text: 'SS',
+              left: 538,
+              top: 635,
+            ),
+            CustomPositionedText(
+              text: 'DD/MM/YY',
+              left: 168,
+              top: 655,
+            ),
+            CustomPositionedText(
+              text: 'EN',
+              left: 360,
+              top: 660,
+            ),
+            CustomPositionedText(
+              text: 'YI',
+              left: 555,
+              top: 660,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 146,
+              top: 688,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 286,
+              top: 688,
+            ),
+            CustomPositionedText(
+              text: 'DD/MM/YY',
+              left: 450,
+              top: 685,
+            ),
+          ],
+        );
+      },
+    );
+    final page4 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image4),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+            CustomPositionedText(
+              text: '4JOBTITLE',
+              left: 165,
+              top: 80,
+            ),
+            CustomPositionedText(
+              text: '4MIN',
+              left: 165,
+              top: 105,
+            ),
+            CustomPositionedText(
+              text: '4PHY',
+              left: 165,
+              top: 125,
+            ),
+            CustomPositionedText(
+              text: '4POSTAL',
+              left: 165,
+              top: 147,
+            ),
+            CustomPositionedText(
+              text: '4TOWN',
+              left: 129,
+              top: 165,
+            ),
+            CustomPositionedText(
+              text: '4PROVINCE',
+              left: 420,
+              top: 168,
+            ),
+            CustomPositionedText(
+              text: '4GS',
+              left: 120,
+              top: 187,
+            ),
+            CustomPositionedText(
+              text: '4CNS',
+              left: 360,
+              top: 186,
+            ),
+            CustomPositionedText(
+              text: 'SS',
+              left: 540,
+              top: 187,
+            ),
+            CustomPositionedText(
+              text: 'DD/MM/YY',
+              left: 170,
+              top: 210,
+            ),
+            CustomPositionedText(
+              text: '4EN',
+              left: 360,
+              top: 215,
+            ),
+            CustomPositionedText(
+              text: '12',
+              left: 560,
+              top: 213,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 148,
+              top: 239,
+            ),
+            CustomPositionedCheck(
+              tick: tick,
+              left: 280,
+              top: 240,
+            ),
+            CustomPositionedText(
+              text: 'DD/MM/YY',
+              left: 450,
+              top: 240,
+            ),
+            //kin 1st applicant
+            CustomPositionedText(
+              text: 'NAME',
+              left: 160,
+              top: 290,
+            ),
+            CustomPositionedText(
+              text: 'OTHER',
+              left: 375,
+              top: 290,
+            ),
+            CustomPositionedText(
+              text: 'PADDRE',
+              left: 160,
+              top: 310,
+            ),
+            CustomPositionedText(
+              text: 'POSTALADD',
+              left: 160,
+              top: 365,
+            ),
+            CustomPositionedText(
+              text: 'CELL',
+              left: 160,
+              top: 400,
+            ),
+            CustomPositionedText(
+              text: 'EMAIL',
+              left: 160,
+              top: 420,
+            ),
+
+            //kin second applicant
+            CustomPositionedText(
+              text: '2NAME',
+              left: 110,
+              top: 495,
+            ),
+            CustomPositionedText(
+              text: '2OTHER',
+              left: 375,
+              top: 495,
+            ),
+            CustomPositionedText(
+              text: '2PHY',
+              left: 160,
+              top: 520,
+            ),
+            CustomPositionedText(
+              text: '2POSTAL',
+              left: 160,
+              top: 573,
+            ),
+            CustomPositionedText(
+              text: '2CELL',
+              left: 160,
+              top: 610,
+            ),
+            CustomPositionedText(
+              text: '2EMAIL',
+              left: 160,
+              top: 630,
+            ),
+          ],
+        );
+      },
+    );
+
+    final page5 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image5),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+            CustomPositionedText(
+              text: '3NAME',
+              left: 115,
+              top: 70,
+            ),
+            CustomPositionedText(
+              text: '3OTHER',
+              left: 380,
+              top: 70,
+            ),
+            CustomPositionedText(
+              text: '3PHY',
+              left: 160,
+              top: 92,
+            ),
+            CustomPositionedText(
+              text: '3POSTAL',
+              left: 160,
+              top: 145,
+            ),
+            CustomPositionedText(
+              text: '3CELL',
+              left: 160,
+              top: 182,
+            ),
+            CustomPositionedText(
+              text: '3EMAIL',
+              left: 160,
+              top: 205,
+            ),
+            //4th Kin Applicant
+            CustomPositionedText(
+              text: '4NAME',
+              left: 115,
+              top: 275,
+            ),
+            CustomPositionedText(
+              text: '4OTHER',
+              left: 370,
+              top: 275,
+            ),
+            CustomPositionedText(
+              text: '4PHY',
+              left: 160,
+              top: 303,
+            ),
+            CustomPositionedText(
+              text: '4POSTAL',
+              left: 160,
+              top: 355,
+            ),
+            CustomPositionedText(
+              text: '4CELL',
+              left: 160,
+              top: 390,
+            ),
+            CustomPositionedText(
+              text: '4EMAIL',
+              left: 160,
+              top: 415,
+            ),
+          ],
+        );
+      },
+    );
+    final page6 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image6),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+            //motorvehicle
+            CustomPositionedCheck(
+              tick: tick,
+              left: 165,
+              top: 83,
+            ),
+            //agri
+            CustomPositionedCheck(
+              tick: tick,
+              left: 310,
+              top: 83,
+            ),
+            //furniture
+            CustomPositionedCheck(
+              left: 460,
+              tick: tick,
+              top: 83,
+            ),
+            //buidling
+            CustomPositionedCheck(
+              tick: tick,
+              left: 165,
+              top: 114,
+            ),
+            //device
+            CustomPositionedCheck(
+              tick: tick,
+              left: 310,
+              top: 114,
+            ),
+            CustomPositionedText(
+              text: 'TOTALCOSTOFASSET',
+              left: 196,
+              top: 210,
+            ),
+            CustomPositionedText(
+              text: 'TOTALINSURANCE',
+              left: 196,
+              top: 230,
+            ),
+            CustomPositionedText(
+              text: 'LESSADVACNE',
+              left: 196,
+              top: 250,
+            ),
+            CustomPositionedText(
+              text: 'LOANAMOUNT',
+              left: 196,
+              top: 270,
+            ),
+            CustomPositionedText(
+              text: 'TENURE',
+              left: 196,
+              top: 292,
+            ),
+            CustomPositionedText(
+              text: 'FIRSTAPPLICANT',
+              left: 196,
+              top: 350,
+            ),
+            CustomPositionedText(
+              text: 'SECONDAPPLICANT',
+              left: 490,
+              top: 350,
+            ),
+            CustomPositionedText(
+              text: 'THIRD APPLICANT',
+              left: 196,
+              top: 372,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH APPLICANT',
+              left: 490,
+              top: 372,
+            ),
+            CustomPositionedText(
+              text: 'FIRSTPROPOTION',
+              left: 197,
+              top: 396,
+            ),
+            CustomPositionedText(
+              text: 'SECONDPROPOTION',
+              left: 491,
+              top: 396,
+            ),
+            CustomPositionedText(
+              text: 'THIRDPROPOTION',
+              left: 198,
+              top: 419,
+            ),
+            CustomPositionedText(
+              text: 'FOURTHPROPOTION',
+              left: 490,
+              top: 419,
+            ),
+
+            //filldetails
+            CustomPositionedText(
+              text: 'FIRSTNAME',
+              left: 85,
+              top: 549,
+            ),
+            pw.Positioned(
+              left: 60,
+              top: 635,
+              child: pw.Image(
+                pw.MemoryImage(
+                    sign), // Assuming image7 is the image you want to place
+                width: 50, // Adjust width as needed
+                height: 30, // Adjust height as needed
+              ),
+            ),
+            CustomPositionedText(
+              text: 'FIRSTDATE',
+              left: 415,
+              top: 662,
+            ),
+            CustomPositionedText(
+              text: 'SECONDNAME',
+              left: 85,
+              top: 691,
+            ),
+          ],
+        );
+      },
+    );
+
+    final page7 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image7),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+            pw.Positioned(
+              left: 60,
+              top: 100,
+              child: pw.Image(
+                pw.MemoryImage(
+                    sign), // Assuming image7 is the image you want to place
+                width: 50, // Adjust width as needed
+                height: 30, // Adjust height as needed
+              ),
+            ),
+            CustomPositionedText(
+              text: 'SECONDDATE',
+              left: 420,
+              top: 130,
+            ),
+            CustomPositionedText(
+              text: 'THIRDNAME',
+              left: 85,
+              top: 180,
+            ),
+            pw.Positioned(
+              left: 60,
+              top: 270,
+              child: pw.Image(
+                pw.MemoryImage(
+                    sign), // Assuming image7 is the image you want to place
+                width: 50, // Adjust width as needed
+                height: 30, // Adjust height as needed
+              ),
+            ),
+            CustomPositionedText(
+              text: 'THIRDDATE',
+              left: 395,
+              top: 292,
+            ),
+            CustomPositionedText(
+              text: 'FOURTHNAME',
+              left: 85,
+              top: 321,
+            ),
+            pw.Positioned(
+              left: 60,
+              top: 420,
+              child: pw.Image(
+                pw.MemoryImage(
+                    sign), // Assuming image7 is the image you want to place
+                width: 50, // Adjust width as needed
+                height: 30, // Adjust height as needed
+              ),
+            ),
+            CustomPositionedText(
+              text: 'FOURTHDATE',
+              left: 420,
+              top: 440,
+            ),
+          ],
+        );
+      },
+    );
+    final page8 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image8),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    final page9 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image9),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    final page10 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image10),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    final page11 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image11),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    final page12 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image12),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    final page13 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image13),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    final page14 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image14),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+            CustomPositionedText(
+              text: 'FIRST NAME',
+              left: 328,
+              top: 221,
+            ),
+            pw.Positioned(
+              left: 330,
+              top: 255,
+              child: pw.Image(
+                pw.MemoryImage(
+                    sign), // Assuming image7 is the image you want to place
+                width: 50, // Adjust width as needed
+                height: 20, // Adjust height as needed
+              ),
+            ),
+            CustomPositionedText(
+              text: 'FIRST DATE',
+              left: 340,
+              top: 307,
+            ),
+            CustomPositionedText(
+              text: 'SECOND NAME',
+              left: 328,
+              top: 328,
+            ),
+            pw.Positioned(
+              left: 330,
+              top: 370,
+              child: pw.Image(
+                pw.MemoryImage(
+                    sign), // Assuming image7 is the image you want to place
+                width: 50, // Adjust width as needed
+                height: 20, // Adjust height as needed
+              ),
+            ),
+            CustomPositionedText(
+              text: 'SECOND DATE',
+              left: 340,
+              top: 424,
+            ),
+            CustomPositionedText(
+              text: 'THIRD NAME',
+              left: 328,
+              top: 445,
+            ),
+            pw.Positioned(
+              left: 330,
+              top: 480,
+              child: pw.Image(
+                pw.MemoryImage(
+                    sign), // Assuming image7 is the image you want to place
+                width: 50, // Adjust width as needed
+                height: 20, // Adjust height as needed
+              ),
+            ),
+            CustomPositionedText(
+              text: 'THIRD DATE',
+              left: 340,
+              top: 545,
+            ),
+            CustomPositionedText(
+              text: 'FOURTH NAME',
+              left: 328,
+              top: 565,
+            ),
+            pw.Positioned(
+              left: 330,
+              top: 600,
+              child: pw.Image(
+                pw.MemoryImage(
+                    sign), // Assuming image7 is the image you want to place
+                width: 50, // Adjust width as needed
+                height: 20, // Adjust height as needed
+              ),
+            ),
+            CustomPositionedText(
+              text: 'FOURTH DATE',
+              left: 340,
+              top: 645,
+            ),
+          ],
+        );
+      },
+    );
+    final page15 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image15),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+            //payers details
+            CustomPositionedText(
+              text: 'CUSTOMER NAME',
+              left: 100,
+              top: 345,
+            ),
+            CustomPositionedText(
+              text:
+                  '2         6         0         1         2         3         4         5         6         7         8         9',
+              left: 100,
+              top: 370,
+            ),
+            CustomPositionedText(
+              text: 'EMAIL',
+              left: 340,
+              top: 370,
+            ),
+            CustomPositionedText(
+              text: 'ADDRESS',
+              left: 100,
+              top: 398,
+            ),
+            //payersbankdetails
+            CustomPositionedText(
+              text: 'BANKNAME',
+              left: 100,
+              top: 434,
+            ),
+            CustomPositionedText(
+              text: 'BRANCHNAME',
+              left: 100,
+              top: 464,
+            ),
+            CustomPositionedText(
+              text: '1         2         3         4         5         6',
+              left: 285,
+              top: 464,
+            ),
+            CustomPositionedText(
+              text:
+                  '2         6         0         1         2         3         4         5         6         7         8         9',
+              left: 100,
+              top: 494,
+            ),
+            CustomPositionedText(
+              text: 'NAME AND FULL POSTALL ADDRESS',
+              left: 100,
+              top: 550,
+            ),
+            pw.Positioned(
+              left: 100,
+              top: 640,
+              child: pw.Image(
+                pw.MemoryImage(
+                    sign), // Assuming image7 is the image you want to place
+                width: 50, // Adjust width as needed
+                height: 30, // Adjust height as needed
+              ),
+            ),
+            CustomPositionedText(
+              text: 'DATE',
+              left: 250,
+              top: 660,
+            ),
+          ],
+        );
+      },
+    );
+    final page16 = pw.Page(
+      margin: pw.EdgeInsets.zero, // Remove default margins
+      build: (context) {
+        return pw.Stack(
+          children: [
+            pw.Center(
+              child: pw.Image(
+                pw.MemoryImage(image16),
+                fit: pw.BoxFit.contain,
+              ),
+            ),
+            CustomPositionedTextNOBold(
+              text: '21/03/2024',
+              left: 500,
+              top: 146,
+            ),
+            CustomPositionedTextNOBold(
+              text: 'NB 1234',
+              left: 500,
+              top: 161,
+            ),
+            CustomPositionedTextBold(
+              text: 'CUSTOMER NAME',
+              left: 85,
+              top: 203,
+            ),
+            CustomPositionedTextNOBold(
+              text: 'AGENT Name',
+              left: 26,
+              top: 386,
+            ),
+            CustomPositionedTextBold(
+              text: 'Payment Terms ',
+              left: 20,
+              top: 680,
+            ),
+            CustomPositionedTextBold(
+              text: 'LOAN APPROVAL THROUGH PSMFC',
+              left: 110,
+              top: 680,
+            ),
+            CustomPositionedTextBold(
+              text: 'Delivery of Device',
+              left: 20,
+              top: 695,
+            ),
+            CustomPositionedTextBold(
+              text: 'EX STOCK',
+              left: 110,
+              top: 695,
+            ),
+            CustomPositionedTextBold(
+              text: 'Quote Validity',
+              left: 20,
+              top: 710,
+            ),
+            CustomPositionedTextBold(
+              text: '21 days',
+              left: 110,
+              top: 710,
+            ),
+            CustomPositionedTextBold(
+              text: 'THANK YOU FOR YOUR BUSINESS!',
+              left: 220,
+              top: 730,
+            ),
+            CustomPositionedTextBold(
+              text: 'Website',
+              left: 20,
+              top: 750,
+            ),
+            CustomPositionedTextNOBold(
+              text: 'www.digitize.co.zm',
+              left: 90,
+              top: 750,
+            ),
+            CustomPositionedTextBold(
+              text: 'Whatsapp',
+              left: 20,
+              top: 765,
+            ),
+            CustomPositionedTextNOBold(
+              text: '962148178',
+              left: 90,
+              top: 765,
+            ),
+            CustomPositionedTextBold(
+              text: 'Phone',
+              left: 20,
+              top: 780,
+            ),
+            CustomPositionedTextNOBold(
+              text: '0211 372 600',
+              left: 90,
+              top: 780,
+            ),
+
+            //calculationssubtotal
+            CustomPositionedTextNOBold(
+              text: 'SUBTOTAL',
+              left: 420,
+              top: 660,
+            ),
+            CustomPositionedTextNOBold(
+              text: '10,343.97',
+              left: 515,
+              top: 660,
+            ),
+            //taxrate
+            CustomPositionedTextNOBold(
+              text: 'TAXRATE',
+              left: 420,
+              top: 680,
+            ),
+            CustomPositionedTextNOBold(
+              text: '0.16',
+              left: 515,
+              top: 680,
+            ),
+            //vat
+            CustomPositionedTextNOBold(
+              text: 'VAT',
+              left: 420,
+              top: 695,
+            ),
+            CustomPositionedTextNOBold(
+              text: '10,343.97',
+              left: 515,
+              top: 695,
+            ),
+            //totalprice
+            CustomPositionedTextBold(
+              text: 'TOTAL PRICE',
+              left: 420,
+              top: 710,
+            ),
+            CustomPositionedTextNOBold(
+              text: '10,343.97',
+              left: 515,
+              top: 710,
+            ),
+            pw.Positioned(
+              left: 16,
+              top: 444,
+              child: pw.Container(
+                  width: 565,
+                  height: 60,
+                  child: pw.Row(children: [
+                    pw.Container(
+                        width: 89,
+                        height: 60,
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                            color: PdfColors.black, // Border color
+                            width: 1, // Border width
+                          ),
+                        ),
+                        child: pw.Center(child: customText(text: '1'))),
+                    pw.Container(
+                        width: 288,
+                        height: 60,
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                            color: PdfColors.black, // Border color
+                            width: 1, // Border width
+                          ),
+                        ),
+                        child: pw.Center(
+                            child: customText(
+                                text:
+                                    '''Neo Pro15 Intel i5-1035G7-10th GEN/8GB DDR4/512GB
+SSD / 1.0MP CAMERA / Black / 15.6 inch FHD IPS 1920*1080 /
+Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
+/ Speaker 8 1W / Standard HDMI / MIC / Earphone Jack / 1.6kg
+/ Windows 11 PRO/Laptop Bag'''))),
+                    pw.Container(
+                        width: 100,
+                        height: 60,
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                            color: PdfColors.black, // Border color
+                            width: 1, // Border width
+                          ),
+                        ),
+                        child:
+                            pw.Center(child: customText(text: '10343.96552'))),
+                    pw.Container(
+                        width: 87,
+                        height: 60,
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(
+                            color: PdfColors.black, // Border color
+                            width: 1, // Border width
+                          ),
+                        ),
+                        child:
+                            pw.Center(child: customText(text: '10343.96552')))
+                  ])),
+            ),
+            for (int i = 0; i < 3; i++)
+              productContainer(
+                  price: 10343.96552,
+                  toppostion: 444 + (i * 60),
+                  quantity: 1,
+                  description:
+                      '''Neo Pro15 Intel i5-1035G7-10th GEN/8GB DDR4/512GB
+SSD / 1.0MP CAMERA / Black / 15.6 inch FHD IPS 1920*1080 /
+Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
+/ Speaker 8 1W / Standard HDMI / MIC / Earphone Jack / 1.6kg
+/ Windows 11 PRO/Laptop Ba''')
+          ],
+        );
+      },
+    );
+    List<dynamic> pages = [];
+    for (int j = 0; j < loanDetail.applicantCount; j++) {
+      for (int i = 0; i < loanDetail.applicants[0].documents!.length; i++) {
+        if (!loanDetail.applicants[0].documents[i].contentType
+            .contains('pdf')) {
+          final Uint8List imageBytes = await fetchAndConvertImage(
+              loanDetail.applicants[j].documents.first.url);
+          pages.add(pw.Page(
+            margin: pw.EdgeInsets.zero, // Remove default margins
+            build: (context) {
+              return pw.Stack(
+                children: [
+                  pw.Center(
+                    child: pw.Image(
+                      pw.MemoryImage(imageBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ));
+        }
+      }
+    }
+
     pdf.addPage(page1);
     pdf.addPage(page2);
-
+    pdf.addPage(page3);
+    pdf.addPage(page4);
+    pdf.addPage(page5);
+    pdf.addPage(page6);
+    pdf.addPage(page7);
+    pdf.addPage(page8);
+    pdf.addPage(page9);
+    pdf.addPage(page10);
+    pdf.addPage(page11);
+    pdf.addPage(page12);
+    pdf.addPage(page13);
+    pdf.addPage(page14);
+    pdf.addPage(page15);
+    pdf.addPage(page16);
+    for (int i = 0; i < pages.length; i++) {
+      pdf.addPage(pages[i]);
+    }
     final Uint8List pdfBytes = await pdf.save();
     setState(() {
       _pdfBytes = pdfBytes;
@@ -626,6 +2143,15 @@ class _ViewApplicationState extends State<ViewApplication> {
     ui.Image image = await boundary.toImage(pixelRatio: 3.0);
     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     return byteData!.buffer.asUint8List();
+  }
+
+  Future<Uint8List> fetchAndConvertImage(String imageUrl) async {
+    final response = await http.get(Uri.parse(imageUrl));
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    } else {
+      throw Exception('Failed to load image: $imageUrl');
+    }
   }
 
   Future<Uint8List> loadImage(String path) async {
@@ -686,22 +2212,6 @@ class _ViewApplicationState extends State<ViewApplication> {
     );
   }
 
-  CustomPositionedText(
-      {required String text, required double left, required double top}) {
-    return pw.Positioned(
-      left: left,
-      top: top,
-      child: pw.Text(
-        text,
-        style: pw.TextStyle(
-          fontSize: 6,
-          color: PdfColors.black,
-          fontWeight: pw.FontWeight.normal,
-        ),
-      ),
-    );
-  }
-
   Future<void> deleteData(int id) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -737,6 +2247,135 @@ class _ViewApplicationState extends State<ViewApplication> {
     } catch (e) {
       print('Error for ID $id: $e');
     }
+  }
+
+  CustomPositionedText(
+      {required String text, required double left, required double top}) {
+    return pw.Positioned(
+      left: left,
+      top: top,
+      child: pw.Text(
+        text,
+        style: pw.TextStyle(
+          fontSize: 6,
+          color: PdfColors.black,
+          fontWeight: pw.FontWeight.normal,
+        ),
+      ),
+    );
+  }
+
+  customText({required String text}) {
+    return pw.Text(
+      text,
+      style: pw.TextStyle(
+        fontSize: 8,
+        color: PdfColors.black,
+        fontWeight: pw.FontWeight.normal,
+      ),
+    );
+  }
+
+  productContainer(
+      {required double toppostion,
+      required int quantity,
+      description,
+      required double price}) {
+    return pw.Positioned(
+      left: 16,
+      top: toppostion,
+      child: pw.Container(
+          width: 565,
+          height: 60,
+          child: pw.Row(children: [
+            pw.Container(
+                width: 89,
+                height: 60,
+                decoration: pw.BoxDecoration(
+                  border: pw.Border.all(
+                    color: PdfColors.black, // Border color
+                    width: 1, // Border width
+                  ),
+                ),
+                child: pw.Center(child: customText(text: quantity.toString()))),
+            pw.Container(
+                width: 288,
+                height: 60,
+                decoration: pw.BoxDecoration(
+                  border: pw.Border.all(
+                    color: PdfColors.black, // Border color
+                    width: 1, // Border width
+                  ),
+                ),
+                child: pw.Center(child: customText(text: description))),
+            pw.Container(
+                width: 100,
+                height: 60,
+                decoration: pw.BoxDecoration(
+                  border: pw.Border.all(
+                    color: PdfColors.black, // Border color
+                    width: 1, // Border width
+                  ),
+                ),
+                child: pw.Center(child: customText(text: price.toString()))),
+            pw.Container(
+                width: 87,
+                height: 60,
+                decoration: pw.BoxDecoration(
+                  border: pw.Border.all(
+                    color: PdfColors.black, // Border color
+                    width: 1, // Border width
+                  ),
+                ),
+                child: pw.Center(
+                    child: customText(text: (price * quantity).toString())))
+          ])),
+    );
+  }
+
+  CustomPositionedTextBold(
+      {required String text, required double left, required double top}) {
+    return pw.Positioned(
+      left: left,
+      top: top,
+      child: pw.Text(
+        text,
+        style: pw.TextStyle(
+          fontSize: 8,
+          color: PdfColors.black,
+          fontWeight: pw.FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  CustomPositionedTextNOBold(
+      {required String text, required double left, required double top}) {
+    return pw.Positioned(
+      left: left,
+      top: top,
+      child: pw.Text(
+        text,
+        style: pw.TextStyle(
+          fontSize: 8,
+          color: PdfColors.black,
+          fontWeight: pw.FontWeight.normal,
+        ),
+      ),
+    );
+  }
+
+  pw.Widget CustomPositionedCheck(
+      {required double left, required double top, required Uint8List? tick}) {
+    return pw.Positioned(
+      left: left,
+      top: top,
+      child: pw.Image(
+        pw.MemoryImage(tick!), // Assuming image7 is the image you want to place
+        width: 10, // Adjust width as needed
+        height: 10, // Adjust height as needed
+      ),
+    );
   }
 
   String formatDate(String dateString) {

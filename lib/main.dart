@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:netone_loanmanagement_admin/src/pages/applications/printapplication.dart';
 import 'package:netone_loanmanagement_admin/src/pages/applications/viewapplication.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'src/navigation/navigation_service.dart';
 import 'src/pages/loginsection/login/log_in_page.dart';
 import 'src/pages/dashboard/dashboard.dart';
-import 'src/pages/routes/routes.dart';
 import 'src/res/font_family.dart';
 import 'src/di/service_locator.dart';
 
@@ -30,9 +28,11 @@ class App extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data == true) {
-              return MyHomePage();
+              return ViewApplication(
+                loanRequestId: 13,
+              );
             } else {
-              return MyHomePage();
+              return LoginPage();
             }
           } else {
             // You can return a loading indicator if needed
