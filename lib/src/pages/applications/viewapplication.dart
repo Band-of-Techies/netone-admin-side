@@ -492,14 +492,17 @@ class _ViewApplicationState extends State<ViewApplication> {
 
   Future<void> _generatePdf() async {
     final image1 = await _captureWidgetAsImage(globalKey);
+
     final image2 = await loadImage('assets/form2.jpg');
     final image3 = await loadImage('assets/form3.jpg');
+
     final image4 = await loadImage('assets/form4.jpg');
     final image5 = await loadImage('assets/form5.jpg');
     final image6 = await loadImage('assets/form6.jpg');
     final image7 = await loadImage('assets/form7.jpg');
     final image8 = await loadImage('assets/form8.jpg');
     final image9 = await loadImage('assets/form9.jpg');
+
     final image10 = await loadImage('assets/form10.jpg');
     final image11 = await loadImage('assets/form11.jpg');
     final image12 = await loadImage('assets/form12.jpg');
@@ -507,7 +510,9 @@ class _ViewApplicationState extends State<ViewApplication> {
     final image14 = await loadImage('assets/form14.jpg');
     final image15 = await loadImage('assets/form15.jpg');
     final image16 = await loadImage('assets/quote.jpg');
+
     final sign = await loadImage('assets/sign.png');
+
     final tick = await loadImage('assets/tick.png');
     final pdf = pw.Document();
 
@@ -522,6 +527,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 fit: pw.BoxFit.contain,
               ),
             ),
+
             if (loanDetail.applicantCount > 0)
               CustomPositionedText(
                 text: loanDetail.applicants[0].surname,
@@ -698,11 +704,12 @@ class _ViewApplicationState extends State<ViewApplication> {
                 left: 490,
                 top: 588,
               ),
-            CustomPositionedText(
-              text: loanDetail.applicants[1].email,
-              left: 165,
-              top: 620,
-            ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].email,
+                left: 165,
+                top: 620,
+              ),
             if (loanDetail.applicantCount > 1)
               CustomPositionedText(
                 text: loanDetail.applicants[1].licenseNumber,
@@ -843,11 +850,12 @@ class _ViewApplicationState extends State<ViewApplication> {
                 left: 160,
                 top: 190,
               ),
-            CustomPositionedText(
-              text: loanDetail.applicants[2].licenseExpiry,
-              left: 440,
-              top: 188,
-            ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].licenseExpiry,
+                left: 440,
+                top: 188,
+              ),
             if (loanDetail.applicantCount > 2)
               CustomPositionedText(
                 text: loanDetail.applicants[2].residentialAddress,
@@ -2324,7 +2332,7 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
         );
       },
     );
-    /*  List<dynamic> pages = [];
+    List<dynamic> pages = [];
     for (int j = 0; j < loanDetail.applicantCount; j++) {
       for (int i = 0; i < loanDetail.applicants[0].documents!.length; i++) {
         if (!loanDetail.applicants[0].documents[i].contentType
@@ -2348,7 +2356,7 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
           ));
         }
       }
-    }*/
+    }
 
     pdf.addPage(page1);
     pdf.addPage(page2);
@@ -2366,9 +2374,9 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
     pdf.addPage(page14);
     pdf.addPage(page15);
     pdf.addPage(page16);
-    /* for (int i = 0; i < pages.length; i++) {
+    for (int i = 0; i < pages.length; i++) {
       pdf.addPage(pages[i]);
-    }*/
+    }
     final Uint8List pdfBytes = await pdf.save();
     setState(() {
       _pdfBytes = pdfBytes;
