@@ -522,198 +522,243 @@ class _ViewApplicationState extends State<ViewApplication> {
                 fit: pw.BoxFit.contain,
               ),
             ),
-            CustomPositionedText(
-              text: 'SURNAME',
-              left: 165,
-              top: 248,
-            ),
-            CustomPositionedText(
-              text: 'MIDDLE',
-              left: 340,
-              top: 248,
-            ),
-            CustomPositionedText(
-              text: 'FIRST',
-              left: 487,
-              top: 254,
-            ),
-            CustomPositionedText(
-              text: 'DD/MM/YY',
-              left: 340,
-              top: 275,
-            ),
-            CustomPositionedText(
-              text: 'NRCNO',
-              left: 490,
-              top: 275,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 161,
-              top: 273,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 161,
-              top: 283,
-            ),
-            CustomPositionedText(
-              text: 'OFFICETELEPHONE',
-              left: 163,
-              top: 305,
-            ),
-            CustomPositionedText(
-              text: 'MOBILENUMBER',
-              left: 487,
-              top: 303,
-            ),
-            CustomPositionedText(
-              text: 'EMAILADDRESS',
-              left: 165,
-              top: 330,
-            ),
-            CustomPositionedText(
-              text: 'DRIVERLICENSE',
-              left: 165,
-              top: 355,
-            ),
-            CustomPositionedText(
-              text: 'DRIVERLICENSEEXP',
-              left: 430,
-              top: 355,
-            ),
-            CustomPositionedText(
-              text: 'RESEDENTIALADDRESS',
-              left: 165,
-              top: 380,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 154,
-              top: 397,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 216,
-              top: 397,
-            ),
-            CustomPositionedText(
-              text: 'HOWLONGTHISPLACE',
-              left: 450,
-              top: 400,
-            ),
-            CustomPositionedText(
-              text: 'POSTALADDRESS',
-              left: 165,
-              top: 420,
-            ),
-            CustomPositionedText(
-              text: 'TOWN',
-              left: 165,
-              top: 440,
-            ),
-            CustomPositionedText(
-              text: 'PROVINCE',
-              left: 430,
-              top: 440,
-            ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].surname,
+                left: 165,
+                top: 248,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].middleName,
+                left: 340,
+                top: 248,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].firstName,
+                left: 487,
+                top: 254,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].dob,
+                left: 340,
+                top: 275,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].nrc,
+                left: 490,
+                top: 275,
+              ),
+            if (loanDetail.applicantCount > 0 &&
+                loanDetail.applicants[0].gender == 'Male')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 161,
+                top: 273,
+              ),
+            if (loanDetail.applicantCount > 0 &&
+                loanDetail.applicants[0].gender == 'Female')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 161,
+                top: 283,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].telephone,
+                left: 163,
+                top: 305,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].mobile,
+                left: 487,
+                top: 303,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].email,
+                left: 165,
+                top: 330,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].licenseNumber,
+                left: 165,
+                top: 355,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].licenseExpiry,
+                left: 430,
+                top: 355,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].residentialAddress,
+                left: 165,
+                top: 380,
+              ),
+            if (loanDetail.applicantCount > 0 &&
+                loanDetail.applicants[0].ownership == 'owned')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 154,
+                top: 397,
+              ),
+            if (loanDetail.applicantCount > 0 &&
+                loanDetail.applicants[0].ownership == 'leased')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 216,
+                top: 397,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].howlongthisplace,
+                left: 450,
+                top: 400,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].postalAddress,
+                left: 165,
+                top: 420,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].town,
+                left: 165,
+                top: 440,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].province,
+                left: 430,
+                top: 440,
+              ),
 
             //second applicant
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].surname,
+                left: 165,
+                top: 535,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].middleName,
+                left: 350,
+                top: 534,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].firstName,
+                left: 490,
+                top: 530,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].dob,
+                left: 355,
+                top: 560,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].nrc,
+                left: 495,
+                top: 560,
+              ),
+            if (loanDetail.applicantCount > 1 &&
+                loanDetail.applicants[1].gender == 'Male')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 187,
+                top: 558,
+              ),
+            if (loanDetail.applicantCount > 1 &&
+                loanDetail.applicants[1].gender == 'Female')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 187,
+                top: 568,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].telephone,
+                left: 165,
+                top: 590,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].mobile,
+                left: 490,
+                top: 588,
+              ),
             CustomPositionedText(
-              text: 'SECOND SURNAME',
-              left: 165,
-              top: 535,
-            ),
-            CustomPositionedText(
-              text: 'SECOND MIDDLE',
-              left: 350,
-              top: 534,
-            ),
-            CustomPositionedText(
-              text: 'SECOND FIRST',
-              left: 490,
-              top: 530,
-            ),
-            CustomPositionedText(
-              text: 'SECOND DOB',
-              left: 355,
-              top: 560,
-            ),
-            CustomPositionedText(
-              text: 'SECOND NRC',
-              left: 495,
-              top: 560,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 187,
-              top: 558,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 187,
-              top: 568,
-            ),
-            CustomPositionedText(
-              text: 'SECOND TELEPHONE',
-              left: 165,
-              top: 590,
-            ),
-            CustomPositionedText(
-              text: 'SECOND MOBILR',
-              left: 490,
-              top: 588,
-            ),
-            CustomPositionedText(
-              text: 'SECOND EMAIL',
+              text: loanDetail.applicants[1].email,
               left: 165,
               top: 620,
             ),
-            CustomPositionedText(
-              text: 'SECOND DL',
-              left: 165,
-              top: 645,
-            ),
-            CustomPositionedText(
-              text: 'SECOND DLEXP',
-              left: 430,
-              top: 645,
-            ),
-            CustomPositionedText(
-              text: 'SECOND RESEDENTIAL',
-              left: 165,
-              top: 675,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 179,
-              top: 690,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 238,
-              top: 690,
-            ),
-            CustomPositionedText(
-              text: 'SECOND HOWLONG',
-              left: 450,
-              top: 691,
-            ),
-            CustomPositionedText(
-              text: 'SECOND POSTAL',
-              left: 165,
-              top: 710,
-            ),
-            CustomPositionedText(
-              text: 'SECOND TOWN',
-              left: 165,
-              top: 735,
-            ),
-            CustomPositionedText(
-              text: 'SECOND PROVINCE',
-              left: 425,
-              top: 735,
-            ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].licenseNumber,
+                left: 165,
+                top: 645,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].licenseExpiry,
+                left: 430,
+                top: 645,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].residentialAddress,
+                left: 165,
+                top: 675,
+              ),
+            if (loanDetail.applicantCount > 1 &&
+                loanDetail.applicants[1].ownership == 'owned')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 179,
+                top: 690,
+              ),
+            if (loanDetail.applicantCount > 1 &&
+                loanDetail.applicants[1].ownership == 'leased')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 238,
+                top: 690,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].howlongthisplace,
+                left: 450,
+                top: 691,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].postalAddress,
+                left: 165,
+                top: 710,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].town,
+                left: 165,
+                top: 735,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].province,
+                left: 425,
+                top: 735,
+              ),
           ],
         );
       },
@@ -730,199 +775,243 @@ class _ViewApplicationState extends State<ViewApplication> {
                 fit: pw.BoxFit.contain,
               ),
             ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].surname,
+                left: 165,
+                top: 80,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].middleName,
+                left: 355,
+                top: 78,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].firstName,
+                left: 490,
+                top: 78,
+              ),
+            if (loanDetail.applicantCount > 2 &&
+                loanDetail.applicants[2].gender == 'Male')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 187,
+                top: 103,
+              ),
+            if (loanDetail.applicantCount > 2 &&
+                loanDetail.applicants[2].gender == 'Female')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 187,
+                top: 113,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].dob,
+                left: 355,
+                top: 105,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].nrc,
+                left: 495,
+                top: 105,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].telephone,
+                left: 140,
+                top: 135,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].mobile,
+                left: 480,
+                top: 135,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].email,
+                left: 140,
+                top: 165,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].licenseNumber,
+                left: 160,
+                top: 190,
+              ),
             CustomPositionedText(
-              text: 'THIRD SURNAME',
-              left: 165,
-              top: 80,
-            ),
-            CustomPositionedText(
-              text: 'THIRD MIDDLE',
-              left: 355,
-              top: 78,
-            ),
-            CustomPositionedText(
-              text: 'THIRD FIRST',
-              left: 490,
-              top: 78,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 187,
-              top: 103,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 187,
-              top: 113,
-            ),
-            CustomPositionedText(
-              text: 'THIRD DOB',
-              left: 355,
-              top: 105,
-            ),
-            CustomPositionedText(
-              text: 'THIRD NRC',
-              left: 495,
-              top: 105,
-            ),
-            CustomPositionedText(
-              text: 'THIRD OFFICE TELE',
-              left: 140,
-              top: 135,
-            ),
-            CustomPositionedText(
-              text: 'THIRD MOBILE',
-              left: 480,
-              top: 135,
-            ),
-            CustomPositionedText(
-              text: 'THIRD EMAIL',
-              left: 140,
-              top: 165,
-            ),
-            CustomPositionedText(
-              text: 'THIRD DL',
-              left: 160,
-              top: 190,
-            ),
-            CustomPositionedText(
-              text: 'THIRD DLEXP',
+              text: loanDetail.applicants[2].licenseExpiry,
               left: 440,
               top: 188,
             ),
-            CustomPositionedText(
-              text: 'THIRD RESEDENTIAL',
-              left: 133,
-              top: 218,
-            ),
-
-            CustomPositionedCheck(
-              tick: tick,
-              left: 179,
-              top: 236,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 237,
-              top: 236,
-            ),
-            CustomPositionedText(
-              text: 'THIRD HOWLONG',
-              left: 450,
-              top: 240,
-            ),
-            CustomPositionedText(
-              text: 'THIRD POSTAL',
-              left: 130,
-              top: 260,
-            ),
-            CustomPositionedText(
-              text: 'THIRD TOWN',
-              left: 130,
-              top: 285,
-            ),
-            CustomPositionedText(
-              text: 'THIRD PROVINCE',
-              left: 430,
-              top: 285,
-            ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].residentialAddress,
+                left: 133,
+                top: 218,
+              ),
+            if (loanDetail.applicantCount > 2 &&
+                loanDetail.applicants[2].ownership == 'owned')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 179,
+                top: 236,
+              ),
+            if (loanDetail.applicantCount > 2 &&
+                loanDetail.applicants[2].ownership == 'leased')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 237,
+                top: 236,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].howlongthisplace,
+                left: 450,
+                top: 240,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].postalAddress,
+                left: 130,
+                top: 260,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].town,
+                left: 130,
+                top: 285,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].province,
+                left: 430,
+                top: 285,
+              ),
 
             //fourth applicant
-            CustomPositionedText(
-              text: 'FOURTH SURNAME',
-              left: 160,
-              top: 370,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH MIDDLE',
-              left: 355,
-              top: 370,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH FIRST',
-              left: 490,
-              top: 370,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 187,
-              top: 394,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 187,
-              top: 404,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH DOB',
-              left: 355,
-              top: 395,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH NRC',
-              left: 490,
-              top: 400,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH TELEPHONE',
-              left: 135,
-              top: 425,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH MOBILE',
-              left: 470,
-              top: 425,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH EMAIL',
-              left: 135,
-              top: 455,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH DL',
-              left: 160,
-              top: 480,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH DLEXP',
-              left: 445,
-              top: 480,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH RESEDNETIAL',
-              left: 160,
-              top: 510,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 180,
-              top: 527,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 237,
-              top: 527,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH HOWLONG',
-              left: 455,
-              top: 530,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH POSTAL',
-              left: 125,
-              top: 550,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH TOWN',
-              left: 125,
-              top: 570,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH PROVINCE',
-              left: 425,
-              top: 572,
-            ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].surname,
+                left: 160,
+                top: 370,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].middleName,
+                left: 355,
+                top: 370,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].firstName,
+                left: 490,
+                top: 370,
+              ),
+            if (loanDetail.applicantCount > 3 &&
+                loanDetail.applicants[3].gender == 'Male')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 187,
+                top: 394,
+              ),
+            if (loanDetail.applicantCount > 3 &&
+                loanDetail.applicants[3].gender == 'Female')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 187,
+                top: 404,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].dob,
+                left: 355,
+                top: 395,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].nrc,
+                left: 490,
+                top: 400,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].telephone,
+                left: 135,
+                top: 425,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].mobile,
+                left: 470,
+                top: 425,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].email,
+                left: 135,
+                top: 455,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].licenseNumber,
+                left: 160,
+                top: 480,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].licenseExpiry,
+                left: 445,
+                top: 480,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].residentialAddress,
+                left: 160,
+                top: 510,
+              ),
+            if (loanDetail.applicantCount > 3 &&
+                loanDetail.applicants[3].ownership == 'owned')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 180,
+                top: 527,
+              ),
+            if (loanDetail.applicantCount > 3 &&
+                loanDetail.applicants[3].ownership == 'leased')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 237,
+                top: 527,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].howlongthisplace,
+                left: 455,
+                top: 530,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].postalAddress,
+                left: 125,
+                top: 550,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].town,
+                left: 125,
+                top: 570,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].province,
+                left: 425,
+                top: 572,
+              ),
           ],
         );
       },
@@ -939,233 +1028,299 @@ class _ViewApplicationState extends State<ViewApplication> {
                 fit: pw.BoxFit.contain,
               ),
             ),
-            CustomPositionedText(
-              text: 'JOBTITLE',
-              left: 165,
-              top: 122,
-            ),
-            CustomPositionedText(
-              text: 'MINISTRY',
-              left: 165,
-              top: 142,
-            ),
-            CustomPositionedText(
-              text: 'PADDRESS',
-              left: 165,
-              top: 162,
-            ),
-            CustomPositionedText(
-              text: 'POSTAL',
-              left: 165,
-              top: 182,
-            ),
-            CustomPositionedText(
-              text: 'TOWN',
-              left: 165,
-              top: 202,
-            ),
-            CustomPositionedText(
-              text: 'PROVINCE',
-              left: 428,
-              top: 202,
-            ),
-            CustomPositionedText(
-              text: 'GROSS',
-              left: 165,
-              top: 222,
-            ),
-            CustomPositionedText(
-              text: 'PROVINCE',
-              left: 360,
-              top: 222,
-            ),
-            CustomPositionedText(
-              text: 'SS',
-              left: 535,
-              top: 220,
-            ),
-            CustomPositionedText(
-              text: 'DD/MM/YY',
-              left: 165,
-              top: 245,
-            ),
-            CustomPositionedText(
-              text: 'EN123123',
-              left: 360,
-              top: 250,
-            ),
-            CustomPositionedText(
-              text: '12',
-              left: 558,
-              top: 246,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 150,
-              top: 276,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 287,
-              top: 276,
-            ),
-            CustomPositionedText(
-              text: 'DD/MM/YY',
-              left: 470,
-              top: 275,
-            ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].occupation.jobTitle,
+                left: 165,
+                top: 122,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].occupation.ministry,
+                left: 165,
+                top: 142,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].occupation.physicalAddress,
+                left: 165,
+                top: 162,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].occupation.postalAddress,
+                left: 165,
+                top: 182,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].occupation.town,
+                left: 165,
+                top: 202,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].occupation.province,
+                left: 428,
+                top: 202,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].occupation.grossSalary,
+                left: 165,
+                top: 222,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].occupation.currentNetSalary,
+                left: 360,
+                top: 222,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].occupation.salaryScale,
+                left: 535,
+                top: 220,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text:
+                    loanDetail.applicants[0].occupation.preferredRetirementYear,
+                left: 165,
+                top: 245,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].occupation.employerNumber,
+                left: 360,
+                top: 250,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].occupation.yearsOfService,
+                left: 558,
+                top: 246,
+              ),
+            if (loanDetail.applicantCount > 0 &&
+                loanDetail.applicants[0].occupation.employmentType ==
+                    'permanent')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 150,
+                top: 276,
+              ),
+            if (loanDetail.applicantCount > 0 &&
+                loanDetail.applicants[0].occupation.employmentType ==
+                    'contract')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 287,
+                top: 276,
+              ),
+            if (loanDetail.applicantCount > 0 &&
+                loanDetail.applicants[0].occupation.employmentType ==
+                    'contract')
+              CustomPositionedText(
+                text: loanDetail.applicants[0].occupation.tempExpiryDate,
+                left: 470,
+                top: 275,
+              ),
             //secondjob
-            CustomPositionedText(
-              text: 'SEOCNDJOB',
-              left: 165,
-              top: 325,
-            ),
-            CustomPositionedText(
-              text: '2MINISTRY',
-              left: 165,
-              top: 345,
-            ),
-            CustomPositionedText(
-              text: '2PHYADD',
-              left: 165,
-              top: 365,
-            ),
-            CustomPositionedText(
-              text: '2POSTAL',
-              left: 165,
-              top: 385,
-            ),
-            CustomPositionedText(
-              text: '2TOWN',
-              left: 165,
-              top: 405,
-            ),
-            CustomPositionedText(
-              text: '2PROVINCE',
-              left: 430,
-              top: 405,
-            ),
-            CustomPositionedText(
-              text: 'GS',
-              left: 165,
-              top: 425,
-            ),
-            CustomPositionedText(
-              text: 'NS',
-              left: 360,
-              top: 425,
-            ),
-            CustomPositionedText(
-              text: 'SS',
-              left: 540,
-              top: 422,
-            ),
-            CustomPositionedText(
-              text: 'DD/MM/YY',
-              left: 165,
-              top: 447,
-            ),
-            CustomPositionedText(
-              text: '2EN',
-              left: 360,
-              top: 448,
-            ),
-            CustomPositionedText(
-              text: '10',
-              left: 560,
-              top: 450,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 145,
-              top: 480,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 281,
-              top: 480,
-            ),
-            CustomPositionedText(
-              text: 'DD/MM/YY',
-              left: 450,
-              top: 480,
-            ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].occupation.jobTitle,
+                left: 165,
+                top: 325,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].occupation.ministry,
+                left: 165,
+                top: 345,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].occupation.physicalAddress,
+                left: 165,
+                top: 365,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].occupation.postalAddress,
+                left: 165,
+                top: 385,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].occupation.town,
+                left: 165,
+                top: 405,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].occupation.province,
+                left: 430,
+                top: 405,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].occupation.grossSalary,
+                left: 165,
+                top: 425,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].occupation.netSalary,
+                left: 360,
+                top: 425,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].occupation.salaryScale,
+                left: 540,
+                top: 422,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text:
+                    loanDetail.applicants[1].occupation.preferredRetirementYear,
+                left: 165,
+                top: 447,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].occupation.employerNumber,
+                left: 360,
+                top: 448,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].occupation.yearsOfService,
+                left: 560,
+                top: 450,
+              ),
+            if (loanDetail.applicantCount > 1 &&
+                loanDetail.applicants[1].occupation.employmentType ==
+                    'permanent')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 145,
+                top: 480,
+              ),
+            if (loanDetail.applicantCount > 1 &&
+                loanDetail.applicants[1].occupation.employmentType ==
+                    'contract')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 281,
+                top: 480,
+              ),
+            if (loanDetail.applicantCount > 1 &&
+                loanDetail.applicants[1].occupation.employmentType ==
+                    'contract')
+              CustomPositionedText(
+                text: loanDetail.applicants[1].occupation.tempExpiryDate,
+                left: 450,
+                top: 480,
+              ),
             //third applicant
-            CustomPositionedText(
-              text: 'THIRDJOB',
-              left: 165,
-              top: 520,
-            ),
-            CustomPositionedText(
-              text: '3MIN',
-              left: 165,
-              top: 545,
-            ),
-            CustomPositionedText(
-              text: '3PHY',
-              left: 165,
-              top: 570,
-            ),
-            CustomPositionedText(
-              text: '3POS',
-              left: 165,
-              top: 590,
-            ),
-            CustomPositionedText(
-              text: '3TOWN',
-              left: 165,
-              top: 610,
-            ),
-            CustomPositionedText(
-              text: '3PROV',
-              left: 420,
-              top: 611,
-            ),
-            CustomPositionedText(
-              text: '3GS',
-              left: 105,
-              top: 634,
-            ),
-            CustomPositionedText(
-              text: 'CNS',
-              left: 358,
-              top: 632,
-            ),
-            CustomPositionedText(
-              text: 'SS',
-              left: 538,
-              top: 635,
-            ),
-            CustomPositionedText(
-              text: 'DD/MM/YY',
-              left: 168,
-              top: 655,
-            ),
-            CustomPositionedText(
-              text: 'EN',
-              left: 360,
-              top: 660,
-            ),
-            CustomPositionedText(
-              text: 'YI',
-              left: 555,
-              top: 660,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 146,
-              top: 688,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 286,
-              top: 688,
-            ),
-            CustomPositionedText(
-              text: 'DD/MM/YY',
-              left: 450,
-              top: 685,
-            ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].occupation.jobTitle,
+                left: 165,
+                top: 520,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].occupation.ministry,
+                left: 165,
+                top: 545,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].occupation.physicalAddress,
+                left: 165,
+                top: 570,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].occupation.postalAddress,
+                left: 165,
+                top: 590,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].occupation.town,
+                left: 165,
+                top: 610,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].occupation.province,
+                left: 420,
+                top: 611,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].occupation.grossSalary,
+                left: 105,
+                top: 634,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].occupation.currentNetSalary,
+                left: 358,
+                top: 632,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].occupation.salaryScale,
+                left: 538,
+                top: 635,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text:
+                    loanDetail.applicants[2].occupation.preferredRetirementYear,
+                left: 168,
+                top: 655,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].occupation.employerNumber,
+                left: 360,
+                top: 660,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].occupation.yearsOfService,
+                left: 555,
+                top: 660,
+              ),
+            if (loanDetail.applicantCount > 2 &&
+                loanDetail.applicants[2].occupation.employmentType ==
+                    'permanent')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 146,
+                top: 688,
+              ),
+            if (loanDetail.applicantCount > 2 &&
+                loanDetail.applicants[2].occupation.employmentType ==
+                    'contract')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 286,
+                top: 688,
+              ),
+            if (loanDetail.applicantCount > 2 &&
+                loanDetail.applicants[2].occupation.employmentType ==
+                    'contract')
+              CustomPositionedText(
+                text: loanDetail.applicants[2].occupation.tempExpiryDate,
+                left: 450,
+                top: 685,
+              ),
           ],
         );
       },
@@ -1181,144 +1336,178 @@ class _ViewApplicationState extends State<ViewApplication> {
                 fit: pw.BoxFit.contain,
               ),
             ),
-            CustomPositionedText(
-              text: '4JOBTITLE',
-              left: 165,
-              top: 80,
-            ),
-            CustomPositionedText(
-              text: '4MIN',
-              left: 165,
-              top: 105,
-            ),
-            CustomPositionedText(
-              text: '4PHY',
-              left: 165,
-              top: 125,
-            ),
-            CustomPositionedText(
-              text: '4POSTAL',
-              left: 165,
-              top: 147,
-            ),
-            CustomPositionedText(
-              text: '4TOWN',
-              left: 129,
-              top: 165,
-            ),
-            CustomPositionedText(
-              text: '4PROVINCE',
-              left: 420,
-              top: 168,
-            ),
-            CustomPositionedText(
-              text: '4GS',
-              left: 120,
-              top: 187,
-            ),
-            CustomPositionedText(
-              text: '4CNS',
-              left: 360,
-              top: 186,
-            ),
-            CustomPositionedText(
-              text: 'SS',
-              left: 540,
-              top: 187,
-            ),
-            CustomPositionedText(
-              text: 'DD/MM/YY',
-              left: 170,
-              top: 210,
-            ),
-            CustomPositionedText(
-              text: '4EN',
-              left: 360,
-              top: 215,
-            ),
-            CustomPositionedText(
-              text: '12',
-              left: 560,
-              top: 213,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 148,
-              top: 239,
-            ),
-            CustomPositionedCheck(
-              tick: tick,
-              left: 280,
-              top: 240,
-            ),
-            CustomPositionedText(
-              text: 'DD/MM/YY',
-              left: 450,
-              top: 240,
-            ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].occupation.jobTitle,
+                left: 165,
+                top: 80,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].occupation.ministry,
+                left: 165,
+                top: 105,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].occupation.physicalAddress,
+                left: 165,
+                top: 125,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].occupation.postalAddress,
+                left: 165,
+                top: 147,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].occupation.town,
+                left: 129,
+                top: 165,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].occupation.province,
+                left: 420,
+                top: 168,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].occupation.grossSalary,
+                left: 120,
+                top: 187,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].occupation.currentNetSalary,
+                left: 360,
+                top: 186,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].occupation.salaryScale,
+                left: 540,
+                top: 187,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text:
+                    loanDetail.applicants[3].occupation.preferredRetirementYear,
+                left: 170,
+                top: 210,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].occupation.employerNumber,
+                left: 360,
+                top: 215,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].occupation.yearsOfService,
+                left: 560,
+                top: 213,
+              ),
+            if (loanDetail.applicantCount > 3 &&
+                loanDetail.applicants[3].occupation.employmentType ==
+                    'permanent')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 148,
+                top: 239,
+              ),
+            if (loanDetail.applicantCount > 3 &&
+                loanDetail.applicants[3].occupation.employmentType ==
+                    'contract')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 280,
+                top: 240,
+              ),
+            if (loanDetail.applicantCount > 3 &&
+                loanDetail.applicants[3].occupation.employmentType ==
+                    'contract')
+              CustomPositionedText(
+                text: loanDetail.applicants[3].occupation.tempExpiryDate,
+                left: 450,
+                top: 240,
+              ),
             //kin 1st applicant
-            CustomPositionedText(
-              text: 'NAME',
-              left: 160,
-              top: 290,
-            ),
-            CustomPositionedText(
-              text: 'OTHER',
-              left: 375,
-              top: 290,
-            ),
-            CustomPositionedText(
-              text: 'PADDRE',
-              left: 160,
-              top: 310,
-            ),
-            CustomPositionedText(
-              text: 'POSTALADD',
-              left: 160,
-              top: 365,
-            ),
-            CustomPositionedText(
-              text: 'CELL',
-              left: 160,
-              top: 400,
-            ),
-            CustomPositionedText(
-              text: 'EMAIL',
-              left: 160,
-              top: 420,
-            ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].kin.name,
+                left: 160,
+                top: 290,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].kin.otherNames,
+                left: 375,
+                top: 290,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].kin.physicalAddress,
+                left: 160,
+                top: 310,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].kin.postalAddress,
+                left: 160,
+                top: 365,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].kin.phoneNumber,
+                left: 160,
+                top: 400,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].kin.email,
+                left: 160,
+                top: 420,
+              ),
 
             //kin second applicant
-            CustomPositionedText(
-              text: '2NAME',
-              left: 110,
-              top: 495,
-            ),
-            CustomPositionedText(
-              text: '2OTHER',
-              left: 375,
-              top: 495,
-            ),
-            CustomPositionedText(
-              text: '2PHY',
-              left: 160,
-              top: 520,
-            ),
-            CustomPositionedText(
-              text: '2POSTAL',
-              left: 160,
-              top: 573,
-            ),
-            CustomPositionedText(
-              text: '2CELL',
-              left: 160,
-              top: 610,
-            ),
-            CustomPositionedText(
-              text: '2EMAIL',
-              left: 160,
-              top: 630,
-            ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].kin.name,
+                left: 110,
+                top: 495,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].kin.otherNames,
+                left: 375,
+                top: 495,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].kin.physicalAddress,
+                left: 160,
+                top: 520,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].kin.postalAddress,
+                left: 160,
+                top: 573,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].kin.phoneNumber,
+                left: 160,
+                top: 610,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].kin.email,
+                left: 160,
+                top: 630,
+              ),
           ],
         );
       },
@@ -1335,67 +1524,79 @@ class _ViewApplicationState extends State<ViewApplication> {
                 fit: pw.BoxFit.contain,
               ),
             ),
-            CustomPositionedText(
-              text: '3NAME',
-              left: 115,
-              top: 70,
-            ),
-            CustomPositionedText(
-              text: '3OTHER',
-              left: 380,
-              top: 70,
-            ),
-            CustomPositionedText(
-              text: '3PHY',
-              left: 160,
-              top: 92,
-            ),
-            CustomPositionedText(
-              text: '3POSTAL',
-              left: 160,
-              top: 145,
-            ),
-            CustomPositionedText(
-              text: '3CELL',
-              left: 160,
-              top: 182,
-            ),
-            CustomPositionedText(
-              text: '3EMAIL',
-              left: 160,
-              top: 205,
-            ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].kin.name,
+                left: 115,
+                top: 70,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].kin.otherNames,
+                left: 380,
+                top: 70,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].kin.physicalAddress,
+                left: 160,
+                top: 92,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].kin.postalAddress,
+                left: 160,
+                top: 145,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].kin.phoneNumber,
+                left: 160,
+                top: 182,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].kin.email,
+                left: 160,
+                top: 205,
+              ),
             //4th Kin Applicant
-            CustomPositionedText(
-              text: '4NAME',
-              left: 115,
-              top: 275,
-            ),
-            CustomPositionedText(
-              text: '4OTHER',
-              left: 370,
-              top: 275,
-            ),
-            CustomPositionedText(
-              text: '4PHY',
-              left: 160,
-              top: 303,
-            ),
-            CustomPositionedText(
-              text: '4POSTAL',
-              left: 160,
-              top: 355,
-            ),
-            CustomPositionedText(
-              text: '4CELL',
-              left: 160,
-              top: 390,
-            ),
-            CustomPositionedText(
-              text: '4EMAIL',
-              left: 160,
-              top: 415,
-            ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].kin.name,
+                left: 115,
+                top: 275,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].kin.otherNames,
+                left: 370,
+                top: 275,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].kin.physicalAddress,
+                left: 160,
+                top: 303,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].kin.postalAddress,
+                left: 160,
+                top: 355,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].kin.phoneNumber,
+                left: 160,
+                top: 390,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].kin.email,
+                left: 160,
+                top: 415,
+              ),
           ],
         );
       },
@@ -1412,127 +1613,144 @@ class _ViewApplicationState extends State<ViewApplication> {
               ),
             ),
             //motorvehicle
-            CustomPositionedCheck(
-              tick: tick,
-              left: 165,
-              top: 83,
-            ),
+            if (loanDetail.category.name == 'Motor Vehicle Loan')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 165,
+                top: 83,
+              ),
             //agri
-            CustomPositionedCheck(
-              tick: tick,
-              left: 310,
-              top: 83,
-            ),
+            if (loanDetail.category.name == 'Agricultural Asset Loan')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 310,
+                top: 83,
+              ),
             //furniture
-            CustomPositionedCheck(
-              left: 460,
-              tick: tick,
-              top: 83,
-            ),
+            if (loanDetail.category.name == 'Furniture Loan')
+              CustomPositionedCheck(
+                left: 460,
+                tick: tick,
+                top: 83,
+              ),
             //buidling
-            CustomPositionedCheck(
-              tick: tick,
-              left: 165,
-              top: 114,
-            ),
+            if (loanDetail.category.name == 'Building Material Loan')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 165,
+                top: 114,
+              ),
             //device
-            CustomPositionedCheck(
-              tick: tick,
-              left: 310,
-              top: 114,
-            ),
+            if (loanDetail.category.name == 'Bring your Own Device Loan')
+              CustomPositionedCheck(
+                tick: tick,
+                left: 310,
+                top: 114,
+              ),
             CustomPositionedText(
-              text: 'TOTALCOSTOFASSET',
+              text: loanDetail.costOfAsset,
               left: 196,
               top: 210,
             ),
             CustomPositionedText(
-              text: 'TOTALINSURANCE',
+              text: loanDetail.insuranceCost,
               left: 196,
               top: 230,
             ),
             CustomPositionedText(
-              text: 'LESSADVACNE',
+              text: loanDetail.advancePayment,
               left: 196,
               top: 250,
             ),
             CustomPositionedText(
-              text: 'LOANAMOUNT',
+              text: loanDetail.loanAmount,
               left: 196,
               top: 270,
             ),
             CustomPositionedText(
-              text: 'TENURE',
+              text: loanDetail.loanTenure,
               left: 196,
               top: 292,
             ),
-            CustomPositionedText(
-              text: 'FIRSTAPPLICANT',
-              left: 196,
-              top: 350,
-            ),
-            CustomPositionedText(
-              text: 'SECONDAPPLICANT',
-              left: 490,
-              top: 350,
-            ),
-            CustomPositionedText(
-              text: 'THIRD APPLICANT',
-              left: 196,
-              top: 372,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH APPLICANT',
-              left: 490,
-              top: 372,
-            ),
-            CustomPositionedText(
-              text: 'FIRSTPROPOTION',
-              left: 197,
-              top: 396,
-            ),
-            CustomPositionedText(
-              text: 'SECONDPROPOTION',
-              left: 491,
-              top: 396,
-            ),
-            CustomPositionedText(
-              text: 'THIRDPROPOTION',
-              left: 198,
-              top: 419,
-            ),
-            CustomPositionedText(
-              text: 'FOURTHPROPOTION',
-              left: 490,
-              top: 419,
-            ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].loansharename,
+                left: 196,
+                top: 350,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].loansharename,
+                left: 490,
+                top: 350,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].loansharename,
+                left: 196,
+                top: 372,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].loansharename,
+                left: 490,
+                top: 372,
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].loansharepercent,
+                left: 197,
+                top: 396,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].loansharepercent,
+                left: 491,
+                top: 396,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].loansharepercent,
+                left: 198,
+                top: 419,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].loansharepercent,
+                left: 490,
+                top: 419,
+              ),
 
             //filldetails
-            CustomPositionedText(
-              text: 'FIRSTNAME',
-              left: 85,
-              top: 549,
-            ),
-            pw.Positioned(
-              left: 60,
-              top: 635,
-              child: pw.Image(
-                pw.MemoryImage(
-                    sign), // Assuming image7 is the image you want to place
-                width: 50, // Adjust width as needed
-                height: 30, // Adjust height as needed
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].surname,
+                left: 85,
+                top: 549,
               ),
-            ),
-            CustomPositionedText(
-              text: 'FIRSTDATE',
-              left: 415,
-              top: 662,
-            ),
-            CustomPositionedText(
-              text: 'SECONDNAME',
-              left: 85,
-              top: 691,
-            ),
+            if (loanDetail.applicantCount > 0)
+              pw.Positioned(
+                left: 60,
+                top: 635,
+                child: pw.Image(
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
+                  width: 50, // Adjust width as needed
+                  height: 30, // Adjust height as needed
+                ),
+              ),
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.createdAt,
+                left: 415,
+                top: 662,
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].surname,
+                left: 85,
+                top: 691,
+              ),
           ],
         );
       },
@@ -1549,61 +1767,69 @@ class _ViewApplicationState extends State<ViewApplication> {
                 fit: pw.BoxFit.contain,
               ),
             ),
-            pw.Positioned(
-              left: 60,
-              top: 100,
-              child: pw.Image(
-                pw.MemoryImage(
-                    sign), // Assuming image7 is the image you want to place
-                width: 50, // Adjust width as needed
-                height: 30, // Adjust height as needed
+            if (loanDetail.applicantCount > 1)
+              pw.Positioned(
+                left: 60,
+                top: 100,
+                child: pw.Image(
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
+                  width: 50, // Adjust width as needed
+                  height: 30, // Adjust height as needed
+                ),
               ),
-            ),
-            CustomPositionedText(
-              text: 'SECONDDATE',
-              left: 420,
-              top: 130,
-            ),
-            CustomPositionedText(
-              text: 'THIRDNAME',
-              left: 85,
-              top: 180,
-            ),
-            pw.Positioned(
-              left: 60,
-              top: 270,
-              child: pw.Image(
-                pw.MemoryImage(
-                    sign), // Assuming image7 is the image you want to place
-                width: 50, // Adjust width as needed
-                height: 30, // Adjust height as needed
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.createdAt,
+                left: 420,
+                top: 130,
               ),
-            ),
-            CustomPositionedText(
-              text: 'THIRDDATE',
-              left: 395,
-              top: 292,
-            ),
-            CustomPositionedText(
-              text: 'FOURTHNAME',
-              left: 85,
-              top: 321,
-            ),
-            pw.Positioned(
-              left: 60,
-              top: 420,
-              child: pw.Image(
-                pw.MemoryImage(
-                    sign), // Assuming image7 is the image you want to place
-                width: 50, // Adjust width as needed
-                height: 30, // Adjust height as needed
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].surname,
+                left: 85,
+                top: 180,
               ),
-            ),
-            CustomPositionedText(
-              text: 'FOURTHDATE',
-              left: 420,
-              top: 440,
-            ),
+            if (loanDetail.applicantCount > 2)
+              pw.Positioned(
+                left: 60,
+                top: 270,
+                child: pw.Image(
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
+                  width: 50, // Adjust width as needed
+                  height: 30, // Adjust height as needed
+                ),
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.createdAt,
+                left: 395,
+                top: 292,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].surname,
+                left: 85,
+                top: 321,
+              ),
+            if (loanDetail.applicantCount > 3)
+              pw.Positioned(
+                left: 60,
+                top: 420,
+                child: pw.Image(
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
+                  width: 50, // Adjust width as needed
+                  height: 30, // Adjust height as needed
+                ),
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.createdAt,
+                left: 420,
+                top: 440,
+              ),
           ],
         );
       },
@@ -1709,86 +1935,98 @@ class _ViewApplicationState extends State<ViewApplication> {
                 fit: pw.BoxFit.contain,
               ),
             ),
-            CustomPositionedText(
-              text: 'FIRST NAME',
-              left: 328,
-              top: 221,
-            ),
-            pw.Positioned(
-              left: 330,
-              top: 255,
-              child: pw.Image(
-                pw.MemoryImage(
-                    sign), // Assuming image7 is the image you want to place
-                width: 50, // Adjust width as needed
-                height: 20, // Adjust height as needed
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].surname,
+                left: 328,
+                top: 221,
               ),
-            ),
-            CustomPositionedText(
-              text: 'FIRST DATE',
-              left: 340,
-              top: 307,
-            ),
-            CustomPositionedText(
-              text: 'SECOND NAME',
-              left: 328,
-              top: 328,
-            ),
-            pw.Positioned(
-              left: 330,
-              top: 370,
-              child: pw.Image(
-                pw.MemoryImage(
-                    sign), // Assuming image7 is the image you want to place
-                width: 50, // Adjust width as needed
-                height: 20, // Adjust height as needed
+            if (loanDetail.applicantCount > 0)
+              pw.Positioned(
+                left: 330,
+                top: 255,
+                child: pw.Image(
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
+                  width: 50, // Adjust width as needed
+                  height: 20, // Adjust height as needed
+                ),
               ),
-            ),
-            CustomPositionedText(
-              text: 'SECOND DATE',
-              left: 340,
-              top: 424,
-            ),
-            CustomPositionedText(
-              text: 'THIRD NAME',
-              left: 328,
-              top: 445,
-            ),
-            pw.Positioned(
-              left: 330,
-              top: 480,
-              child: pw.Image(
-                pw.MemoryImage(
-                    sign), // Assuming image7 is the image you want to place
-                width: 50, // Adjust width as needed
-                height: 20, // Adjust height as needed
+            if (loanDetail.applicantCount > 0)
+              CustomPositionedText(
+                text: loanDetail.applicants[0].createdAt,
+                left: 340,
+                top: 307,
               ),
-            ),
-            CustomPositionedText(
-              text: 'THIRD DATE',
-              left: 340,
-              top: 545,
-            ),
-            CustomPositionedText(
-              text: 'FOURTH NAME',
-              left: 328,
-              top: 565,
-            ),
-            pw.Positioned(
-              left: 330,
-              top: 600,
-              child: pw.Image(
-                pw.MemoryImage(
-                    sign), // Assuming image7 is the image you want to place
-                width: 50, // Adjust width as needed
-                height: 20, // Adjust height as needed
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].surname,
+                left: 328,
+                top: 328,
               ),
-            ),
-            CustomPositionedText(
-              text: 'FOURTH DATE',
-              left: 340,
-              top: 645,
-            ),
+            if (loanDetail.applicantCount > 1)
+              pw.Positioned(
+                left: 330,
+                top: 370,
+                child: pw.Image(
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
+                  width: 50, // Adjust width as needed
+                  height: 20, // Adjust height as needed
+                ),
+              ),
+            if (loanDetail.applicantCount > 1)
+              CustomPositionedText(
+                text: loanDetail.applicants[1].createdAt,
+                left: 340,
+                top: 424,
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].surname,
+                left: 328,
+                top: 445,
+              ),
+            if (loanDetail.applicantCount > 2)
+              pw.Positioned(
+                left: 330,
+                top: 480,
+                child: pw.Image(
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
+                  width: 50, // Adjust width as needed
+                  height: 20, // Adjust height as needed
+                ),
+              ),
+            if (loanDetail.applicantCount > 2)
+              CustomPositionedText(
+                text: loanDetail.applicants[2].createdAt,
+                left: 340,
+                top: 545,
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].surname,
+                left: 328,
+                top: 565,
+              ),
+            if (loanDetail.applicantCount > 3)
+              pw.Positioned(
+                left: 330,
+                top: 600,
+                child: pw.Image(
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
+                  width: 50, // Adjust width as needed
+                  height: 20, // Adjust height as needed
+                ),
+              ),
+            if (loanDetail.applicantCount > 3)
+              CustomPositionedText(
+                text: loanDetail.applicants[3].createdAt,
+                left: 340,
+                top: 645,
+              ),
           ],
         );
       },
@@ -1806,23 +2044,23 @@ class _ViewApplicationState extends State<ViewApplication> {
             ),
             //payers details
             CustomPositionedText(
-              text: 'CUSTOMER NAME',
+              text: loanDetail.applicants[0].surname,
               left: 100,
               top: 345,
             ),
+
             CustomPositionedText(
-              text:
-                  '2         6         0         1         2         3         4         5         6         7         8         9',
+              text: loanDetail.applicants[0].mobile.split('         ').join(),
               left: 100,
               top: 370,
             ),
             CustomPositionedText(
-              text: 'EMAIL',
+              text: loanDetail.applicants[0].email,
               left: 340,
               top: 370,
             ),
             CustomPositionedText(
-              text: 'ADDRESS',
+              text: loanDetail.applicants[0].residentialAddress,
               left: 100,
               top: 398,
             ),
@@ -2086,7 +2324,7 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
         );
       },
     );
-    List<dynamic> pages = [];
+    /*  List<dynamic> pages = [];
     for (int j = 0; j < loanDetail.applicantCount; j++) {
       for (int i = 0; i < loanDetail.applicants[0].documents!.length; i++) {
         if (!loanDetail.applicants[0].documents[i].contentType
@@ -2110,7 +2348,7 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
           ));
         }
       }
-    }
+    }*/
 
     pdf.addPage(page1);
     pdf.addPage(page2);
@@ -2128,9 +2366,9 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
     pdf.addPage(page14);
     pdf.addPage(page15);
     pdf.addPage(page16);
-    for (int i = 0; i < pages.length; i++) {
+    /* for (int i = 0; i < pages.length; i++) {
       pdf.addPage(pages[i]);
-    }
+    }*/
     final Uint8List pdfBytes = await pdf.save();
     setState(() {
       _pdfBytes = pdfBytes;
