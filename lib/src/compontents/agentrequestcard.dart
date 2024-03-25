@@ -839,13 +839,86 @@ class _AgentRequestItemState extends State<AgentRequestItem> {
       String accessToken = prefs.getString('token')!;
       request.headers['Authorization'] = 'Bearer $accessToken';
       request.fields['loan_request[request_order_status]'] = seletedagent;
-      if (selectedFiles.isNotEmpty) {
-        for (var file in selectedFiles) {
+      //purchaseorder
+      if (purchaseorderfiles.isNotEmpty) {
+        for (var file in purchaseorderfiles) {
           request.files.add(http.MultipartFile(
-            'loan_request[order_documents][]',
+            'loan_request[psmpc_purchase_order][]',
             http.ByteStream.fromBytes(file),
             file.length,
-            filename: 'file.jpg', // Provide a filename here
+            filename: 'psmpc_purchase_order.jpg', // Provide a filename here
+            contentType: MediaType('application', 'octet-stream'),
+          ));
+        }
+      }
+      //deliveryrecipet
+      if (deliveryrecipetFile.isNotEmpty) {
+        for (var file in deliveryrecipetFile) {
+          request.files.add(http.MultipartFile(
+            'loan_request[delivery_report][]',
+            http.ByteStream.fromBytes(file),
+            file.length,
+            filename: 'delivery_report.jpg', // Provide a filename here
+            contentType: MediaType('application', 'octet-stream'),
+          ));
+        }
+      }
+      //warrentyform
+      if (warrentyfiles.isNotEmpty) {
+        for (var file in warrentyfiles) {
+          request.files.add(http.MultipartFile(
+            'loan_request[warranty_form][]',
+            http.ByteStream.fromBytes(file),
+            file.length,
+            filename: 'warranty_form.jpg', // Provide a filename here
+            contentType: MediaType('application', 'octet-stream'),
+          ));
+        }
+      }
+      //antufraud
+      if (antifraudfiles.isNotEmpty) {
+        for (var file in antifraudfiles) {
+          request.files.add(http.MultipartFile(
+            'loan_request[anti_fraud_form][]',
+            http.ByteStream.fromBytes(file),
+            file.length,
+            filename: 'anti_fraud_form.jpg', // Provide a filename here
+            contentType: MediaType('application', 'octet-stream'),
+          ));
+        }
+      }
+      //authorization
+      if (authorizationfiles.isNotEmpty) {
+        for (var file in authorizationfiles) {
+          request.files.add(http.MultipartFile(
+            'loan_request[authorize_letter][]',
+            http.ByteStream.fromBytes(file),
+            file.length,
+            filename: 'authorize_letter.jpg', // Provide a filename here
+            contentType: MediaType('application', 'octet-stream'),
+          ));
+        }
+      }
+      //taxinvoice
+      if (taxfiles.isNotEmpty) {
+        for (var file in taxfiles) {
+          request.files.add(http.MultipartFile(
+            'loan_request[invoice][]',
+            http.ByteStream.fromBytes(file),
+            file.length,
+            filename: 'invoice.jpg', // Provide a filename here
+            contentType: MediaType('application', 'octet-stream'),
+          ));
+        }
+      }
+      //swapagreement
+      if (swapFiles.isNotEmpty) {
+        for (var file in swapFiles) {
+          request.files.add(http.MultipartFile(
+            'loan_request[swap_agreement][]',
+            http.ByteStream.fromBytes(file),
+            file.length,
+            filename: 'swap_agreement.jpg', // Provide a filename here
             contentType: MediaType('application', 'octet-stream'),
           ));
         }

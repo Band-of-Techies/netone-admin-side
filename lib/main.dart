@@ -28,9 +28,7 @@ class App extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data == true) {
-              return ViewApplication(
-                loanRequestId: 15,
-              );
+              return DashboardScreen();
             } else {
               return LoginPage();
             }

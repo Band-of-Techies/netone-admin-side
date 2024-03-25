@@ -475,7 +475,26 @@ class _ViewApplicationState extends State<ViewApplication> {
                     for (int i = 0; i < loanDetail.applicants.length; i++)
                       applicantDocuments(i, i),
                     if (loanDetail.documents.isNotEmpty) additonalDocumnets(),
-                    if (loanDetail.orderdocuments.isNotEmpty) orderDocumnets()
+                    if (loanDetail.psmpc_purchase_order.isNotEmpty)
+                      orderDocumnets(loanDetail.psmpc_purchase_order,
+                          'PSMPC Purchase Order'),
+                    if (loanDetail.delivery_report.isNotEmpty)
+                      orderDocumnets(
+                          loanDetail.delivery_report, 'DELIVERY RECEIPT'),
+                    if (loanDetail.warranty_form.isNotEmpty)
+                      orderDocumnets(
+                          loanDetail.warranty_form, 'WARRANTY DISCLAIMER FORM'),
+                    if (loanDetail.anti_fraud_form.isNotEmpty)
+                      orderDocumnets(
+                          loanDetail.anti_fraud_form, 'ANTI-FRAUD DECLARATION'),
+                    if (loanDetail.authorize_letter.isNotEmpty)
+                      orderDocumnets(
+                          loanDetail.authorize_letter, 'AUTHORIZATION LETTER'),
+                    if (loanDetail.invoice.isNotEmpty)
+                      orderDocumnets(loanDetail.invoice, 'TAX INVOICE'),
+                    if (loanDetail.swap_agreement.isNotEmpty)
+                      orderDocumnets(
+                          loanDetail.swap_agreement, 'SWAP AGREEMENT'),
                   ],
                 ),
               ),
@@ -2118,6 +2137,8 @@ class _ViewApplicationState extends State<ViewApplication> {
         );
       },
     );
+    final vat = int.parse(loanDetail.original_total_cost) * .16;
+    final total = vat + int.parse(loanDetail.original_total_cost);
     final page16 = pw.Page(
       margin: pw.EdgeInsets.zero, // Remove default margins
       build: (context) {
@@ -2130,7 +2151,7 @@ class _ViewApplicationState extends State<ViewApplication> {
               ),
             ),
             CustomPositionedTextNOBold(
-              text: '21/03/2024',
+              text: loanDetail.createdAt,
               left: 500,
               top: 146,
             ),
@@ -2140,12 +2161,13 @@ class _ViewApplicationState extends State<ViewApplication> {
               top: 161,
             ),
             CustomPositionedTextBold(
-              text: 'CUSTOMER NAME',
+              text: loanDetail.applicants[0].surname,
               left: 85,
               top: 203,
             ),
             CustomPositionedTextNOBold(
-              text: 'AGENT Name',
+              text:
+                  loanDetail.agent.name != null ? loanDetail.agent.name : 'NA',
               left: 26,
               top: 386,
             ),
@@ -2222,7 +2244,7 @@ class _ViewApplicationState extends State<ViewApplication> {
               top: 660,
             ),
             CustomPositionedTextNOBold(
-              text: '10,343.97',
+              text: loanDetail.original_total_cost,
               left: 515,
               top: 660,
             ),
@@ -2259,86 +2281,131 @@ class _ViewApplicationState extends State<ViewApplication> {
               left: 515,
               top: 710,
             ),
-            pw.Positioned(
-              left: 16,
-              top: 444,
-              child: pw.Container(
-                  width: 565,
-                  height: 60,
-                  child: pw.Row(children: [
-                    pw.Container(
-                        width: 89,
-                        height: 60,
-                        decoration: pw.BoxDecoration(
-                          border: pw.Border.all(
-                            color: PdfColors.black, // Border color
-                            width: 1, // Border width
-                          ),
-                        ),
-                        child: pw.Center(child: customText(text: '1'))),
-                    pw.Container(
-                        width: 288,
-                        height: 60,
-                        decoration: pw.BoxDecoration(
-                          border: pw.Border.all(
-                            color: PdfColors.black, // Border color
-                            width: 1, // Border width
-                          ),
-                        ),
-                        child: pw.Center(
-                            child: customText(
-                                text:
-                                    '''Neo Pro15 Intel i5-1035G7-10th GEN/8GB DDR4/512GB
-SSD / 1.0MP CAMERA / Black / 15.6 inch FHD IPS 1920*1080 /
-Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
-/ Speaker 8 1W / Standard HDMI / MIC / Earphone Jack / 1.6kg
-/ Windows 11 PRO/Laptop Bag'''))),
-                    pw.Container(
-                        width: 100,
-                        height: 60,
-                        decoration: pw.BoxDecoration(
-                          border: pw.Border.all(
-                            color: PdfColors.black, // Border color
-                            width: 1, // Border width
-                          ),
-                        ),
-                        child:
-                            pw.Center(child: customText(text: '10343.96552'))),
-                    pw.Container(
-                        width: 87,
-                        height: 60,
-                        decoration: pw.BoxDecoration(
-                          border: pw.Border.all(
-                            color: PdfColors.black, // Border color
-                            width: 1, // Border width
-                          ),
-                        ),
-                        child:
-                            pw.Center(child: customText(text: '10343.96552')))
-                  ])),
-            ),
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < loanDetail.requestedProducts.length; i++)
               productContainer(
                   price: 10343.96552,
                   toppostion: 444 + (i * 60),
-                  quantity: 1,
-                  description:
-                      '''Neo Pro15 Intel i5-1035G7-10th GEN/8GB DDR4/512GB
-SSD / 1.0MP CAMERA / Black / 15.6 inch FHD IPS 1920*1080 /
-Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
-/ Speaker 8 1W / Standard HDMI / MIC / Earphone Jack / 1.6kg
-/ Windows 11 PRO/Laptop Ba''')
+                  quantity: loanDetail.requestedProducts[i].quantity,
+                  description: '''${loanDetail.requestedProducts[i].productName}
+                                    ${loanDetail.requestedProducts[i].productDescription}''')
           ],
         );
       },
     );
     List<dynamic> pages = [];
+
     for (int j = 0; j < loanDetail.applicantCount; j++) {
-      for (int i = 0; i < loanDetail.applicants[0].documents!.length; i++) {
-        if (!loanDetail.applicants[0].documents[i].contentType
+      for (int i = 0; i < loanDetail.applicants[j].payslip1.length; i++) {
+        if (!loanDetail.applicants[j].payslip1[i].contentType.contains('pdf')) {
+          final Uint8List imageBytes = await fetchAndConvertImage(
+              loanDetail.applicants[j].payslip1[i].url);
+          pages.add(pw.Page(
+            margin: pw.EdgeInsets.zero, // Remove default margins
+            build: (context) {
+              return pw.Stack(
+                children: [
+                  pw.Center(
+                    child: pw.Image(
+                      pw.MemoryImage(imageBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ));
+        }
+      }
+      for (int i = 0; i < loanDetail.applicants[j].payslip2.length; i++) {
+        if (!loanDetail.applicants[j].payslip2[i].contentType.contains('pdf')) {
+          final Uint8List imageBytes = await fetchAndConvertImage(
+              loanDetail.applicants[j].payslip2[i].url);
+          pages.add(pw.Page(
+            margin: pw.EdgeInsets.zero, // Remove default margins
+            build: (context) {
+              return pw.Stack(
+                children: [
+                  pw.Center(
+                    child: pw.Image(
+                      pw.MemoryImage(imageBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ));
+        }
+      }
+      for (int i = 0; i < loanDetail.applicants[j].payslip3.length; i++) {
+        if (!loanDetail.applicants[j].payslip3[i].contentType.contains('pdf')) {
+          final Uint8List imageBytes = await fetchAndConvertImage(
+              loanDetail.applicants[j].payslip3[i].url);
+          pages.add(pw.Page(
+            margin: pw.EdgeInsets.zero, // Remove default margins
+            build: (context) {
+              return pw.Stack(
+                children: [
+                  pw.Center(
+                    child: pw.Image(
+                      pw.MemoryImage(imageBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ));
+        }
+      }
+      for (int i = 0; i < loanDetail.applicants[j].intoletter.length; i++) {
+        if (!loanDetail.applicants[j].intoletter[i].contentType
             .contains('pdf')) {
           final Uint8List imageBytes = await fetchAndConvertImage(
-              loanDetail.applicants[j].documents.first.url);
+              loanDetail.applicants[j].intoletter[i].url);
+          pages.add(pw.Page(
+            margin: pw.EdgeInsets.zero, // Remove default margins
+            build: (context) {
+              return pw.Stack(
+                children: [
+                  pw.Center(
+                    child: pw.Image(
+                      pw.MemoryImage(imageBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ));
+        }
+      }
+      for (int i = 0; i < loanDetail.applicants[j].nrccopy.length; i++) {
+        if (!loanDetail.applicants[j].nrccopy[i].contentType.contains('pdf')) {
+          final Uint8List imageBytes = await fetchAndConvertImage(
+              loanDetail.applicants[j].nrccopy[i].url);
+          pages.add(pw.Page(
+            margin: pw.EdgeInsets.zero, // Remove default margins
+            build: (context) {
+              return pw.Stack(
+                children: [
+                  pw.Center(
+                    child: pw.Image(
+                      pw.MemoryImage(imageBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ));
+        }
+      }
+      for (int i = 0; i < loanDetail.applicants[j].bankstatemtn.length; i++) {
+        if (!loanDetail.applicants[j].bankstatemtn[i].contentType
+            .contains('pdf')) {
+          final Uint8List imageBytes = await fetchAndConvertImage(
+              loanDetail.applicants[j].bankstatemtn[i].url);
           pages.add(pw.Page(
             margin: pw.EdgeInsets.zero, // Remove default margins
             build: (context) {
@@ -2790,27 +2857,27 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
           SizedBox(
             height: 20,
           ),
-          if (loanDetail.applicants[applicantkey].documents.length > 0)
+          if (loanDetail.applicants[applicantkey].payslip1.length > 0)
             loadDocFiles(applicantkey, 'Payslip 1',
-                loanDetail.applicants[applicantkey].documents),
+                loanDetail.applicants[applicantkey].payslip1),
           SizedBox(
             height: 20,
           ),
-          if (loanDetail.applicants[applicantkey].documents.length > 0)
+          if (loanDetail.applicants[applicantkey].payslip2.length > 0)
             loadDocFiles(applicantkey, 'Payslip 2',
-                loanDetail.applicants[applicantkey].documents),
-          if (loanDetail.applicants[applicantkey].documents.length > 0)
+                loanDetail.applicants[applicantkey].payslip2),
+          if (loanDetail.applicants[applicantkey].payslip3.length > 0)
             loadDocFiles(applicantkey, 'Payslip 3',
-                loanDetail.applicants[applicantkey].documents),
-          if (loanDetail.applicants[applicantkey].documents.length > 0)
+                loanDetail.applicants[applicantkey].payslip3),
+          if (loanDetail.applicants[applicantkey].intoletter.length > 0)
             loadDocFiles(applicantkey, 'Introductory Letter',
-                loanDetail.applicants[applicantkey].documents),
-          if (loanDetail.applicants[applicantkey].documents.length > 0)
+                loanDetail.applicants[applicantkey].intoletter),
+          if (loanDetail.applicants[applicantkey].bankstatemtn.length > 0)
             loadDocFiles(applicantkey, 'Bank Statement',
-                loanDetail.applicants[applicantkey].documents),
-          if (loanDetail.applicants[applicantkey].documents.length > 0)
+                loanDetail.applicants[applicantkey].bankstatemtn),
+          if (loanDetail.applicants[applicantkey].nrccopy.length > 0)
             loadDocFiles(applicantkey, 'NRC',
-                loanDetail.applicants[applicantkey].documents),
+                loanDetail.applicants[applicantkey].nrccopy),
         ],
       ),
     );
@@ -3108,7 +3175,7 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
     );
   }
 
-  Container orderDocumnets() {
+  Container orderDocumnets(List<Document> orderdocuments, String titles) {
     return Container(
       margin: EdgeInsets.only(bottom: 30),
       padding: EdgeInsets.fromLTRB(20, 25, 20, 15),
@@ -3119,7 +3186,7 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomText(
-            text: 'Order Documents',
+            text: titles,
             fontWeight: FontWeight.w700,
             fontSize: 15,
           ),
@@ -3128,7 +3195,7 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
           ),
           Wrap(
             children: List.generate(
-              loanDetail.orderdocuments.length,
+              orderdocuments.length,
               (index) {
                 return Container(
                   margin: EdgeInsets.all(10),
@@ -3139,11 +3206,10 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Display Image for image files
-                      isImage(loanDetail.orderdocuments[index].contentType)
+                      isImage(orderdocuments[index].contentType)
                           ? GestureDetector(
                               onTap: () {
-                                String imageUrl =
-                                    loanDetail.orderdocuments[index].url;
+                                String imageUrl = orderdocuments[index].url;
                                 js.context.callMethod('open', [imageUrl]);
                               },
                               child: Container(
@@ -3156,7 +3222,7 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
                                   color: AppColors.neutral,
                                 ),
                                 child: Image.network(
-                                  loanDetail.orderdocuments[index].url,
+                                  orderdocuments[index].url,
                                   width:
                                       300, // Set the width of the image as per your requirement
                                   height:
@@ -3181,12 +3247,10 @@ Type C port / USB 3.2 GEN*2 / AC WIFI / 4500mAH Smart battery
                                 ),
                               ),
                             )
-                          : loanDetail.orderdocuments[index].contentType
-                                  .contains('pdf')
+                          : orderdocuments[index].contentType.contains('pdf')
                               ? GestureDetector(
                                   onTap: () {
-                                    String pdfUrl =
-                                        loanDetail.orderdocuments[index].url;
+                                    String pdfUrl = orderdocuments[index].url;
                                     js.context.callMethod('open', [pdfUrl]);
                                   },
                                   child: Container(

@@ -22,7 +22,14 @@ class LoanRequestDetails {
   final dynamic applicantCount;
   final AgentDetails agent;
   final List<Document> documents;
-  final List<Document> orderdocuments;
+  final List<Document> swap_agreement;
+  final List<Document> psmpc_purchase_order;
+  final List<Document> delivery_report;
+  final List<Document> warranty_form;
+  final List<Document> anti_fraud_form;
+  final List<Document> authorize_letter;
+  final List<Document> invoice;
+  //final List<Document> orderdocuments;
   final List<RequestedProduct> requestedProducts;
   final Category category;
   final dynamic original_total_cost;
@@ -30,7 +37,7 @@ class LoanRequestDetails {
   LoanRequestDetails({
     required this.original_total_cost,
     required this.requestedProducts,
-    required this.orderdocuments,
+    // required this.orderdocuments,
     required this.requestnumber,
     required this.documents,
     required this.id,
@@ -55,25 +62,60 @@ class LoanRequestDetails {
     required this.applicantCount,
     required this.agent,
     required this.category,
+    required this.anti_fraud_form,
+    required this.authorize_letter,
+    required this.delivery_report,
+    required this.invoice,
+    required this.psmpc_purchase_order,
+    required this.swap_agreement,
+    required this.warranty_form,
   });
 
   factory LoanRequestDetails.fromJson(Map<String, dynamic> json) {
     List<Document> documents = (json['documents'] as List<dynamic>)
         .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
         .toList();
-    List<Document> orderdocuments = (json['order_documents'] as List<dynamic>)
+    List<Document> anti_fraud_form = (json['anti_fraud_form'] as List<dynamic>)
         .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
         .toList();
+    List<Document> authorize_letter =
+        (json['authorize_letter'] as List<dynamic>)
+            .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+            .toList();
+    List<Document> delivery_report = (json['delivery_report'] as List<dynamic>)
+        .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+        .toList();
+    List<Document> invoice = (json['invoice'] as List<dynamic>)
+        .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+        .toList();
+    List<Document> psmpc_purchase_order =
+        (json['psmpc_purchase_order'] as List<dynamic>)
+            .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+            .toList();
+    List<Document> swap_agreement = (json['swap_agreement'] as List<dynamic>)
+        .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+        .toList();
+    List<Document> warranty_form = (json['warranty_form'] as List<dynamic>)
+        .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+        .toList();
+
     List<RequestedProduct> requestedProducts =
         (json['requested_products'] as List<dynamic>)
             .map((product) =>
                 RequestedProduct.fromJson(product as Map<String, dynamic>))
             .toList();
     return LoanRequestDetails(
-      orderdocuments: orderdocuments,
+      // orderdocuments: orderdocuments,
       original_total_cost: json["original_total_cost"] ?? "NA",
       documents: documents,
       id: json['id'] ?? "NA",
+      psmpc_purchase_order: psmpc_purchase_order,
+      delivery_report: delivery_report,
+      warranty_form: warranty_form,
+      anti_fraud_form: anti_fraud_form,
+      authorize_letter: authorize_letter,
+      invoice: invoice,
+      swap_agreement: swap_agreement,
       requestnumber: json['request_number'] ?? "NA",
       createdAt: json['created_at'] ?? "NA",
       updatedAt: json['updated_at'] ?? "NA",
@@ -175,6 +217,13 @@ class Applicant {
   final Occupation occupation;
   final List<Document> documents;
   final Kin kin;
+  final List<Document> payslip1;
+  final List<Document> payslip2;
+  final List<Document> payslip3;
+  final List<Document> intoletter;
+  final List<Document> bankstatemtn;
+  final List<Document> nrccopy;
+  final Signature signature;
 
   Applicant({
     required this.kin,
@@ -203,13 +252,48 @@ class Applicant {
     required this.province,
     required this.town,
     required this.occupation,
+    required this.bankstatemtn,
+    required this.nrccopy,
+    required this.payslip1,
+    required this.payslip2,
+    required this.payslip3,
+    required this.intoletter,
+    required this.signature,
   });
 
   factory Applicant.fromJson(Map<String, dynamic> json) {
     List<Document> documents = (json['documents'] as List<dynamic>)
         .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
         .toList();
+    List<Document> bankstatemtn = (json['bank_statement'] as List<dynamic>)
+        .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+        .toList();
+
+    List<Document> nrccopy = (json['nrc_copy'] as List<dynamic>)
+        .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+        .toList();
+
+    List<Document> payslip1 = (json['payslip_1'] as List<dynamic>)
+        .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+        .toList();
+
+    List<Document> payslip2 = (json['payslip_2'] as List<dynamic>)
+        .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+        .toList();
+
+    List<Document> payslip3 = (json['payslip_3'] as List<dynamic>)
+        .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+        .toList();
+    List<Document> intoletter = (json['intro_letter'] as List<dynamic>)
+        .map((doc) => Document.fromJson(doc as Map<String, dynamic>))
+        .toList();
     return Applicant(
+        bankstatemtn: bankstatemtn,
+        intoletter: intoletter,
+        nrccopy: nrccopy,
+        payslip1: payslip1,
+        payslip2: payslip2,
+        payslip3: payslip3,
         id: json['id'] ?? "NA",
         ownership: json['ownership'] ?? "NA",
         howlongthisplace: json['ownership_how_long'] ?? "NA",
@@ -239,7 +323,30 @@ class Applicant {
         ),
         kin: Kin.fromJson(
           json['kin'] ?? "NA",
+        ),
+        signature: Signature.fromJson(
+          json['signature'] ?? {}, // Handle empty signature object
         ));
+  }
+}
+
+class Signature {
+  final dynamic id;
+  final String contentType;
+  final String url;
+
+  Signature({
+    required this.id,
+    required this.contentType,
+    required this.url,
+  });
+
+  factory Signature.fromJson(Map<String, dynamic> json) {
+    return Signature(
+      id: json['id'] ?? "NA",
+      contentType: json['content_type'] ?? "NA",
+      url: json['url'] ?? "NA",
+    );
   }
 }
 
