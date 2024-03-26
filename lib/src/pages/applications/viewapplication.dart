@@ -2546,68 +2546,77 @@ class _ViewApplicationState extends State<ViewApplication> {
             fontWeight: FontWeight.w700,
             color: AppColors.mainColor,
           ),
-          content: Column(
-            children: [
-              CustomText(
-                text: 'Select an agent',
-                color: AppColors.neutral,
-              ),
-              SizedBox(
-                width: 160,
-                child: DropdownButtonFormField2<String>(
-                  isExpanded: true,
-                  decoration: InputDecoration(
-                    // Add Horizontal padding using menuItemStyleData.padding so it matches
-                    // the menu padding when button's width is not specified.
-                    contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    // Add more decoration..
-                  ),
-                  hint: Text(
-                    'Choose Agent',
-                    style: GoogleFonts.dmSans(
-                        fontSize: 14, color: AppColors.neutral),
-                  ),
-                  items: agents!.map((agent) {
-                    return DropdownMenuItem<String>(
-                      value: agent['id'].toString(),
-                      child: CustomText(
-                        fontSize: 14,
-                        color: AppColors.neutral,
-                        text: agent['name'].toString(),
+          content: SizedBox(
+            height: MediaQuery.of(context).size.height * .2,
+            width: MediaQuery.of(context).size.width * .4,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CustomText(
+                  text: 'Select an agent:',
+                  color: AppColors.neutral,
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                SizedBox(
+                  width: 160,
+                  child: DropdownButtonFormField2<String>(
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      // Add Horizontal padding using menuItemStyleData.padding so it matches
+                      // the menu padding when button's width is not specified.
+                      contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    );
-                  }).toList(),
-                  onChanged: (agent) {
-                    setState(() {
-                      seletedagent = agent!;
-                      print(agent);
-                    });
-                  },
-                  buttonStyleData: const ButtonStyleData(
-                    padding: EdgeInsets.only(right: 8),
-                  ),
-                  iconStyleData: const IconStyleData(
-                    icon: Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.black45,
+                      // Add more decoration..
                     ),
-                    iconSize: 24,
-                  ),
-                  dropdownStyleData: DropdownStyleData(
-                    decoration: BoxDecoration(
-                      color: AppColors.sidebarbackground,
-                      borderRadius: BorderRadius.circular(8),
+                    hint: Text(
+                      'Choose Agent',
+                      style: GoogleFonts.dmSans(
+                          fontSize: 14, color: AppColors.neutral),
                     ),
-                  ),
-                  menuItemStyleData: const MenuItemStyleData(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    items: agents!.map((agent) {
+                      return DropdownMenuItem<String>(
+                        value: agent['id'].toString(),
+                        child: CustomText(
+                          fontSize: 14,
+                          color: AppColors.neutral,
+                          text: agent['name'].toString(),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (agent) {
+                      setState(() {
+                        seletedagent = agent!;
+                        print(agent);
+                      });
+                    },
+                    buttonStyleData: const ButtonStyleData(
+                      padding: EdgeInsets.only(right: 8),
+                    ),
+                    iconStyleData: const IconStyleData(
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.black45,
+                      ),
+                      iconSize: 24,
+                    ),
+                    dropdownStyleData: DropdownStyleData(
+                      decoration: BoxDecoration(
+                        color: AppColors.sidebarbackground,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    menuItemStyleData: const MenuItemStyleData(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           actions: [
             // Cancel Button
@@ -2623,7 +2632,13 @@ class _ViewApplicationState extends State<ViewApplication> {
             // Confirm Button
             TextButton(
               onPressed: () {
-                _submitAssignment(widget.loanRequestId, seletedagent!);
+                if (loanDetail.agent.name != null &&
+                    loanDetail.agent.name != 'NA') {
+                  _changeAgent(widget.loanRequestId, seletedagent!);
+                } else {
+                  _submitAssignment(widget.loanRequestId, seletedagent!);
+                }
+                Navigator.pop(context);
               },
               child: CustomText(
                 text: 'Confirm',
@@ -2676,7 +2691,7 @@ class _ViewApplicationState extends State<ViewApplication> {
     }
   }
 
-  Future<void> _submitAssignment(int id, String seletedagent) async {
+  Future<void> _changeAgent(int id, String seletedagent) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (seletedagent != null) {
       // Replace with your actual API endpoint
@@ -2702,15 +2717,61 @@ class _ViewApplicationState extends State<ViewApplication> {
         Response response = await dio.patch(apiUrl, data: requestBody);
         if (response.statusCode == 201 || response.statusCode == 200) {
           // Successfully created assignment (status code 201 for POST)
-          print('Assignment created successfully');
+          print('Agent updated successfully');
+          fetchLoanRequestDetails(widget.loanRequestId);
+          warning('Agent updated successfully');
         } else {
           // Handle error
           print(
               'Failed to create assignment. Status code: ${response.statusCode}');
+          warning('Failed to update agent');
+        }
+      } catch (error) {
+        // Handle error
+        print('Error during PATCH request: $error');
+        warning('Failed to update agent');
+      }
+    }
+  }
+
+  Future<void> _submitAssignment(int id, String seletedagent) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (seletedagent != null) {
+      // Replace with your actual API endpoint
+
+      String apiUrl =
+          "https://loan-managment.onrender.com/loan_requests/$id/assign_to_agent";
+      // Replace 'yourAccessToken' with the actual token
+      String accessToken = prefs.getString('token')!;
+
+      Dio dio = Dio();
+      dio.options.headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      };
+
+      // Create the request body
+      Map<String, dynamic> requestBody = {
+        'user_id': seletedagent,
+      };
+
+      try {
+        Response response = await dio.post(apiUrl, data: requestBody);
+        if (response.statusCode == 201 || response.statusCode == 200) {
+          // Successfully created assignment (status code 201 for POST)
+          print('Assignment created successfully');
+          fetchLoanRequestDetails(widget.loanRequestId);
+          warning('Assignment created successfully');
+        } else {
+          // Handle error
+          print(
+              'Failed to create assignment. Status code: ${response.statusCode}');
+          warning('Failed to assign agent');
         }
       } catch (error) {
         // Handle error
         print('Error during POST request: $error');
+        warning('Failed to assign agent');
       }
     }
   }
