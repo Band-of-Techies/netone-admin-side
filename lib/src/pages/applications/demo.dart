@@ -335,7 +335,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),
-                                  if (role == 'Admin')
+                                  if (role == 'Adminsss')
                                     TextButton(
                                         onPressed: () {
                                           fetchUsers();
@@ -544,6 +544,8 @@ class _ViewApplicationState extends State<ViewApplication> {
     final image14 = await loadImage('assets/form14.jpg');
     final image15 = await loadImage('assets/form15.jpg');
     final image16 = await loadImage('assets/quote.jpg');
+
+    final sign = await loadImage('assets/sign.png');
 
     final tick = await loadImage('assets/tick.png');
     final pdf = pw.Document();
@@ -1641,13 +1643,6 @@ class _ViewApplicationState extends State<ViewApplication> {
         );
       },
     );
-
-    List<Uint8List> signatures = [];
-    for (int i = 0; i < loanDetail.applicantCount; i++) {
-      signatures.add(
-          await fetchAndConvertImage(loanDetail.applicants[i].signature.url));
-    }
-
     final page6 = pw.Page(
       margin: pw.EdgeInsets.zero, // Remove default margins
       build: (context) {
@@ -1674,7 +1669,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 top: 83,
               ),
             //furniture
-            if (loanDetail.category.name == 'Furniture loan')
+            if (loanDetail.category.name == 'Furniture Loan')
               CustomPositionedCheck(
                 left: 460,
                 tick: tick,
@@ -1778,17 +1773,17 @@ class _ViewApplicationState extends State<ViewApplication> {
             if (loanDetail.applicantCount > 0)
               pw.Positioned(
                 left: 60,
-                top: 641,
+                top: 635,
                 child: pw.Image(
-                  pw.MemoryImage(signatures[
-                      0]), // Assuming image7 is the image you want to place
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
                   width: 50, // Adjust width as needed
                   height: 30, // Adjust height as needed
                 ),
               ),
             if (loanDetail.applicantCount > 0)
               CustomPositionedText(
-                text: loanDetail.invoicedate,
+                text: loanDetail.createdAt,
                 left: 415,
                 top: 662,
               ),
@@ -1819,15 +1814,15 @@ class _ViewApplicationState extends State<ViewApplication> {
                 left: 60,
                 top: 100,
                 child: pw.Image(
-                  pw.MemoryImage(signatures[
-                      1]), // Assuming image7 is the image you want to place
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
                   width: 50, // Adjust width as needed
                   height: 30, // Adjust height as needed
                 ),
               ),
             if (loanDetail.applicantCount > 1)
               CustomPositionedText(
-                text: loanDetail.invoicedate,
+                text: loanDetail.createdAt,
                 left: 420,
                 top: 130,
               ),
@@ -1842,15 +1837,15 @@ class _ViewApplicationState extends State<ViewApplication> {
                 left: 60,
                 top: 270,
                 child: pw.Image(
-                  pw.MemoryImage(signatures[
-                      2]), // Assuming image7 is the image you want to place
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
                   width: 50, // Adjust width as needed
                   height: 30, // Adjust height as needed
                 ),
               ),
             if (loanDetail.applicantCount > 2)
               CustomPositionedText(
-                text: loanDetail.invoicedate,
+                text: loanDetail.createdAt,
                 left: 395,
                 top: 292,
               ),
@@ -1865,15 +1860,15 @@ class _ViewApplicationState extends State<ViewApplication> {
                 left: 60,
                 top: 420,
                 child: pw.Image(
-                  pw.MemoryImage(signatures[
-                      3]), // Assuming image7 is the image you want to place
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
                   width: 50, // Adjust width as needed
                   height: 30, // Adjust height as needed
                 ),
               ),
             if (loanDetail.applicantCount > 3)
               CustomPositionedText(
-                text: loanDetail.invoicedate,
+                text: loanDetail.createdAt,
                 left: 420,
                 top: 440,
               ),
@@ -1993,15 +1988,15 @@ class _ViewApplicationState extends State<ViewApplication> {
                 left: 330,
                 top: 255,
                 child: pw.Image(
-                  pw.MemoryImage(signatures[
-                      0]), // Assuming image7 is the image you want to place
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
                   width: 50, // Adjust width as needed
                   height: 20, // Adjust height as needed
                 ),
               ),
             if (loanDetail.applicantCount > 0)
               CustomPositionedText(
-                text: loanDetail.invoicedate,
+                text: loanDetail.applicants[0].createdAt,
                 left: 340,
                 top: 307,
               ),
@@ -2016,15 +2011,15 @@ class _ViewApplicationState extends State<ViewApplication> {
                 left: 330,
                 top: 370,
                 child: pw.Image(
-                  pw.MemoryImage(signatures[
-                      1]), // Assuming image7 is the image you want to place
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
                   width: 50, // Adjust width as needed
                   height: 20, // Adjust height as needed
                 ),
               ),
             if (loanDetail.applicantCount > 1)
               CustomPositionedText(
-                text: loanDetail.invoicedate,
+                text: loanDetail.applicants[1].createdAt,
                 left: 340,
                 top: 424,
               ),
@@ -2039,15 +2034,15 @@ class _ViewApplicationState extends State<ViewApplication> {
                 left: 330,
                 top: 480,
                 child: pw.Image(
-                  pw.MemoryImage(signatures[
-                      2]), // Assuming image7 is the image you want to place
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
                   width: 50, // Adjust width as needed
                   height: 20, // Adjust height as needed
                 ),
               ),
             if (loanDetail.applicantCount > 2)
               CustomPositionedText(
-                text: loanDetail.invoicedate,
+                text: loanDetail.applicants[2].createdAt,
                 left: 340,
                 top: 545,
               ),
@@ -2062,15 +2057,15 @@ class _ViewApplicationState extends State<ViewApplication> {
                 left: 330,
                 top: 600,
                 child: pw.Image(
-                  pw.MemoryImage(signatures[
-                      3]), // Assuming image7 is the image you want to place
+                  pw.MemoryImage(
+                      sign), // Assuming image7 is the image you want to place
                   width: 50, // Adjust width as needed
                   height: 20, // Adjust height as needed
                 ),
               ),
             if (loanDetail.applicantCount > 3)
               CustomPositionedText(
-                text: loanDetail.invoicedate,
+                text: loanDetail.applicants[3].createdAt,
                 left: 340,
                 top: 645,
               ),
@@ -2097,11 +2092,7 @@ class _ViewApplicationState extends State<ViewApplication> {
             ),
 
             CustomPositionedText(
-              text: loanDetail.applicants[0].mobile.replaceAllMapped(
-                RegExp(r'.{1}'),
-                (match) =>
-                    '${match.group(0)}         ', // Add 8 spaces after each character
-              ),
+              text: loanDetail.applicants[0].mobile.split('         ').join(),
               left: 100,
               top: 370,
             ),
@@ -2117,35 +2108,28 @@ class _ViewApplicationState extends State<ViewApplication> {
             ),
             //payersbankdetails
             CustomPositionedText(
-              text: loanDetail.bankname,
+              text: 'BANKNAME',
               left: 100,
               top: 434,
             ),
             CustomPositionedText(
-              text: loanDetail.branchname,
+              text: 'BRANCHNAME',
               left: 100,
               top: 464,
             ),
             CustomPositionedText(
-              text: loanDetail.sortcode.replaceAllMapped(
-                RegExp(r'.{1}'),
-                (match) =>
-                    '${match.group(0)}         ', // Add 8 spaces after each character
-              ),
+              text: '1         2         3         4         5         6',
               left: 285,
               top: 464,
             ),
             CustomPositionedText(
-              text: loanDetail.accnumber.replaceAllMapped(
-                RegExp(r'.{1}'),
-                (match) =>
-                    '${match.group(0)}         ', // Add 8 spaces after each character
-              ),
+              text:
+                  '2         6         0         1         2         3         4         5         6         7         8         9',
               left: 100,
               top: 494,
             ),
             CustomPositionedText(
-              text: loanDetail.banknameandaddress,
+              text: 'NAME AND FULL POSTALL ADDRESS',
               left: 100,
               top: 550,
             ),
@@ -2153,14 +2137,14 @@ class _ViewApplicationState extends State<ViewApplication> {
               left: 100,
               top: 640,
               child: pw.Image(
-                pw.MemoryImage(signatures[
-                    0]), // Assuming image7 is the image you want to place
+                pw.MemoryImage(
+                    sign), // Assuming image7 is the image you want to place
                 width: 50, // Adjust width as needed
                 height: 30, // Adjust height as needed
               ),
             ),
             CustomPositionedText(
-              text: loanDetail.invoicedate,
+              text: 'DATE',
               left: 250,
               top: 660,
             ),
@@ -2168,7 +2152,8 @@ class _ViewApplicationState extends State<ViewApplication> {
         );
       },
     );
-
+    final vat = int.parse(loanDetail.original_total_cost) * .16;
+    final total = vat + int.parse(loanDetail.original_total_cost);
     final page16 = pw.Page(
       margin: pw.EdgeInsets.zero, // Remove default margins
       build: (context) {
@@ -2181,12 +2166,12 @@ class _ViewApplicationState extends State<ViewApplication> {
               ),
             ),
             CustomPositionedTextNOBold(
-              text: loanDetail.invoicedate,
+              text: loanDetail.createdAt,
               left: 500,
               top: 146,
             ),
             CustomPositionedTextNOBold(
-              text: loanDetail.id.toString(),
+              text: 'NB 1234',
               left: 500,
               top: 161,
             ),
@@ -2198,7 +2183,7 @@ class _ViewApplicationState extends State<ViewApplication> {
             CustomPositionedTextNOBold(
               text:
                   loanDetail.agent.name != null ? loanDetail.agent.name : 'NA',
-              left: 28,
+              left: 26,
               top: 386,
             ),
             CustomPositionedTextBold(
@@ -2493,7 +2478,6 @@ class _ViewApplicationState extends State<ViewApplication> {
     pdf.addPage(page14);
     pdf.addPage(page15);
     pdf.addPage(page16);
-
     for (int i = 0; i < pages.length; i++) {
       pdf.addPage(pages[i]);
     }

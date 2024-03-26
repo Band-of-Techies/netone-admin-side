@@ -173,7 +173,7 @@ class _CategoryStatusState extends State<CategoryStatus> {
                   backgroundColor:
                       MaterialStateProperty.all(AppColors.mainColor)),
               onPressed: () {
-                //  _deleteProduct(productId);
+                _deleteProduct(productId);
                 Navigator.of(context).pop(); // Close the dialog
               },
               child: CustomText(text: 'Delete'),
@@ -196,7 +196,7 @@ class _CategoryStatusState extends State<CategoryStatus> {
       Dio dio = Dio();
       dio.options.headers['Authorization'] = token!;
       final response = await dio
-          .delete('https://loan-managment.onrender.com/products/$productId');
+          .delete('https://loan-managment.onrender.com/categories/$productId');
 
       // Check the response status code and handle accordingly
       if (response.statusCode == 200) {
@@ -425,7 +425,7 @@ class _CategoryStatusState extends State<CategoryStatus> {
     try {
       // Prepare data for API request
       Map<String, dynamic> productData = {
-        "product": {
+        "category": {
           "name": name,
           "description": description,
         }
@@ -441,7 +441,7 @@ class _CategoryStatusState extends State<CategoryStatus> {
 
       // Perform the POST request using Dio
       Response response = await Dio().put(
-        'https://loan-managment.onrender.com/products/$id',
+        'https://loan-managment.onrender.com/categories/$id',
         data: productData,
         options: Options(
           headers: {

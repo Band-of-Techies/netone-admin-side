@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class LoanRequestDetails {
   final dynamic id;
   final String requestnumber;
@@ -34,7 +36,18 @@ class LoanRequestDetails {
   final Category category;
   final dynamic original_total_cost;
 
+  final String invoicedate;
+  final String totalcost;
+  final String vat;
+
+  final String bankname;
+  final String accnumber;
+  final String branchname;
+  final String sortcode;
+  final String banknameandaddress;
+
   LoanRequestDetails({
+    required this.invoicedate,
     required this.original_total_cost,
     required this.requestedProducts,
     // required this.orderdocuments,
@@ -69,6 +82,13 @@ class LoanRequestDetails {
     required this.psmpc_purchase_order,
     required this.swap_agreement,
     required this.warranty_form,
+    required this.accnumber,
+    required this.bankname,
+    required this.branchname,
+    required this.sortcode,
+    required this.banknameandaddress,
+    required this.totalcost,
+    required this.vat,
   });
 
   factory LoanRequestDetails.fromJson(Map<String, dynamic> json) {
@@ -115,6 +135,8 @@ class LoanRequestDetails {
       anti_fraud_form: anti_fraud_form,
       authorize_letter: authorize_letter,
       invoice: invoice,
+      invoicedate:
+          DateFormat('dd/MM/yyyy').format(DateTime.parse(json['created_at'])),
       swap_agreement: swap_agreement,
       requestnumber: json['request_number'] ?? "NA",
       createdAt: json['created_at'] ?? "NA",
@@ -144,6 +166,13 @@ class LoanRequestDetails {
           .toList(),
       applicantCount: json['applicant_count'] ?? "NA",
       category: Category.fromJson(json['category'] ?? {}),
+      bankname: (json['bank_name'] ?? "NA"),
+      branchname: (json['bank_branch_name'] ?? "NA"),
+      accnumber: (json['bank_account_number'] ?? "NA"),
+      totalcost: (json['total_cost'] ?? "NA"),
+      vat: (json['vat'] ?? "NA"),
+      sortcode: (json['bank_sort_code'] ?? "NA"),
+      banknameandaddress: (json['bank_name_and_full_address'] ?? "NA"),
     );
   }
 }
@@ -160,32 +189,6 @@ class AgentDetails {
     return AgentDetails(
       id: json['id'] ?? "NA",
       name: json['name'] ?? "NA",
-    );
-  }
-}
-
-class Product {
-  final dynamic id;
-  final String createdAt;
-  final String updatedAt;
-  final String name;
-  final String description;
-
-  Product({
-    required this.id,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.name,
-    required this.description,
-  });
-
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      id: json['id'] ?? "NA",
-      createdAt: json['created_at'] ?? "NA",
-      updatedAt: json['updated_at'] ?? "NA",
-      name: json['name'] ?? "NA",
-      description: json['description'] ?? "NA",
     );
   }
 }
@@ -479,12 +482,16 @@ class RequestedProduct {
   final int productId;
   final String productName;
   final String productDescription;
+  final String unitprice;
+  final String totalcost;
 
   RequestedProduct({
     required this.id,
     required this.quantity,
     required this.productId,
     required this.productName,
+    required this.totalcost,
+    required this.unitprice,
     required this.productDescription,
   });
 
@@ -495,6 +502,8 @@ class RequestedProduct {
       productId: json['product_id'] ?? "NA",
       productName: json['product_name'] ?? "NA",
       productDescription: json['product_description'] ?? "NA",
+      totalcost: json['total_cost'] ?? "NA",
+      unitprice: json['unit_price'] ?? "NA",
     );
   }
 }

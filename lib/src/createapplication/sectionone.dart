@@ -194,152 +194,145 @@ class _SectionOneState extends State<SectionOne>
         padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
-          child: RawScrollbar(
-            thumbVisibility: true,
-            thumbColor: AppColors.mainColor,
-            radius: Radius.circular(20),
-            thickness: 5,
-            child: ListView(
-              children: [
-                applicantDetails(1, applicants[0]),
-                if (widget.myTabController.numberOfPersons > 1)
-                  applicantDetails(2, applicants[1]),
-                if (widget.myTabController.numberOfPersons > 2)
-                  applicantDetails(3, applicants[2]),
-                if (widget.myTabController.numberOfPersons > 3)
-                  applicantDetails(4, applicants[3]),
-                Row(
-                  children: [
-                    CustomText(
-                      text: 'Joint Application:',
-                      color: blackfont,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Switch(
-                      activeColor: primary,
-                      value: widget.myTabController.numberOfPersons < 2
-                          ? isJointApplication
-                          : true,
-                      onChanged: (value) {
-                        setState(() {
-                          isJointApplication = value;
-                        });
-                      },
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    isJointApplication ||
-                            widget.myTabController.numberOfPersons > 1
-                        ? Expanded(
-                            child: DropdownButtonFormField(
-                              focusColor: whitefont,
-                              dropdownColor: whitefont,
-                              value: numberOfPersons,
-                              iconEnabledColor: primary,
-                              items: [1, 2, 3, 4].map((int value) {
-                                return DropdownMenuItem(
-                                  value: value,
-                                  child: Text('$value'),
-                                );
-                              }).toList(),
-                              onChanged: (int? value) {
+          child: ListView(
+            children: [
+              applicantDetails(1, applicants[0]),
+              if (widget.myTabController.numberOfPersons > 1)
+                applicantDetails(2, applicants[1]),
+              if (widget.myTabController.numberOfPersons > 2)
+                applicantDetails(3, applicants[2]),
+              if (widget.myTabController.numberOfPersons > 3)
+                applicantDetails(4, applicants[3]),
+              Row(
+                children: [
+                  CustomText(
+                    text: 'Joint Application:',
+                    color: blackfont,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Switch(
+                    activeColor: primary,
+                    value: widget.myTabController.numberOfPersons < 2
+                        ? isJointApplication
+                        : true,
+                    onChanged: (value) {
+                      setState(() {
+                        isJointApplication = value;
+                      });
+                    },
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  isJointApplication ||
+                          widget.myTabController.numberOfPersons > 1
+                      ? Expanded(
+                          child: DropdownButtonFormField(
+                            focusColor: whitefont,
+                            dropdownColor: whitefont,
+                            value: numberOfPersons,
+                            iconEnabledColor: primary,
+                            items: [1, 2, 3, 4].map((int value) {
+                              return DropdownMenuItem(
+                                value: value,
+                                child: Text('$value'),
+                              );
+                            }).toList(),
+                            onChanged: (int? value) {
+                              setState(() {
+                                int previousNumberOfPersons = numberOfPersons;
+                                numberOfPersons = value!;
+
+                                if (numberOfPersons > previousNumberOfPersons) {
+                                  // Generate new applicants only for the additional persons
+                                  applicants.addAll(List.generate(
+                                    numberOfPersons - previousNumberOfPersons,
+                                    (index) => ApplicantDetails(),
+                                  ));
+                                } else {
+                                  // Trim the list if the number of persons is reduced
+                                  applicants.removeRange(
+                                      numberOfPersons, applicants.length);
+                                }
+
                                 setState(() {
-                                  int previousNumberOfPersons = numberOfPersons;
-                                  numberOfPersons = value!;
-
-                                  if (numberOfPersons >
-                                      previousNumberOfPersons) {
-                                    // Generate new applicants only for the additional persons
-                                    applicants.addAll(List.generate(
-                                      numberOfPersons - previousNumberOfPersons,
-                                      (index) => ApplicantDetails(),
-                                    ));
-                                  } else {
-                                    // Trim the list if the number of persons is reduced
-                                    applicants.removeRange(
-                                        numberOfPersons, applicants.length);
-                                  }
-
-                                  setState(() {
-                                    widget.myTabController
-                                        .updateNumberOfPersons(value);
-                                    widget.myTabController.numberOfPersons =
-                                        value;
-                                  });
-                                  print(widget.myTabController.numberOfPersons);
+                                  widget.myTabController
+                                      .updateNumberOfPersons(value);
+                                  widget.myTabController.numberOfPersons =
+                                      value;
                                 });
-                              },
-                              style: GoogleFonts.dmSans(
+                                print(widget.myTabController.numberOfPersons);
+                              });
+                            },
+                            style: GoogleFonts.dmSans(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                                borderSide:
+                                    BorderSide(color: Colors.grey, width: 1.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide:
+                                    BorderSide(color: primary, width: 1.0),
+                              ),
+                              labelText: 'Number of Persons',
+                              labelStyle: GoogleFonts.dmSans(
                                 color: Colors.black,
+                                height: 0.5,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w500,
                               ),
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                  borderSide: BorderSide(
-                                      color: Colors.grey, width: 1.0),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                  borderSide:
-                                      BorderSide(color: primary, width: 1.0),
-                                ),
-                                labelText: 'Number of Persons',
-                                labelStyle: GoogleFonts.dmSans(
-                                  color: Colors.black,
-                                  height: 0.5,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
                             ),
-                          )
-                        : SizedBox.shrink(),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(primary),
-                        padding: MaterialStateProperty.all(EdgeInsets.all(15))),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        // Form is valid, move to the next section
-                        if (validateGender(applicants) &&
-                            validateLocation(applicants)) {
-                          //printApplicantDetails();
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(primary),
+                      padding: MaterialStateProperty.all(EdgeInsets.all(15))),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // Form is valid, move to the next section
+                      if (validateGender(applicants) &&
+                          validateLocation(applicants)) {
+                        //printApplicantDetails();
 
-                          if (widget._tabController.index <
-                              widget._tabController.length - 1) {
-                            myTabController.applicants = applicants;
-                            myTabController.updateApplicants(applicants);
-                            widget._tabController
-                                .animateTo(widget._tabController.index + 1);
+                        if (widget._tabController.index <
+                            widget._tabController.length - 1) {
+                          myTabController.applicants = applicants;
+                          myTabController.updateApplicants(applicants);
+                          widget._tabController
+                              .animateTo(widget._tabController.index + 1);
 
-                            DefaultTabController.of(context)?.animateTo(1);
-                          }
-                        } else {
-                          warning('Complete Details');
-                          // Handle the case when the last tab is reached
+                          DefaultTabController.of(context)?.animateTo(1);
                         }
+                      } else {
+                        warning('Complete Details');
+                        // Handle the case when the last tab is reached
                       }
-                    },
-                    child: CustomText(
-                      text: 'Next',
-                      color: whitefont,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    )),
-              ],
-            ),
+                    }
+                  },
+                  child: CustomText(
+                    text: 'Next',
+                    color: whitefont,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  )),
+            ],
           ),
         ),
       ),
@@ -542,6 +535,7 @@ class _SectionOneState extends State<SectionOne>
               SizedBox(width: 40.0),
               Expanded(
                   child: CustomTextFormField(
+                prefix: '+260 ',
                 controller: applicant.mobileController,
                 labelText: 'Mobile',
                 validator: (value) {
@@ -550,9 +544,9 @@ class _SectionOneState extends State<SectionOne>
                   }
 
                   // Validate if the value starts with '+260' and contains only numeric digits afterwards
-                  RegExp mobilePattern = RegExp(r'^\+260\d{9}$');
+                  RegExp mobilePattern = RegExp(r'^\d{9}$');
                   if (!mobilePattern.hasMatch(value)) {
-                    return 'Start with +260 followed by 9 digits';
+                    return 'Please enter a valid Mobile Number';
                   }
 
                   return null;

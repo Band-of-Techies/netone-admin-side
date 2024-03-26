@@ -53,6 +53,10 @@ dependencies:
   pdf: ^3.10.8
   flutter_image_compress: ^2.2.0
   image: ^4.1.7
+  image_cropper: ^5.0.1
+  pdf_render: ^1.4.5
+  advance_pdf_viewer2: ^2.0.5+1
+
   
 
 

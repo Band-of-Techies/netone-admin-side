@@ -7,11 +7,13 @@ class CustomTextFormField extends StatelessWidget {
   final String labelText;
   final String? Function(String?)? validator;
   final bool? isEnabled;
+  final String? prefix;
 
   const CustomTextFormField({
     required this.controller,
     required this.labelText,
     this.validator,
+    this.prefix = '',
     this.isEnabled = true,
   });
 
@@ -21,6 +23,7 @@ class CustomTextFormField extends StatelessWidget {
       enabled: isEnabled,
       controller: controller,
       decoration: InputDecoration(
+        prefixText: prefix,
         labelText: labelText,
         labelStyle: GoogleFonts.dmSans(
           color: Colors.black,
