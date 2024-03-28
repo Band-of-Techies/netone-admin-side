@@ -2236,6 +2236,11 @@ class _ViewApplicationState extends State<ViewApplication> {
               left: 220,
               top: 730,
             ),
+            CustomPositionedTextNOBold(
+              text: 'Page 1',
+              left: 270,
+              top: 780,
+            ),
             CustomPositionedTextBold(
               text: 'Website',
               left: 20,
@@ -2268,52 +2273,83 @@ class _ViewApplicationState extends State<ViewApplication> {
             ),
 
             //calculationssubtotal
-            CustomPositionedTextNOBold(
-              text: 'SUBTOTAL',
-              left: 420,
-              top: 660,
-            ),
-            CustomPositionedTextNOBold(
-              text: loanDetail.original_total_cost,
-              left: 515,
-              top: 660,
-            ),
-            //taxrate
-            CustomPositionedTextNOBold(
-              text: 'TAXRATE',
-              left: 420,
-              top: 680,
-            ),
-            CustomPositionedTextNOBold(
-              text: '0.16',
-              left: 515,
-              top: 680,
-            ),
+            if (loanDetail.requestedProducts.length < 4)
+              pw.Positioned(
+                  left: 450,
+                  top: 660,
+                  child: pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                      children: [
+                        pw.Column(
+                            mainAxisAlignment:
+                                pw.MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              TextNOBold(
+                                text: 'SUBTOTAL',
+                              ),
+                              pw.SizedBox(
+                                height: 10,
+                              ),
+                              TextNOBold(
+                                text: 'TAXRATE',
+                              ),
+                              pw.SizedBox(
+                                height: 10,
+                              ),
+                              TextNOBold(
+                                text: 'VAT',
+                              ),
+                              pw.SizedBox(
+                                height: 10,
+                              ),
+                              TextNOBold(
+                                text: 'TOTAL PRICE',
+                              ),
+                            ]),
+                        pw.SizedBox(
+                          width: 20,
+                        ),
+                        pw.Column(
+                            mainAxisAlignment:
+                                pw.MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              TextNOBold(
+                                text: loanDetail.original_total_cost,
+                              ),
+                              pw.SizedBox(
+                                height: 10,
+                              ),
+                              TextNOBold(
+                                text: '0.16',
+                              ),
+                              pw.SizedBox(
+                                height: 10,
+                              ),
+                              TextNOBold(
+                                text: loanDetail.vat,
+                              ),
+                              pw.SizedBox(
+                                height: 10,
+                              ),
+                              TextNOBold(
+                                text: loanDetail.totalcost,
+                              ),
+                              //taxrate
+                            ])
+                      ])),
+
             //vat
-            CustomPositionedTextNOBold(
-              text: 'VAT',
-              left: 420,
-              top: 695,
-            ),
-            CustomPositionedTextNOBold(
-              text: '10,343.97',
-              left: 515,
-              top: 695,
-            ),
+
             //totalprice
-            CustomPositionedTextBold(
-              text: 'TOTAL PRICE',
-              left: 420,
-              top: 710,
-            ),
-            CustomPositionedTextNOBold(
-              text: '10,343.97',
-              left: 515,
-              top: 710,
-            ),
-            for (int i = 0; i < loanDetail.requestedProducts.length; i++)
+
+            for (int i = 0;
+                i < loanDetail.requestedProducts.length && i < 3;
+                i++)
               productContainer(
-                  price: 10343.96552,
+                  total: loanDetail.requestedProducts[i].totalcost,
+                  price: loanDetail.requestedProducts[i].unitprice,
                   toppostion: 444 + (i * 60),
                   quantity: loanDetail.requestedProducts[i].quantity,
                   description: '''${loanDetail.requestedProducts[i].productName}
@@ -2322,6 +2358,595 @@ class _ViewApplicationState extends State<ViewApplication> {
         );
       },
     );
+    dynamic page17;
+    if (loanDetail.requestedProducts.length > 3 &&
+        loanDetail.requestedProducts.length < 7) {
+      page17 = pw.Page(
+        margin: pw.EdgeInsets.zero, // Remove default margins
+        build: (context) {
+          return pw.Stack(
+            children: [
+              pw.Center(
+                child: pw.Image(
+                  pw.MemoryImage(image16),
+                  fit: pw.BoxFit.contain,
+                ),
+              ),
+              CustomPositionedTextNOBold(
+                text: loanDetail.invoicedate,
+                left: 500,
+                top: 146,
+              ),
+              CustomPositionedTextNOBold(
+                text: loanDetail.id.toString(),
+                left: 500,
+                top: 161,
+              ),
+              CustomPositionedTextBold(
+                text: loanDetail.applicants[0].surname,
+                left: 85,
+                top: 203,
+              ),
+              CustomPositionedTextNOBold(
+                text: loanDetail.agent.name != null
+                    ? loanDetail.agent.name
+                    : 'NA',
+                left: 28,
+                top: 386,
+              ),
+              CustomPositionedTextBold(
+                text: 'Payment Terms ',
+                left: 20,
+                top: 680,
+              ),
+              CustomPositionedTextBold(
+                text: 'LOAN APPROVAL THROUGH PSMFC',
+                left: 110,
+                top: 680,
+              ),
+              CustomPositionedTextBold(
+                text: 'Delivery of Device',
+                left: 20,
+                top: 695,
+              ),
+              CustomPositionedTextBold(
+                text: 'EX STOCK',
+                left: 110,
+                top: 695,
+              ),
+              CustomPositionedTextBold(
+                text: 'Quote Validity',
+                left: 20,
+                top: 710,
+              ),
+              CustomPositionedTextBold(
+                text: '21 days',
+                left: 110,
+                top: 710,
+              ),
+              CustomPositionedTextBold(
+                text: 'THANK YOU FOR YOUR BUSINESS!',
+                left: 220,
+                top: 730,
+              ),
+              CustomPositionedTextNOBold(
+                text: 'Page 2',
+                left: 270,
+                top: 780,
+              ),
+              CustomPositionedTextBold(
+                text: 'Website',
+                left: 20,
+                top: 750,
+              ),
+              CustomPositionedTextNOBold(
+                text: 'www.digitize.co.zm',
+                left: 90,
+                top: 750,
+              ),
+              CustomPositionedTextBold(
+                text: 'Whatsapp',
+                left: 20,
+                top: 765,
+              ),
+              CustomPositionedTextNOBold(
+                text: '962148178',
+                left: 90,
+                top: 765,
+              ),
+              CustomPositionedTextBold(
+                text: 'Phone',
+                left: 20,
+                top: 780,
+              ),
+              CustomPositionedTextNOBold(
+                text: '0211 372 600',
+                left: 90,
+                top: 780,
+              ),
+
+              //calculationssubtotal
+              if (loanDetail.requestedProducts.length > 3 &&
+                  loanDetail.requestedProducts.length < 7)
+                pw.Positioned(
+                    left: 450,
+                    top: 660,
+                    child: pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Column(
+                              mainAxisAlignment:
+                                  pw.MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                TextNOBold(
+                                  text: 'SUBTOTAL',
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: 'TAXRATE',
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: 'VAT',
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: 'TOTAL PRICE',
+                                ),
+                              ]),
+                          pw.SizedBox(
+                            width: 20,
+                          ),
+                          pw.Column(
+                              mainAxisAlignment:
+                                  pw.MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                TextNOBold(
+                                  text: loanDetail.original_total_cost,
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: '0.16',
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: loanDetail.vat,
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: loanDetail.totalcost,
+                                ),
+                                //taxrate
+                              ])
+                        ])),
+
+              //vat
+
+              //totalprice
+
+              for (int i = 3;
+                  i < loanDetail.requestedProducts.length && i < 6;
+                  i++)
+                productContainer(
+                    total: loanDetail.requestedProducts[i].totalcost,
+                    price: loanDetail.requestedProducts[i].unitprice,
+                    toppostion: 444 + ((i - 3) * 60),
+                    quantity: loanDetail.requestedProducts[i].quantity,
+                    description:
+                        '''${loanDetail.requestedProducts[i].productName}
+                                    ${loanDetail.requestedProducts[i].productDescription}''')
+            ],
+          );
+        },
+      );
+    }
+    dynamic page18;
+    if (loanDetail.requestedProducts.length > 6 &&
+        loanDetail.requestedProducts.length < 10) {
+      page18 = pw.Page(
+        margin: pw.EdgeInsets.zero, // Remove default margins
+        build: (context) {
+          return pw.Stack(
+            children: [
+              pw.Center(
+                child: pw.Image(
+                  pw.MemoryImage(image16),
+                  fit: pw.BoxFit.contain,
+                ),
+              ),
+              CustomPositionedTextNOBold(
+                text: loanDetail.invoicedate,
+                left: 500,
+                top: 146,
+              ),
+              CustomPositionedTextNOBold(
+                text: loanDetail.id.toString(),
+                left: 500,
+                top: 161,
+              ),
+              CustomPositionedTextBold(
+                text: loanDetail.applicants[0].surname,
+                left: 85,
+                top: 203,
+              ),
+              CustomPositionedTextNOBold(
+                text: loanDetail.agent.name != null
+                    ? loanDetail.agent.name
+                    : 'NA',
+                left: 28,
+                top: 386,
+              ),
+              CustomPositionedTextBold(
+                text: 'Payment Terms ',
+                left: 20,
+                top: 680,
+              ),
+              CustomPositionedTextBold(
+                text: 'LOAN APPROVAL THROUGH PSMFC',
+                left: 110,
+                top: 680,
+              ),
+              CustomPositionedTextBold(
+                text: 'Delivery of Device',
+                left: 20,
+                top: 695,
+              ),
+              CustomPositionedTextBold(
+                text: 'EX STOCK',
+                left: 110,
+                top: 695,
+              ),
+              CustomPositionedTextBold(
+                text: 'Quote Validity',
+                left: 20,
+                top: 710,
+              ),
+              CustomPositionedTextBold(
+                text: '21 days',
+                left: 110,
+                top: 710,
+              ),
+              CustomPositionedTextBold(
+                text: 'THANK YOU FOR YOUR BUSINESS!',
+                left: 220,
+                top: 730,
+              ),
+              CustomPositionedTextNOBold(
+                text: 'Page 3',
+                left: 270,
+                top: 780,
+              ),
+              CustomPositionedTextBold(
+                text: 'Website',
+                left: 20,
+                top: 750,
+              ),
+              CustomPositionedTextNOBold(
+                text: 'www.digitize.co.zm',
+                left: 90,
+                top: 750,
+              ),
+              CustomPositionedTextBold(
+                text: 'Whatsapp',
+                left: 20,
+                top: 765,
+              ),
+              CustomPositionedTextNOBold(
+                text: '962148178',
+                left: 90,
+                top: 765,
+              ),
+              CustomPositionedTextBold(
+                text: 'Phone',
+                left: 20,
+                top: 780,
+              ),
+              CustomPositionedTextNOBold(
+                text: '0211 372 600',
+                left: 90,
+                top: 780,
+              ),
+
+              //calculationssubtotal
+              if (loanDetail.requestedProducts.length > 6 &&
+                  loanDetail.requestedProducts.length < 10)
+                pw.Positioned(
+                    left: 450,
+                    top: 660,
+                    child: pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Column(
+                              mainAxisAlignment:
+                                  pw.MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                TextNOBold(
+                                  text: 'SUBTOTAL',
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: 'TAXRATE',
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: 'VAT',
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: 'TOTAL PRICE',
+                                ),
+                              ]),
+                          pw.SizedBox(
+                            width: 20,
+                          ),
+                          pw.Column(
+                              mainAxisAlignment:
+                                  pw.MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                TextNOBold(
+                                  text: loanDetail.original_total_cost,
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: '0.16',
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: loanDetail.vat,
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: loanDetail.totalcost,
+                                ),
+                                //taxrate
+                              ])
+                        ])),
+
+              //vat
+
+              //totalprice
+
+              for (int i = 6;
+                  i < loanDetail.requestedProducts.length && i < 9;
+                  i++)
+                productContainer(
+                    total: loanDetail.requestedProducts[i].totalcost,
+                    price: loanDetail.requestedProducts[i].unitprice,
+                    toppostion: 444 + ((i - 6) * 60),
+                    quantity: loanDetail.requestedProducts[i].quantity,
+                    description:
+                        '''${loanDetail.requestedProducts[i].productName}
+                                    ${loanDetail.requestedProducts[i].productDescription}''')
+            ],
+          );
+        },
+      );
+    }
+    dynamic page19;
+    if (loanDetail.requestedProducts.length > 9 &&
+        loanDetail.requestedProducts.length < 13) {
+      page19 = pw.Page(
+        margin: pw.EdgeInsets.zero, // Remove default margins
+        build: (context) {
+          return pw.Stack(
+            children: [
+              pw.Center(
+                child: pw.Image(
+                  pw.MemoryImage(image16),
+                  fit: pw.BoxFit.contain,
+                ),
+              ),
+              CustomPositionedTextNOBold(
+                text: loanDetail.invoicedate,
+                left: 500,
+                top: 146,
+              ),
+              CustomPositionedTextNOBold(
+                text: loanDetail.id.toString(),
+                left: 500,
+                top: 161,
+              ),
+              CustomPositionedTextBold(
+                text: loanDetail.applicants[0].surname,
+                left: 85,
+                top: 203,
+              ),
+              CustomPositionedTextNOBold(
+                text: loanDetail.agent.name != null
+                    ? loanDetail.agent.name
+                    : 'NA',
+                left: 28,
+                top: 386,
+              ),
+              CustomPositionedTextBold(
+                text: 'Payment Terms ',
+                left: 20,
+                top: 680,
+              ),
+              CustomPositionedTextBold(
+                text: 'LOAN APPROVAL THROUGH PSMFC',
+                left: 110,
+                top: 680,
+              ),
+              CustomPositionedTextBold(
+                text: 'Delivery of Device',
+                left: 20,
+                top: 695,
+              ),
+              CustomPositionedTextBold(
+                text: 'EX STOCK',
+                left: 110,
+                top: 695,
+              ),
+              CustomPositionedTextBold(
+                text: 'Quote Validity',
+                left: 20,
+                top: 710,
+              ),
+              CustomPositionedTextBold(
+                text: '21 days',
+                left: 110,
+                top: 710,
+              ),
+              CustomPositionedTextBold(
+                text: 'THANK YOU FOR YOUR BUSINESS!',
+                left: 220,
+                top: 730,
+              ),
+              CustomPositionedTextNOBold(
+                text: 'Page 4',
+                left: 270,
+                top: 780,
+              ),
+              CustomPositionedTextBold(
+                text: 'Website',
+                left: 20,
+                top: 750,
+              ),
+              CustomPositionedTextNOBold(
+                text: 'www.digitize.co.zm',
+                left: 90,
+                top: 750,
+              ),
+              CustomPositionedTextBold(
+                text: 'Whatsapp',
+                left: 20,
+                top: 765,
+              ),
+              CustomPositionedTextNOBold(
+                text: '962148178',
+                left: 90,
+                top: 765,
+              ),
+              CustomPositionedTextBold(
+                text: 'Phone',
+                left: 20,
+                top: 780,
+              ),
+              CustomPositionedTextNOBold(
+                text: '0211 372 600',
+                left: 90,
+                top: 780,
+              ),
+
+              //calculationssubtotal
+              if (loanDetail.requestedProducts.length > 9 &&
+                  loanDetail.requestedProducts.length < 13)
+                pw.Positioned(
+                    left: 450,
+                    top: 660,
+                    child: pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Column(
+                              mainAxisAlignment:
+                                  pw.MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                TextNOBold(
+                                  text: 'SUBTOTAL',
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: 'TAXRATE',
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: 'VAT',
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: 'TOTAL PRICE',
+                                ),
+                              ]),
+                          pw.SizedBox(
+                            width: 20,
+                          ),
+                          pw.Column(
+                              mainAxisAlignment:
+                                  pw.MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                TextNOBold(
+                                  text: loanDetail.original_total_cost,
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: '0.16',
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: loanDetail.vat,
+                                ),
+                                pw.SizedBox(
+                                  height: 10,
+                                ),
+                                TextNOBold(
+                                  text: loanDetail.totalcost,
+                                ),
+                                //taxrate
+                              ])
+                        ])),
+
+              //vat
+
+              //totalprice
+
+              for (int i = 9;
+                  i < loanDetail.requestedProducts.length && i < 12;
+                  i++)
+                productContainer(
+                    total: loanDetail.requestedProducts[i].totalcost,
+                    price: loanDetail.requestedProducts[i].unitprice,
+                    toppostion: 444 + ((i - 9) * 60),
+                    quantity: loanDetail.requestedProducts[i].quantity,
+                    description:
+                        '''${loanDetail.requestedProducts[i].productName}
+                                    ${loanDetail.requestedProducts[i].productDescription}''')
+            ],
+          );
+        },
+      );
+    }
+
     List<dynamic> pages = [];
 
     for (int j = 0; j < loanDetail.applicantCount; j++) {
@@ -2493,6 +3118,18 @@ class _ViewApplicationState extends State<ViewApplication> {
     pdf.addPage(page14);
     pdf.addPage(page15);
     pdf.addPage(page16);
+    if (loanDetail.requestedProducts.length > 3 &&
+        loanDetail.requestedProducts.length < 7) {
+      pdf.addPage(page17);
+    }
+    if (loanDetail.requestedProducts.length > 6 &&
+        loanDetail.requestedProducts.length < 10) {
+      pdf.addPage(page18);
+    }
+    if (loanDetail.requestedProducts.length > 9 &&
+        loanDetail.requestedProducts.length < 13) {
+      pdf.addPage(page19);
+    }
 
     for (int i = 0; i < pages.length; i++) {
       pdf.addPage(pages[i]);
@@ -2888,7 +3525,8 @@ class _ViewApplicationState extends State<ViewApplication> {
       {required double toppostion,
       required int quantity,
       description,
-      required double price}) {
+      required String price,
+      required String total}) {
     return pw.Positioned(
       left: 16,
       top: toppostion,
@@ -2935,8 +3573,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                     width: 1, // Border width
                   ),
                 ),
-                child: pw.Center(
-                    child: customText(text: (price * quantity).toString())))
+                child: pw.Center(child: customText(text: total.toString())))
           ])),
     );
   }
@@ -2969,6 +3606,19 @@ class _ViewApplicationState extends State<ViewApplication> {
           color: PdfColors.black,
           fontWeight: pw.FontWeight.normal,
         ),
+      ),
+    );
+  }
+
+  TextNOBold({
+    required String text,
+  }) {
+    return pw.Text(
+      text,
+      style: pw.TextStyle(
+        fontSize: 8,
+        color: PdfColors.black,
+        fontWeight: pw.FontWeight.normal,
       ),
     );
   }

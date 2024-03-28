@@ -37,8 +37,8 @@ class LoanRequestDetails {
   final dynamic original_total_cost;
 
   final String invoicedate;
-  final String totalcost;
-  final String vat;
+  final dynamic totalcost;
+  final dynamic vat;
 
   final String bankname;
   final String accnumber;
@@ -126,7 +126,7 @@ class LoanRequestDetails {
             .toList();
     return LoanRequestDetails(
       // orderdocuments: orderdocuments,
-      original_total_cost: json["original_total_cost"] ?? "NA",
+      original_total_cost: json["original_total_cost"].toString() ?? 0,
       documents: documents,
       id: json['id'] ?? "NA",
       psmpc_purchase_order: psmpc_purchase_order,
@@ -169,8 +169,8 @@ class LoanRequestDetails {
       bankname: (json['bank_name'] ?? "NA"),
       branchname: (json['bank_branch_name'] ?? "NA"),
       accnumber: (json['bank_account_number'] ?? "NA"),
-      totalcost: (json['total_cost'] ?? "NA"),
-      vat: (json['vat'] ?? "NA"),
+      totalcost: (json['total_cost'].toString() ?? 0),
+      vat: (json['vat'].toString() ?? 0),
       sortcode: (json['bank_sort_code'] ?? "NA"),
       banknameandaddress: (json['bank_name_and_full_address'] ?? "NA"),
     );
