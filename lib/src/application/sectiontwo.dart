@@ -621,7 +621,7 @@ class _SectionTwoState extends State<SectionTwo>
                     hint: Text(
                       applicantDetailsList.townController != null
                           ? applicantDetailsList.townController.toString()
-                          : 'Select Town',
+                          : 'Select District',
                       style: GoogleFonts.dmSans(
                         fontSize: 15,
                         color: AppColors.neutral,
@@ -1264,31 +1264,37 @@ class _SectionTwoState extends State<SectionTwo>
         request.fields[
                 'loan_request[applicants_attributes][$i][kin_attributes][physical_address]'] =
             myTabController.employmentDetailsList[i]
-                .physicalAddressControllernextofkin.text;
+                    .physicalAddressControllernextofkin.text ??
+                '';
         request.fields[
                 'loan_request[applicants_attributes][$i][kin_attributes][postal_address]'] =
-            myTabController
-                .employmentDetailsList[i].postalAddressControllerforKline.text;
+            myTabController.employmentDetailsList[i]
+                    .postalAddressControllerforKline.text ??
+                '';
         request.fields[
                 'loan_request[applicants_attributes][$i][kin_attributes][phone_number]'] =
             myTabController.employmentDetailsList[i].cellNumberController.text;
         request.fields[
                 'loan_request[applicants_attributes][$i][kin_attributes][email]'] =
             myTabController
-                .employmentDetailsList[i].emailAddressController.text;
+                    .employmentDetailsList[i].emailAddressController.text ??
+                '';
         request.fields[
                 'loan_request[applicants_attributes][$i][occupation_attributes][id]'] =
             myTabController.employmentDetailsList[i].occupationid.toString();
         request.fields[
                 'loan_request[applicants_attributes][$i][occupation_attributes][job_title]'] =
-            myTabController.employmentDetailsList[i].jobTitleController.text;
+            myTabController.employmentDetailsList[i].jobTitleController.text ??
+                '';
         request.fields[
                 'loan_request[applicants_attributes][$i][occupation_attributes][ministry]'] =
-            myTabController.employmentDetailsList[i].ministryController.text;
+            myTabController.employmentDetailsList[i].ministryController.text ??
+                '';
         request.fields[
                 'loan_request[applicants_attributes][$i][occupation_attributes][physical_address]'] =
             myTabController.employmentDetailsList[i]
-                .physicalAddressControlleremployment.text;
+                    .physicalAddressControlleremployment.text ??
+                '';
         request.fields[
                 'loan_request[applicants_attributes][$i][occupation_attributes][postal_address]'] =
             myTabController.employmentDetailsList[i]
@@ -1309,7 +1315,8 @@ class _SectionTwoState extends State<SectionTwo>
         request.fields[
                 'loan_request[applicants_attributes][$i][occupation_attributes][salary_scale]'] =
             myTabController.employmentDetailsList[i].salaryScaleController
-                .toString();
+                    .toString() ??
+                '';
         request.fields[
                 'loan_request[applicants_attributes][$i][occupation_attributes][retirement_year]'] =
             myTabController
@@ -1321,7 +1328,8 @@ class _SectionTwoState extends State<SectionTwo>
         request.fields[
                 'loan_request[applicants_attributes][$i][occupation_attributes][years_of_service]'] =
             myTabController.employmentDetailsList[i].yearsInEmploymentController
-                .toString();
+                    .toString() ??
+                '';
         request.fields[
                 'loan_request[applicants_attributes][$i][occupation_attributes][employment_type]'] =
             myTabController.employmentDetailsList[i].employmentType.toString();

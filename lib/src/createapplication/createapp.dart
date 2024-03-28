@@ -84,8 +84,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                     fontSize: 12,
                     color: Colors.amber), // Font color for unselected tabs
 
-                controller: myTabController
-                    .tabController, // remove this to make the direct tab click disabled
+                //  controller: myTabController.tabController, // remove this to make the direct tab click disabled
                 onTap: null,
                 isScrollable: false,
                 tabs: [

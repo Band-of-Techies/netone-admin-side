@@ -721,7 +721,7 @@ class _SectionTwoState extends State<SectionTwo>
                     hint: Text(
                       applicantDetailsList.townController != null
                           ? applicantDetailsList.townController.toString()
-                          : 'Select Town',
+                          : 'Select District',
                       style: GoogleFonts.dmSans(
                         fontSize: 15,
                         color: blackfont,

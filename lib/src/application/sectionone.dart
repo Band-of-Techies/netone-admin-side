@@ -609,9 +609,6 @@ class _SectionOneState extends State<SectionOne>
                 controller: applicant.postalAddressController,
                 labelText: 'Postal Address',
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter Postal Address';
-                  }
                   return null;
                 },
               )),
@@ -694,7 +691,7 @@ class _SectionOneState extends State<SectionOne>
                     hint: Text(
                       applicant.townController != null
                           ? applicant.townController.toString()
-                          : 'Select Town',
+                          : 'Select District',
                       style: GoogleFonts.dmSans(
                         fontSize: 15,
                         color: AppColors.neutral,
@@ -947,7 +944,7 @@ class _SectionOneState extends State<SectionOne>
             myTabController.applicants[i].firstNameController.text;
         // Replace with actual first name
         request.fields['loan_request[applicants_attributes][$i][middle_name]'] =
-            myTabController.applicants[i].middleNameController.text;
+            myTabController.applicants[i].middleNameController.text ?? '';
 
         request.fields['loan_request[applicants_attributes][$i][email]'] =
             myTabController.applicants[i].emailController.text;
@@ -959,18 +956,18 @@ class _SectionOneState extends State<SectionOne>
             myTabController.applicants[i].nrcController.text;
 
         request.fields['loan_request[applicants_attributes][$i][telephone]'] =
-            myTabController.applicants[i].telephoneController.text;
+            myTabController.applicants[i].telephoneController.text ?? '';
 
         request.fields['loan_request[applicants_attributes][$i][mobile]'] =
             myTabController.applicants[i].mobileController.text;
 
         request.fields[
                 'loan_request[applicants_attributes][$i][license_number]'] =
-            myTabController.applicants[i].licenseNumberController.text;
+            myTabController.applicants[i].licenseNumberController.text ?? '';
 
         request.fields[
                 'loan_request[applicants_attributes][$i][license_expiry]'] =
-            myTabController.applicants[i].licenseExpiryController.text;
+            myTabController.applicants[i].licenseExpiryController.text ?? '';
 
         request.fields[
                 'loan_request[applicants_attributes][$i][residential_address]'] =
@@ -978,7 +975,7 @@ class _SectionOneState extends State<SectionOne>
 
         request.fields[
                 'loan_request[applicants_attributes][$i][postal_address]'] =
-            myTabController.applicants[i].postalAddressController.text;
+            myTabController.applicants[i].postalAddressController.text ?? '';
 
         request.fields['loan_request[applicants_attributes][$i][province]'] =
             myTabController.applicants[i].provinceController.toString();
@@ -994,7 +991,7 @@ class _SectionOneState extends State<SectionOne>
 
         request.fields[
                 'loan_request[applicants_attributes][$i][ownership_how_long]'] =
-            myTabController.applicants[i].ownership.toString();
+            myTabController.applicants[i].ownership.toString() ?? '';
 
         // Add other applicant details as needed
       }

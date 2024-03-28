@@ -2383,17 +2383,17 @@ class _SectionThreeState extends State<SectionThree>
       }
       request.headers['Authorization'] = 'Bearer $accessToken';
       request.fields['loan_request[description]'] =
-          myTabController.loanDetails.descriptionController.text;
+          myTabController.loanDetails.descriptionController.text ?? '';
       request.fields['loan_request[cost_of_asset]'] =
-          myTabController.loanDetails.costofasset.text;
+          myTabController.loanDetails.costofasset.text ?? '';
       request.fields['loan_request[insurance_cost]'] =
-          myTabController.loanDetails.insurancecost.text;
+          myTabController.loanDetails.insurancecost.text ?? '';
       request.fields['loan_request[advance_payment]'] =
-          myTabController.loanDetails.advancepayment.text;
+          myTabController.loanDetails.advancepayment.text ?? '';
       request.fields['loan_request[loan_tenure]'] =
           myTabController.loanDetails.tenure.toString();
       request.fields['loan_request[loan_amount]'] =
-          myTabController.loanDetails.loanamaountapplied.text;
+          myTabController.loanDetails.loanamaountapplied.text ?? '';
 
       //bankdetails
       request.fields['loan_request[bank_name]'] =

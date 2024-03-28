@@ -1132,7 +1132,7 @@ class _SectionFourState extends State<SectionFour>
 
         request.fields[
                 'loan_request[applicants_attributes][$i][postal_address]'] =
-            myTabController.applicants[i].postalAddressController.text;
+            myTabController.applicants[i].postalAddressController.text ?? '';
 
         request.fields['loan_request[applicants_attributes][$i][province]'] =
             myTabController.applicants[i].provinceController!;

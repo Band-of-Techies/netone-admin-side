@@ -188,19 +188,24 @@ class _SectionThreeState extends State<SectionThree>
                                 }
                                 if (_formKey.currentState!.validate()) {
                                   if (validateTenure(loadndetails)) {
-                                    if (attatchment == true) {
-                                      myTabController.loanDetails =
-                                          loadndetails;
-                                      //printApplicantDetails();
-                                      if (widget._tabController.index <
-                                          widget._tabController.length - 1) {
-                                        widget._tabController.animateTo(
-                                            widget._tabController.index + 1);
+                                    if (loadndetails
+                                        .chosenProductIds.isNotEmpty) {
+                                      if (attatchment == true) {
+                                        myTabController.loanDetails =
+                                            loadndetails;
+                                        //printApplicantDetails();
+                                        if (widget._tabController.index <
+                                            widget._tabController.length - 1) {
+                                          widget._tabController.animateTo(
+                                              widget._tabController.index + 1);
+                                        } else {
+                                          // Handle the case when the last tab is reached
+                                        }
                                       } else {
-                                        // Handle the case when the last tab is reached
+                                        warning('Attatch all documents');
                                       }
                                     } else {
-                                      warning('Attatch all documents');
+                                      warning('Choose a product');
                                     }
                                   } else {
                                     warning('Select Tenure');
