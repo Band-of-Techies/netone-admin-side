@@ -51,7 +51,7 @@ dependencies:
   fl_chart: ^0.65.0
   syncfusion_flutter_pdf: ^25.1.35
   pdf: ^3.10.8
-  flutter_image_compress: ^2.2.0
+
   image: ^4.1.7
   image_cropper: ^5.0.1
   pdf_render: ^1.4.5

@@ -1025,7 +1025,7 @@ class _SectionTwoState extends State<SectionTwo>
                     }).toList(),
                   ),
                   SizedBox(width: 40.0),
-                  if (applicantDetailsList.employmentType == 'Temporary')
+                  if (applicantDetailsList.employmentType == 'contract')
                     SizedBox(
                         width: 300,
                         child: GestureDetector(
@@ -1158,11 +1158,11 @@ class _SectionTwoState extends State<SectionTwo>
                 loanDetail.applicants[i].occupation.id;
             applicantDetailsLists[i].kinid = loanDetail.applicants[i].kin.id;
             applicantDetailsLists[i].jobTitleController.text =
-                loanDetail.applicants[i].occupation.jobTitle;
+                loanDetail.applicants[i].occupation.jobTitle ?? 'NA';
             applicantDetailsLists[i].ministryController.text =
-                loanDetail.applicants[i].occupation.ministry;
+                loanDetail.applicants[i].occupation.ministry ?? 'NA';
             applicantDetailsLists[i].physicalAddressControlleremployment.text =
-                loanDetail.applicants[i].occupation.physicalAddress;
+                loanDetail.applicants[i].occupation.physicalAddress ?? 'NA';
             applicantDetailsLists[i].postalAddressControllerEmployment.text =
                 loanDetail.applicants[i].occupation.postalAddress;
             applicantDetailsLists[i].provinceController =
@@ -1174,17 +1174,24 @@ class _SectionTwoState extends State<SectionTwo>
             applicantDetailsLists[i].currentNetSalaryController.text =
                 loanDetail.applicants[i].occupation.currentNetSalary;
             applicantDetailsLists[i].salaryScaleController =
-                loanDetail.applicants[i].occupation.salaryScale;
+                loanDetail.applicants[i].occupation.salaryScale ?? 'NA';
             applicantDetailsLists[i].preferredYearOfRetirementController =
                 loanDetail.applicants[i].occupation.preferredRetirementYear;
             applicantDetailsLists[i].employeeNumberController.text =
                 loanDetail.applicants[i].occupation.employerNumber;
             applicantDetailsLists[i].yearsInEmploymentController =
-                loanDetail.applicants[i].occupation.yearsOfService;
+                loanDetail.applicants[i].occupation.yearsOfService ?? 'NA';
             applicantDetailsLists[i].nameController.text =
                 loanDetail.applicants[i].kin.name;
             applicantDetailsLists[i].otherNamesController.text =
                 loanDetail.applicants[i].kin.otherNames;
+
+            applicantDetailsLists[i].physicalAddressControllernextofkin.text =
+                loanDetail.applicants[i].kin.physicalAddress;
+
+            applicantDetailsLists[i].postalAddressControllerforKline.text =
+                loanDetail.applicants[i].kin.postalAddress;
+
             applicantDetailsLists[i].physicalAddressControllernextofkin.text =
                 loanDetail.applicants[i].occupation.physicalAddress;
             applicantDetailsLists[i].netSalaryController.text =

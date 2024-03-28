@@ -6,9 +6,11 @@ class FormTextField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
   final String? Function(String?)? validator;
+  final String? prefix;
 
   const FormTextField({
     required this.controller,
+    this.prefix = '',
     required this.labelText,
     this.validator,
   });
@@ -18,6 +20,7 @@ class FormTextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
+        prefixText: prefix,
         labelText: labelText,
         labelStyle: GoogleFonts.dmSans(
           color: AppColors.neutral,

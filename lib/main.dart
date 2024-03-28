@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:netone_loanmanagement_admin/src/pages/applications/editapplication.dart';
 import 'package:netone_loanmanagement_admin/src/pages/applications/viewapplication.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'src/navigation/navigation_service.dart';
@@ -28,8 +29,8 @@ class App extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data == true) {
-              return ViewApplication(
-                loanRequestId: 23,
+              return EditApplication(
+                requestid: 24,
               );
             } else {
               return LoginPage();

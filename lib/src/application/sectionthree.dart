@@ -11,6 +11,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 import 'package:netone_loanmanagement_admin/src/application/datas/applicant.dart';
 import 'package:netone_loanmanagement_admin/src/application/datas/loandetails.dart';
@@ -106,7 +107,7 @@ class _SectionThreeState extends State<SectionThree>
                             SizedBox(
                               height: 30,
                             ),
-
+                            bankDetails(),
                             SizedBox(height: 20),
                             affirmationsection(0, 0, myTabController),
                             if (widget.myTabController.numberOfPersons > 1)
@@ -298,6 +299,13 @@ class _SectionThreeState extends State<SectionThree>
           loadndetails.loanamaountapplied.text = loanDetail.loanAmount;
           loadndetails.tenure = loanDetail.loanTenure;
           loadndetails.descriptionController.text = loanDetail.description;
+          loadndetails.bankname.text = loanDetail.bankname;
+
+          loadndetails.branchname.text = loanDetail.branchname;
+          loadndetails.sortcode.text = loanDetail.sortcode;
+          loadndetails.accountnumber.text = loanDetail.accnumber;
+          loadndetails.nameandbankaddress.text = loanDetail.banknameandaddress;
+
           for (int i = 0; i < loanDetail.applicantCount; i++) {
             applicants[i].applicantid = loanDetail.applicants[i].id;
             applicants[i].loanapplicantname.text =
@@ -317,9 +325,227 @@ class _SectionThreeState extends State<SectionThree>
     }
   }
 
+  Wrap viewAllFiles(List<Document> allfiles, String title) {
+    return Wrap(
+      children: List.generate(
+        allfiles.length,
+        (index) {
+          return Stack(
+            children: [
+              Container(
+                margin: EdgeInsets.all(10),
+                width: 300,
+                height: 90,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Display Image for image files
+                    isImage(allfiles[index].contentType)
+                        ? GestureDetector(
+                            onTap: () {
+                              String imageUrl = allfiles[index].url;
+                              js.context.callMethod('open', [imageUrl]);
+                            },
+                            child: Container(
+                              width: 300,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: AppColors.mainbackground),
+                                borderRadius: BorderRadius.circular(5),
+                                color: AppColors.neutral,
+                              ),
+                              child: Image.network(
+                                allfiles[index].url,
+                                width:
+                                    300, // Set the width of the image as per your requirement
+                                height:
+                                    50, // Set the height of the image as per your requirement
+                                fit: BoxFit
+                                    .cover, // Adjust this based on your image requirements
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    width: 300,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: AppColors.neutral),
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: AppColors.neutral,
+                                    ),
+                                    child: Center(
+                                      child: Text('Image Not Found'),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          )
+                        : allfiles[index].contentType.contains('pdf')
+                            ? GestureDetector(
+                                onTap: () {
+                                  String pdfUrl = allfiles[index].url;
+                                  js.context.callMethod('open', [pdfUrl]);
+                                },
+                                child: Container(
+                                  width: 300,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: AppColors.neutral),
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppColors.neutral,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Icon(
+                                        Icons.picture_as_pdf,
+                                        color: Colors.red,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                width: 300,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: AppColors.neutral),
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: AppColors.neutral,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Icon(
+                                      Icons.enhanced_encryption,
+                                      color: Colors.red,
+                                    ),
+                                    CustomText(text: 'Unreadable Format')
+                                  ],
+                                ),
+                              ),
+
+                    SizedBox(height: 8.0), // Add spacing between image and text
+
+                    // Display file name with overflow handling
+                    Flexible(
+                      child: Text(
+                        'Document  ${index + 1}',
+
+                        // Adjust the maximum lines based on your UI requirements
+                        style: GoogleFonts.dmSans(
+                          color: AppColors.neutral,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: 12,
+                right: 5,
+                child: GestureDetector(
+                  onTap: () {
+                    // Handle the close icon tap
+
+                    showDeleteConfirmationDocs(context, widget.id.toString()!,
+                        allfiles[index].id.toString(), title);
+                  },
+                  child: CircleAvatar(
+                    radius: 12,
+                    backgroundColor: AppColors.mainbackground,
+                    child: Icon(
+                      Icons.close,
+                      size: 15,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void showDeleteConfirmationDocs(
+      BuildContext context, String id, String documentId, String title) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.mainbackground,
+          title: CustomText(
+            text: 'Delete File',
+            color: AppColors.mainColor,
+            fontSize: 18,
+          ),
+          content: CustomText(
+            text: 'Are you sure you want to delete $title',
+            fontSize: 15,
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(AppColors.mainbackground),
+                        padding: MaterialStateProperty.all(
+                            EdgeInsets.fromLTRB(15, 5, 15, 5))),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: CustomText(
+                      text: 'Close',
+                      color: AppColors.neutral,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    )),
+                SizedBox(
+                  width: 15,
+                ),
+                ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(AppColors.mainColor),
+                        padding: MaterialStateProperty.all(
+                            EdgeInsets.fromLTRB(15, 5, 15, 5))),
+                    onPressed: () {
+                      deleteAttachment(id, documentId);
+                      Navigator.pop(context);
+                    },
+                    child: CustomText(
+                      text: 'Delete',
+                      color: AppColors.neutral,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ))
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Column affirmationsection(
       int applicantkey, int i, MyTabController myTabController) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (loanDetail.applicants.length > applicantkey &&
@@ -329,6 +555,8 @@ class _SectionThreeState extends State<SectionThree>
           height: 10,
         ),
         Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (widget.myTabController.applicants[i].selectedFiles.isNotEmpty)
               Container(
@@ -472,7 +700,7 @@ class _SectionThreeState extends State<SectionThree>
                   },
                 ),
               )),
-            Row(
+            /*  Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -566,14 +794,540 @@ class _SectionThreeState extends State<SectionThree>
                     ],
                   ),
               ],
-            ),
+            ),*/
           ],
         ),
         SizedBox(height: 20),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            //signature
+            uploadtitles(
+                'Signature - Only PNG/JPEG - Signature in white background'),
+            SizedBox(
+              height: 10,
+            ),
+            // viewAllFiles(loanDetail.applicants[i].signature);
+            Container(
+              margin: EdgeInsets.all(10),
+              width: 300,
+              height: 90,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Display Image for image files
+                  GestureDetector(
+                    onTap: () {
+                      String imageUrl = loanDetail.applicants[i].signature.url;
+                      js.context.callMethod('open', [imageUrl]);
+                    },
+                    child: Container(
+                      width: 300,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.mainbackground),
+                        borderRadius: BorderRadius.circular(5),
+                        color: AppColors.neutral,
+                      ),
+                      child: Image.network(
+                        loanDetail.applicants[i].signature.url,
+                        width:
+                            300, // Set the width of the image as per your requirement
+                        height:
+                            50, // Set the height of the image as per your requirement
+                        fit: BoxFit
+                            .cover, // Adjust this based on your image requirements
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 300,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: AppColors.neutral),
+                              borderRadius: BorderRadius.circular(5),
+                              color: AppColors.neutral,
+                            ),
+                            child: Center(
+                              child: Text('Image Not Found'),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+
+                  // Display file name with overflow handling
+                  Flexible(
+                    child: Text(
+                      'Signature  ${i + 1}',
+
+                      // Adjust the maximum lines based on your UI requirements
+                      style: GoogleFonts.dmSans(
+                        color: AppColors.neutral,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Wrap(
+              children: [
+                if (widget.myTabController.applicants[i].signature.isNotEmpty)
+                  viewFiles(widget.myTabController.applicants[i].signature,
+                      widget.myTabController.applicants[i].signatureName),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            pickSignatureWidget(widget.myTabController.applicants[i].signature,
+                widget.myTabController.applicants[i].signatureName, context),
+            SizedBox(
+              height: 20,
+            ),
+            //one
+            uploadtitles('Payslip - 1'),
+            SizedBox(
+              height: 10,
+            ),
+            viewAllFiles(loanDetail.applicants[i].payslip1, 'Payslip 1'),
+            SizedBox(
+              height: 10,
+            ),
+            Wrap(
+              children: [
+                if (widget
+                    .myTabController.applicants[i].paysliponeFiles.isNotEmpty)
+                  viewFiles(
+                      widget.myTabController.applicants[i].paysliponeFiles,
+                      widget.myTabController.applicants[i].paysliponeFileNames),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            pickFilesWidget(
+              widget.myTabController.applicants[i].paysliponeFiles,
+              widget.myTabController.applicants[i].paysliponeFileNames,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+
+            //two
+
+            uploadtitles('Payslip - 2'),
+            SizedBox(
+              height: 10,
+            ),
+            viewAllFiles(loanDetail.applicants[i].payslip2, 'Payslip 2'),
+            SizedBox(
+              height: 10,
+            ),
+
+            Wrap(
+              children: [
+                if (widget
+                    .myTabController.applicants[i].paysliptwoFiles.isNotEmpty)
+                  viewFiles(
+                      widget.myTabController.applicants[i].paysliptwoFiles,
+                      widget.myTabController.applicants[i].paysliptwoFileNames),
+              ],
+            ),
+            pickFilesWidget(
+              widget.myTabController.applicants[i].paysliptwoFiles,
+              widget.myTabController.applicants[i].paysliptwoFileNames,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+
+            uploadtitles('Payslip - 3'),
+            SizedBox(
+              height: 10,
+            ),
+            viewAllFiles(loanDetail.applicants[i].payslip3, 'Payslip 3'),
+            SizedBox(
+              height: 10,
+            ),
+
+            Wrap(
+              children: [
+                if (widget
+                    .myTabController.applicants[i].payslipthreeFiles.isNotEmpty)
+                  viewFiles(
+                      widget.myTabController.applicants[i].payslipthreeFiles,
+                      widget
+                          .myTabController.applicants[i].payslipthreeFileNames),
+              ],
+            ),
+            pickFilesWidget(
+              widget.myTabController.applicants[i].payslipthreeFiles,
+              widget.myTabController.applicants[i].payslipthreeFileNames,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+
+            uploadtitles('Introductory Letter from Employer'),
+            SizedBox(
+              height: 10,
+            ),
+            viewAllFiles(
+                loanDetail.applicants[i].intoletter, 'Introductory Letter'),
+            SizedBox(
+              height: 10,
+            ),
+            Wrap(
+              children: [
+                if (widget
+                    .myTabController.applicants[i].intodletterFiles.isNotEmpty)
+                  viewFiles(
+                      widget.myTabController.applicants[i].intodletterFiles,
+                      widget
+                          .myTabController.applicants[i].introletterFileNames),
+              ],
+            ),
+            pickFilesWidget(
+              widget.myTabController.applicants[i].intodletterFiles,
+              widget.myTabController.applicants[i].introletterFileNames,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+
+            uploadtitles('Bank Statement'),
+            SizedBox(
+              height: 10,
+            ),
+            viewAllFiles(
+                loanDetail.applicants[i].bankstatemtn, 'Bank Statement'),
+            SizedBox(
+              height: 10,
+            ),
+            Wrap(
+              children: [
+                if (widget.myTabController.applicants[i].bankStatementFiles
+                    .isNotEmpty)
+                  viewFiles(
+                      widget.myTabController.applicants[i].bankStatementFiles,
+                      widget.myTabController.applicants[i]
+                          .bankStatementFileNames),
+              ],
+            ),
+            pickFilesWidget(
+              widget.myTabController.applicants[i].bankStatementFiles,
+              widget.myTabController.applicants[i].bankStatementFileNames,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+
+            uploadtitles('NRC'),
+            SizedBox(
+              height: 10,
+            ),
+            viewAllFiles(loanDetail.applicants[i].nrccopy, 'NRC Copy'),
+            SizedBox(
+              height: 10,
+            ),
+            Wrap(
+              children: [
+                if (widget.myTabController.applicants[i].nrcFiles.isNotEmpty)
+                  viewFiles(widget.myTabController.applicants[i].nrcFiles,
+                      widget.myTabController.applicants[i].nrcFileNames),
+              ],
+            ),
+            pickFilesWidget(
+              widget.myTabController.applicants[i].nrcFiles,
+              widget.myTabController.applicants[i].nrcFileNames,
+            ),
+          ],
+        ),
         SizedBox(
           height: 30,
         )
       ],
+    );
+  }
+
+  ElevatedButton pickSignatureWidget(
+    List<Uint8List> selectedFiles,
+    List<String> selectedFilesnames,
+    BuildContext context,
+  ) {
+    return ElevatedButton(
+      style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(
+              AppColors.mainColor), // Use appropriate color
+          padding: MaterialStateProperty.all(EdgeInsets.all(15))),
+      onPressed: () async {
+        if (selectedFiles.length < 1) {
+          await _pickAndCropImage(selectedFiles, selectedFilesnames, context);
+        } else {
+          // warning('Only one file can be attached, remove to add new');
+        }
+      },
+      child: Text(
+        'Pick Signature',
+        style: GoogleFonts.dmSans(
+            color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+      ),
+    );
+  }
+
+  Future<void> _pickAndCropImage(
+    List<Uint8List> selectedFiles,
+    List<String> selectedFilesnames,
+    BuildContext context,
+  ) async {
+    final html.FileUploadInputElement input = html.FileUploadInputElement();
+    input.accept = 'image/*';
+    input.click();
+
+    input.onChange.listen((event) async {
+      final files = input.files;
+      if (files != null && files.isNotEmpty) {
+        final reader = html.FileReader();
+        reader.readAsDataUrl(files[0]);
+        reader.onError.listen((error) => setState(() {
+              // Handle error
+            }));
+
+        reader.onLoad.first.then((_) async {
+          final imageBytes = reader.result as String?;
+          if (imageBytes != null) {
+            final croppedImage = await cropImage(imageBytes, context);
+            if (croppedImage != null) {
+              print('Start');
+
+              print('End');
+              if (croppedImage != null) {
+                print(12);
+                setState(() {
+                  selectedFiles.add(croppedImage);
+                  selectedFilesnames.add('Signature');
+                });
+                // Save the cropped image to storage
+                // Implement your storage saving logic here
+              }
+            }
+          }
+        });
+      }
+    });
+  }
+
+  Future<Uint8List?> cropImage(String imageBytes, BuildContext context) async {
+    final croppedFile = await ImageCropper().cropImage(
+      sourcePath: imageBytes,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.original,
+      ],
+      uiSettings: [
+        WebUiSettings(
+          context: context,
+          enableZoom: true,
+          showZoomer: true,
+          mouseWheelZoom: true,
+          viewPort: CroppieViewPort(height: 200, width: 500, type: 'Rectangle'),
+        ),
+      ],
+    );
+    if (croppedFile != null) {
+      return croppedFile.readAsBytes();
+    } else {
+      return null;
+    }
+  }
+
+  Container viewFiles(List<Uint8List> files, List<String> fileNames) {
+    return Container(
+        width: MediaQuery.of(context).size.width * .9,
+        child: Wrap(
+          children: List.generate(
+            files.length,
+            (index) {
+              var fileBytes = files[index];
+              var fileName = fileNames[index];
+              String fileExtension = fileName.split('.').last.toLowerCase();
+
+              return Container(
+                margin: EdgeInsets.all(10),
+                width: 300,
+                height: 60,
+                child: Stack(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Display Image for image files
+
+                        (fileExtension != 'pdf')
+                            ? GestureDetector(
+                                onTap: () {
+                                  // Open image in a new tab
+                                  final blob =
+                                      html.Blob([fileBytes], 'image/*');
+                                  final url =
+                                      html.Url.createObjectUrlFromBlob(blob);
+                                  html.window.open(url, '_blank');
+                                },
+                                child: Container(
+                                  width: 300,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: AppColors.mainbackground),
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppColors.mainbackground,
+                                  ),
+                                  child: Image.memory(
+                                    fileBytes,
+                                    width:
+                                        300, // Set the width of the image as per your requirement
+                                    height:
+                                        50, // Set the height of the image as per your requirement
+                                    fit: BoxFit
+                                        .cover, // Adjust this based on your image requirements
+                                  ),
+                                ),
+                              )
+                            : GestureDetector(
+                                onTap: () {
+                                  // Open PDF in a new tab
+                                  final blob = html.Blob(
+                                      [Uint8List.fromList(fileBytes)],
+                                      'application/pdf');
+                                  final url =
+                                      html.Url.createObjectUrlFromBlob(blob);
+                                  html.window.open(url, '_blank');
+                                },
+                                child: Container(
+                                  width: 300,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: AppColors.mainColor),
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppColors.neutral,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Icon(
+                                        Icons.picture_as_pdf,
+                                        color: Colors.red,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                        SizedBox(
+                            height: 8.0), // Add spacing between image and text
+
+                        // Display file name with overflow handling
+                        Flexible(
+                          child: Text(
+                            fileName,
+                            overflow: TextOverflow.ellipsis,
+                            // Adjust the maximum lines based on your UI requirements
+                            style: GoogleFonts.dmSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      top: 12,
+                      right: 5,
+                      child: GestureDetector(
+                        onTap: () {
+                          // Handle the close icon tap
+                          setState(() {
+                            files.removeAt(index);
+                            fileNames.removeAt(index);
+                          });
+                        },
+                        child: CircleAvatar(
+                          radius: 12,
+                          backgroundColor: AppColors.mainbackground,
+                          child: Icon(
+                            Icons.close,
+                            size: 15,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+        ));
+  }
+
+  ElevatedButton pickFilesWidget(
+      List<Uint8List> selectedFiles, List<String> selectedFilesnames) {
+    return ElevatedButton(
+      style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(AppColors.mainColor),
+          padding: MaterialStateProperty.all(EdgeInsets.all(15))),
+      onPressed: () async {
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          allowMultiple: false,
+          type: FileType.custom,
+          allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+        );
+
+        if (result != null) {
+          if (result.files.first.size > 1024 * 1024) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('The file size exceeds limit'),
+              ),
+            );
+          } else {
+            if (selectedFiles.length < 3) {
+              setState(() {
+                selectedFiles.addAll(result.files.map((file) => file.bytes!));
+                selectedFilesnames
+                    .addAll(result.files.map((file) => file.name));
+              });
+            } else {
+              warning('Maximum three files, remove files to add new');
+            }
+          }
+        }
+      },
+      child: Text(
+        'Upload',
+        style: GoogleFonts.dmSans(
+            color: AppColors.neutral,
+            fontSize: 14,
+            fontWeight: FontWeight.w500),
+      ),
+    );
+  }
+
+  Text uploadtitles(String title) {
+    return Text(
+      title,
+      style: GoogleFonts.dmSans(
+          decoration: TextDecoration.underline,
+          color: AppColors.neutral,
+          fontSize: 14,
+          fontWeight: FontWeight.w700),
     );
   }
 
@@ -1053,6 +1807,132 @@ class _SectionThreeState extends State<SectionThree>
     );
   }
 
+  Container bankDetails() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 30),
+      padding: EdgeInsets.fromLTRB(20, 25, 20, 25),
+      decoration: BoxDecoration(
+          color: AppColors.sidebarbackground,
+          borderRadius: BorderRadius.circular(20)),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              'Bank Details - Applicant 1',
+              style: GoogleFonts.dmSans(
+                  color: AppColors.mainColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: FormTextField(
+                    controller: loadndetails.bankname,
+                    labelText: 'Bank Name',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your Bank Name';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(value)) {
+                        return 'Invalid Bank Name';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: 40,
+                ),
+                Expanded(
+                  child: FormTextField(
+                    controller: loadndetails.branchname,
+                    labelText: 'Branch Name',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your Branch Name';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(value)) {
+                        return 'Invalid Branch Name';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: FormTextField(
+                    controller: loadndetails.sortcode,
+                    labelText: 'Sortcode',
+                    validator: (value) {
+                      if (value != null && value.isNotEmpty) {
+                        if (!RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(value)) {
+                          return 'Invalid Sortcode';
+                        }
+                        if (value.length > 6) {
+                          return 'Maximum length is 6 digits';
+                        }
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: 40,
+                ),
+                Expanded(
+                  child: FormTextField(
+                    controller: loadndetails.accountnumber,
+                    labelText: 'Bank Account Number',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your Bank Acc No';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(value)) {
+                        return 'Invalid Account Number';
+                      }
+                      if (value.length > 13) {
+                        return 'Maximum length is 13 digits';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            FormTextField(
+              controller: loadndetails.nameandbankaddress,
+              labelText: 'Bank Name and Full Address',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your Bank Name and full address';
+                }
+                if (value.length < 5) {
+                  return 'Bank Name and address should have at least 5 characters';
+                }
+                return null;
+              },
+            ),
+          ]),
+    );
+  }
+
   Column section3A() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1409,17 +2289,96 @@ class _SectionThreeState extends State<SectionThree>
         request.fields[
                 'loan_request[applicants_attributes][$i][loan_share_percent]'] =
             myTabController.applicants[i].loanapplicantpercentage.text;
-        if (widget.myTabController.applicants[i].selectedFiles.isNotEmpty) {
-          for (var file in widget.myTabController.applicants[i].selectedFiles) {
+        if (widget.myTabController.applicants[i].paysliponeFiles.isNotEmpty) {
+          for (var file
+              in widget.myTabController.applicants[i].paysliponeFiles) {
             request.files.add(http.MultipartFile(
-              'loan_request[applicants_attributes][$i][documents][]',
+              'loan_request[applicants_attributes][$i][payslip_1][]',
               http.ByteStream.fromBytes(file),
               file.length,
-              filename:
-                  'file${loanDetail.applicants[i].documents.length + i}.jpg', // Provide a filename here
+              filename: 'file$i.jpg', // Provide a filename here
               contentType: MediaType('application', 'octet-stream'),
             ));
           }
+        }
+
+        //payslip2
+        if (widget.myTabController.applicants[i].paysliptwoFiles.isNotEmpty) {
+          for (var file
+              in widget.myTabController.applicants[i].paysliptwoFiles) {
+            request.files.add(http.MultipartFile(
+              'loan_request[applicants_attributes][$i][payslip_2][]',
+              http.ByteStream.fromBytes(file),
+              file.length,
+              filename: 'file$i.jpg', // Provide a filename here
+              contentType: MediaType('application', 'octet-stream'),
+            ));
+          }
+        }
+
+        //payslip3
+        if (widget.myTabController.applicants[i].payslipthreeFiles.isNotEmpty) {
+          for (var file
+              in widget.myTabController.applicants[i].payslipthreeFiles) {
+            request.files.add(http.MultipartFile(
+              'loan_request[applicants_attributes][$i][payslip_3][]',
+              http.ByteStream.fromBytes(file),
+              file.length,
+              filename: 'file$i.jpg', // Provide a filename here
+              contentType: MediaType('application', 'octet-stream'),
+            ));
+          }
+        }
+        if (widget.myTabController.applicants[i].intodletterFiles.isNotEmpty) {
+          //intro_letter print(1);
+          for (var file
+              in widget.myTabController.applicants[i].intodletterFiles) {
+            request.files.add(http.MultipartFile(
+              'loan_request[applicants_attributes][$i][intro_letter][]',
+              http.ByteStream.fromBytes(file),
+              file.length,
+              filename: 'file$i.jpg', // Provide a filename here
+              contentType: MediaType('application', 'octet-stream'),
+            ));
+          }
+        }
+
+        //bank_statement
+        if (widget
+            .myTabController.applicants[i].bankStatementFiles.isNotEmpty) {
+          for (var file
+              in widget.myTabController.applicants[i].bankStatementFiles) {
+            request.files.add(http.MultipartFile(
+              'loan_request[applicants_attributes][$i][bank_statement][]',
+              http.ByteStream.fromBytes(file),
+              file.length,
+              filename: 'file$i.jpg', // Provide a filename here
+              contentType: MediaType('application', 'octet-stream'),
+            ));
+          }
+        }
+
+        //bank_statement
+        if (widget.myTabController.applicants[i].nrcFiles.isNotEmpty) {
+          for (var file in widget.myTabController.applicants[i].nrcFiles) {
+            request.files.add(http.MultipartFile(
+              'loan_request[applicants_attributes][$i][nrc_copy][]',
+              http.ByteStream.fromBytes(file),
+              file.length,
+              filename: 'file$i.jpg', // Provide a filename here
+              contentType: MediaType('application', 'octet-stream'),
+            ));
+          }
+        }
+        if (widget.myTabController.applicants[i].signature.isNotEmpty) {
+          var file = widget.myTabController.applicants[i].signature[0];
+          request.files.add(http.MultipartFile(
+            'loan_request[applicants_attributes][$i][signature]',
+            http.ByteStream.fromBytes(file),
+            file.length,
+            filename: 'signature.jpg', // Provide a filename here
+            contentType: MediaType('application', 'octet-stream'),
+          ));
         }
       }
       request.headers['Authorization'] = 'Bearer $accessToken';
@@ -1435,16 +2394,51 @@ class _SectionThreeState extends State<SectionThree>
           myTabController.loanDetails.tenure.toString();
       request.fields['loan_request[loan_amount]'] =
           myTabController.loanDetails.loanamaountapplied.text;
+
+      //bankdetails
+      request.fields['loan_request[bank_name]'] =
+          myTabController.loanDetails.bankname.text;
+      request.fields['loan_request[bank_branch_name]'] =
+          myTabController.loanDetails.branchname.text;
+      request.fields['loan_request[bank_sort_code]'] =
+          myTabController.loanDetails.sortcode.text;
+      request.fields['loan_request[bank_account_number]'] =
+          myTabController.loanDetails.accountnumber.text;
+      request.fields['loan_request[bank_name_and_full_address]'] =
+          myTabController.loanDetails.nameandbankaddress.text;
       var response = await request.send();
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Request was successful
-        print('Form submitted successfully');
+        print('Form updated successfully');
         setState(() {
           isloadiing = false;
+          for (int i = 0; i < loanDetail.applicantCount; i++) {
+            widget.myTabController.applicants[i].bankStatementFileNames.clear();
+            widget.myTabController.applicants[i].bankStatementFiles.clear();
+
+            widget.myTabController.applicants[i].nrcFileNames.clear();
+            widget.myTabController.applicants[i].nrcFiles.clear();
+
+            widget.myTabController.applicants[i].paysliponeFileNames.clear();
+            widget.myTabController.applicants[i].paysliponeFiles.clear();
+
+            widget.myTabController.applicants[i].paysliptwoFileNames.clear();
+            widget.myTabController.applicants[i].paysliptwoFileNames.clear();
+
+            widget.myTabController.applicants[i].payslipthreeFileNames.clear();
+            widget.myTabController.applicants[i].payslipthreeFiles.clear();
+
+            widget.myTabController.applicants[i].introletterFileNames.clear();
+            widget.myTabController.applicants[i].intodletterFiles.clear();
+
+            widget.myTabController.applicants[i].signature.clear();
+            widget.myTabController.applicants[i].signatureName.clear();
+          }
         });
         warning('Form Submitted');
         fetchData(widget.id);
+
         //  clearAllFields();
       } else {
         // Request failed
@@ -1504,6 +2498,40 @@ class _SectionThreeState extends State<SectionThree>
         );
       },
     );
+  }
+
+  Future<void> deleteAttachment(String id, String documentId) async {
+    final String apiUrl =
+        'https://loan-managment.onrender.com/loan_requests/$id/remove_attachment?document_id=$documentId';
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isloadiing = true;
+      token = prefs.getString('token');
+    });
+
+    try {
+      final response = await http.delete(
+        Uri.parse(apiUrl),
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Successful deletion
+        print('Attachment deleted successfully');
+        warning('Attachment deleted successfully');
+        fetchData(widget.id);
+      } else {
+        // Failed to delete attachment
+        print(
+            'Failed to delete attachment. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      // Exception occurred
+      print('Exception while deleting attachment: $e');
+    }
   }
 
   Future<void> productDelete(int id, int productid) async {

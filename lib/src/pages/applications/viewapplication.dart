@@ -2696,7 +2696,8 @@ class _ViewApplicationState extends State<ViewApplication> {
     if (seletedagent != null) {
       // Replace with your actual API endpoint
 
-      String apiUrl = "https://loan-managment.onrender.com/loan_requests/$id";
+      String apiUrl =
+          "https://loan-managment.onrender.com/loan_requests/$id/assign_to_agent";
       // Replace 'yourAccessToken' with the actual token
       String accessToken = prefs.getString('token')!;
 
@@ -2708,13 +2709,11 @@ class _ViewApplicationState extends State<ViewApplication> {
 
       // Create the request body
       Map<String, dynamic> requestBody = {
-        'assign_to': {
-          'id': seletedagent,
-        }
+        'user_id': seletedagent,
       };
 
       try {
-        Response response = await dio.patch(apiUrl, data: requestBody);
+        Response response = await dio.post(apiUrl, data: requestBody);
         if (response.statusCode == 201 || response.statusCode == 200) {
           // Successfully created assignment (status code 201 for POST)
           print('Agent updated successfully');
@@ -3153,12 +3152,78 @@ class _ViewApplicationState extends State<ViewApplication> {
           SizedBox(
             height: 20,
           ),
+          //displaysignature
+          Container(
+            margin: EdgeInsets.all(10),
+            width: 300,
+            height: 90,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Display Image for image files
+                GestureDetector(
+                  onTap: () {
+                    String imageUrl = loanDetail.applicants[i].signature.url;
+                    js.context.callMethod('open', [imageUrl]);
+                  },
+                  child: Container(
+                    width: 300,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.mainbackground),
+                      borderRadius: BorderRadius.circular(5),
+                      color: AppColors.neutral,
+                    ),
+                    child: Image.network(
+                      loanDetail.applicants[i].signature.url,
+                      width:
+                          300, // Set the width of the image as per your requirement
+                      height:
+                          50, // Set the height of the image as per your requirement
+                      fit: BoxFit
+                          .cover, // Adjust this based on your image requirements
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 300,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppColors.neutral),
+                            borderRadius: BorderRadius.circular(5),
+                            color: AppColors.neutral,
+                          ),
+                          child: Center(
+                            child: Text('Image Not Found'),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+
+                // Display file name with overflow handling
+                Flexible(
+                  child: Text(
+                    'Signature  ${i + 1}',
+
+                    // Adjust the maximum lines based on your UI requirements
+                    style: GoogleFonts.dmSans(
+                      color: AppColors.neutral,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
           if (loanDetail.applicants[applicantkey].payslip1.length > 0)
             loadDocFiles(applicantkey, 'Payslip 1',
                 loanDetail.applicants[applicantkey].payslip1),
-          SizedBox(
-            height: 20,
-          ),
+
           if (loanDetail.applicants[applicantkey].payslip2.length > 0)
             loadDocFiles(applicantkey, 'Payslip 2',
                 loanDetail.applicants[applicantkey].payslip2),

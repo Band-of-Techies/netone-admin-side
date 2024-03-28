@@ -228,23 +228,18 @@ class _SectionOneState extends State<SectionOne>
                               padding: MaterialStateProperty.all(
                                   EdgeInsets.all(15))),
                           onPressed: () {
-                            /*  print(myTabController
-                                .applicants[0].surnameController.text);
-                            updateData(widget.id!, myTabController,
-                                loanDetail.applicantCount);*/
-                            /*  if (_formKey.currentState!.validate()) {
+                            if (_formKey.currentState!.validate()) {
                               // Form is valid, move to the next section
-                              if (validateGender(applicants) &&
-                                  validateOwnership(applicants)) {
+                              if (validateGender(applicants)) {
                                 //printApplicantDetails();
-                  
-                                 
+                                updateData(widget.id!, myTabController,
+                                    loanDetail.applicantCount);
                                 print('update');
                               } else {
                                 warning('Complete Gender and Ownership');
                                 // Handle the case when the last tab is reached
                               }
-                            }*/
+                            }
                           },
                           child: CustomText(
                             text: 'Update',
@@ -456,6 +451,7 @@ class _SectionOneState extends State<SectionOne>
               SizedBox(width: 40.0),
               Expanded(
                   child: FormTextField(
+                prefix: '+260 ',
                 controller: applicant.mobileController,
                 labelText: 'Mobile',
                 validator: (value) {
@@ -464,9 +460,9 @@ class _SectionOneState extends State<SectionOne>
                   }
 
                   // Validate if the value starts with '+260' and contains only numeric digits afterwards
-                  RegExp mobilePattern = RegExp(r'^\+260\d{9}$');
+                  RegExp mobilePattern = RegExp(r'^\d{9}$');
                   if (!mobilePattern.hasMatch(value)) {
-                    return 'Start with +260 followed by 9 digits';
+                    return 'Please enter a valid Mobile Number';
                   }
 
                   return null;
@@ -884,33 +880,33 @@ class _SectionOneState extends State<SectionOne>
             applicants[i].surnameController.text =
                 loanDetail.applicants[i].surname;
             applicants[i].middleNameController.text =
-                loanDetail.applicants[i].middleName;
+                loanDetail.applicants[i].middleName ?? '';
             applicants[i].firstNameController.text =
                 loanDetail.applicants[i].firstName;
             applicants[i].dobController.text = loanDetail.applicants[i].dob;
             applicants[i].nrcController.text = loanDetail.applicants[i].nrc;
             applicants[i].telephoneController.text =
-                loanDetail.applicants[i].telephone;
+                loanDetail.applicants[i].telephone ?? '';
             applicants[i].mobileController.text =
                 loanDetail.applicants[i].mobile;
             applicants[i].emailController.text = loanDetail.applicants[i].email;
             applicants[i].licenseNumberController.text =
-                loanDetail.applicants[i].licenseNumber;
+                loanDetail.applicants[i].licenseNumber ?? '';
             applicants[i].licenseExpiryController.text =
-                loanDetail.applicants[i].licenseExpiry;
+                loanDetail.applicants[i].licenseExpiry ?? '';
             applicants[i].residentialAddressController.text =
-                loanDetail.applicants[i].residentialAddress;
+                loanDetail.applicants[i].residentialAddress ?? '';
             applicants[i].postalAddressController.text =
-                loanDetail.applicants[i].postalAddress;
+                loanDetail.applicants[i].postalAddress ?? '';
             applicants[i].howlongthisplaceController.text =
-                loanDetail.applicants[i].howlongthisplace;
+                loanDetail.applicants[i].howlongthisplace ?? '';
             applicants[i].applicantid = loanDetail.applicants[i].id;
             applicants[i].provinceController =
-                loanDetail.applicants[i].province;
-            applicants[i].townController = loanDetail.applicants[i].town;
+                loanDetail.applicants[i].province ?? '';
+            applicants[i].townController = loanDetail.applicants[i].town ?? '';
 
             applicants[i].gender = loanDetail.applicants[i].gender;
-            applicants[i].ownership = loanDetail.applicants[i].ownership;
+            applicants[i].ownership = loanDetail.applicants[i].ownership ?? '';
           }
         });
         setState(() {

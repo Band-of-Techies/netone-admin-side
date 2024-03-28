@@ -25,6 +25,26 @@ class ApplicantDetails {
   String? selectedprovince;
   List<Uint8List> selectedFiles = [];
   List<String> selectedFilesnames = [];
+  List<Uint8List> signature = [];
+  List<String> signatureName = [];
+
+  List<Uint8List> paysliponeFiles = [];
+  List<String> paysliponeFileNames = [];
+
+  List<Uint8List> paysliptwoFiles = [];
+  List<String> paysliptwoFileNames = [];
+
+  List<Uint8List> payslipthreeFiles = [];
+  List<String> payslipthreeFileNames = [];
+
+  List<Uint8List> intodletterFiles = [];
+  List<String> introletterFileNames = [];
+
+  List<Uint8List> bankStatementFiles = [];
+  List<String> bankStatementFileNames = [];
+
+  List<Uint8List> nrcFiles = [];
+  List<String> nrcFileNames = [];
   TextEditingController loanapplicantname = TextEditingController();
   TextEditingController loanapplicantpercentage = TextEditingController();
   void dispose() {
