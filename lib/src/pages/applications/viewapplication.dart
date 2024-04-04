@@ -2159,11 +2159,11 @@ class _ViewApplicationState extends State<ViewApplication> {
                 height: 30, // Adjust height as needed
               ),
             ),
-            CustomPositionedText(
+            /*  CustomPositionedText(
               text: loanDetail.invoicedate,
               left: 250,
               top: 660,
-            ),
+            ),*/
           ],
         );
       },
@@ -3083,6 +3083,154 @@ class _ViewApplicationState extends State<ViewApplication> {
             .contains('pdf')) {
           final Uint8List imageBytes = await fetchAndConvertImage(
               loanDetail.applicants[j].documents[i].url);
+          pages.add(pw.Page(
+            margin: pw.EdgeInsets.zero, // Remove default margins
+            build: (context) {
+              return pw.Stack(
+                children: [
+                  pw.Center(
+                    child: pw.Image(
+                      pw.MemoryImage(imageBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ));
+        }
+      }
+      //orderdocuments
+      for (int i = 0; i < loanDetail.psmpc_purchase_order.length; i++) {
+        if (!loanDetail.psmpc_purchase_order[i].contentType.contains('pdf')) {
+          final Uint8List imageBytes = await fetchAndConvertImage(
+              loanDetail.psmpc_purchase_order[i].url);
+          pages.add(pw.Page(
+            margin: pw.EdgeInsets.zero, // Remove default margins
+            build: (context) {
+              return pw.Stack(
+                children: [
+                  pw.Center(
+                    child: pw.Image(
+                      pw.MemoryImage(imageBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ));
+        }
+      }
+      for (int i = 0; i < loanDetail.delivery_report.length; i++) {
+        if (!loanDetail.delivery_report[i].contentType.contains('pdf')) {
+          final Uint8List imageBytes =
+              await fetchAndConvertImage(loanDetail.delivery_report[i].url);
+          pages.add(pw.Page(
+            margin: pw.EdgeInsets.zero, // Remove default margins
+            build: (context) {
+              return pw.Stack(
+                children: [
+                  pw.Center(
+                    child: pw.Image(
+                      pw.MemoryImage(imageBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ));
+        }
+      }
+      for (int i = 0; i < loanDetail.warranty_form.length; i++) {
+        if (!loanDetail.warranty_form[i].contentType.contains('pdf')) {
+          final Uint8List imageBytes =
+              await fetchAndConvertImage(loanDetail.warranty_form[i].url);
+          pages.add(pw.Page(
+            margin: pw.EdgeInsets.zero, // Remove default margins
+            build: (context) {
+              return pw.Stack(
+                children: [
+                  pw.Center(
+                    child: pw.Image(
+                      pw.MemoryImage(imageBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ));
+        }
+      }
+      for (int i = 0; i < loanDetail.anti_fraud_form.length; i++) {
+        if (!loanDetail.anti_fraud_form[i].contentType.contains('pdf')) {
+          final Uint8List imageBytes =
+              await fetchAndConvertImage(loanDetail.anti_fraud_form[i].url);
+          pages.add(pw.Page(
+            margin: pw.EdgeInsets.zero, // Remove default margins
+            build: (context) {
+              return pw.Stack(
+                children: [
+                  pw.Center(
+                    child: pw.Image(
+                      pw.MemoryImage(imageBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ));
+        }
+      }
+      for (int i = 0; i < loanDetail.authorize_letter.length; i++) {
+        if (!loanDetail.authorize_letter[i].contentType.contains('pdf')) {
+          final Uint8List imageBytes =
+              await fetchAndConvertImage(loanDetail.authorize_letter[i].url);
+          pages.add(pw.Page(
+            margin: pw.EdgeInsets.zero, // Remove default margins
+            build: (context) {
+              return pw.Stack(
+                children: [
+                  pw.Center(
+                    child: pw.Image(
+                      pw.MemoryImage(imageBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ));
+        }
+      }
+      for (int i = 0; i < loanDetail.invoice.length; i++) {
+        if (!loanDetail.invoice[i].contentType.contains('pdf')) {
+          final Uint8List imageBytes =
+              await fetchAndConvertImage(loanDetail.invoice[i].url);
+          pages.add(pw.Page(
+            margin: pw.EdgeInsets.zero, // Remove default margins
+            build: (context) {
+              return pw.Stack(
+                children: [
+                  pw.Center(
+                    child: pw.Image(
+                      pw.MemoryImage(imageBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ));
+        }
+      }
+      for (int i = 0; i < loanDetail.swap_agreement.length; i++) {
+        if (!loanDetail.swap_agreement[i].contentType.contains('pdf')) {
+          final Uint8List imageBytes =
+              await fetchAndConvertImage(loanDetail.swap_agreement[i].url);
           pages.add(pw.Page(
             margin: pw.EdgeInsets.zero, // Remove default margins
             build: (context) {

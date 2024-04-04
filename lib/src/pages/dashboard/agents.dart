@@ -456,8 +456,7 @@ class _AgentStatusState extends State<AgentStatus> {
                     (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter an email';
-                      } else if (!value.contains('@') ||
-                          !value.contains('.com')) {
+                      } else if (!value.contains('@')) {
                         return 'Email format error';
                       }
                       return null; // Return null if validation passes
