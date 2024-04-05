@@ -47,6 +47,7 @@ class _ViewApplicationState extends State<ViewApplication> {
   List<Uint8List> selectedFiles = [];
   List<String> selectedFilesnames = [];
   bool isloadiing = true;
+  bool permission = false;
   String? email;
   String? token;
   String? role;
@@ -54,29 +55,52 @@ class _ViewApplicationState extends State<ViewApplication> {
   @override
   Widget build(BuildContext context) {
     return isloadiing == false
-        ? Scaffold(
-            appBar: AppBar(
-              backgroundColor: AppColors.mainbackground,
-              centerTitle: false,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back),
-                color: AppColors.neutral,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => DashboardScreen()),
-                  );
-                },
-              ),
-              title: Text(
-                loanDetail.requestnumber,
-                style:
-                    GoogleFonts.dmSans(fontSize: 14, color: AppColors.neutral),
-              ),
-              actions: [
-                Row(
-                  children: [
-                    /*  SizedBox(
+        ? permission == false
+            ? Scaffold(
+                appBar: AppBar(
+                  backgroundColor: AppColors.mainbackground,
+                  centerTitle: false,
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    color: AppColors.neutral,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DashboardScreen()),
+                      );
+                    },
+                  ),
+                ),
+                backgroundColor: AppColors.mainbackground,
+                body: Center(
+                  child: CustomText(text: 'No Permission'),
+                ),
+              )
+            : Scaffold(
+                appBar: AppBar(
+                  backgroundColor: AppColors.mainbackground,
+                  centerTitle: false,
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    color: AppColors.neutral,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DashboardScreen()),
+                      );
+                    },
+                  ),
+                  title: Text(
+                    loanDetail.requestnumber,
+                    style: GoogleFonts.dmSans(
+                        fontSize: 14, color: AppColors.neutral),
+                  ),
+                  actions: [
+                    Row(
+                      children: [
+                        /*  SizedBox(
                       height: 40,
                       width: 350,
                       child: DropdownButtonFormField2<String>(
@@ -157,364 +181,366 @@ class _ViewApplicationState extends State<ViewApplication> {
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                         )),*/
-                    SizedBox(
-                      width: 20,
-                    ),
-                    IconButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: CustomText(
-                                text: 'Print PDF',
-                                color: primary,
-                              ),
-                              content: Container(
-                                constraints: BoxConstraints(maxHeight: 200),
-                                child: Center(
-                                  child: SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * .2,
-                                    child: ListView(
-                                      children: [
-                                        RepaintBoundary(
-                                          key: globalKey,
-                                          child: Stack(
-                                            children: [
-                                              Image.asset(
-                                                'assets/form1.jpg',
-                                                fit: BoxFit.contain,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: CustomText(
+                                    text: 'Print PDF',
+                                    color: primary,
                                   ),
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        content: Container(
-                                          constraints:
-                                              BoxConstraints(maxHeight: 200),
-                                          child: Center(
-                                            child: SizedBox(
-                                                width: 50,
-                                                height: 50,
-                                                child:
-                                                    CircularProgressIndicator()),
-                                          ),
+                                  content: Container(
+                                    constraints: BoxConstraints(maxHeight: 200),
+                                    child: Center(
+                                      child: SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .2,
+                                        child: ListView(
+                                          children: [
+                                            RepaintBoundary(
+                                              key: globalKey,
+                                              child: Stack(
+                                                children: [
+                                                  Image.asset(
+                                                    'assets/form1.jpg',
+                                                    fit: BoxFit.contain,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    );
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            content: Container(
+                                              constraints: BoxConstraints(
+                                                  maxHeight: 200),
+                                              child: Center(
+                                                child: SizedBox(
+                                                    width: 50,
+                                                    height: 50,
+                                                    child:
+                                                        CircularProgressIndicator()),
+                                              ),
+                                            ),
+                                          ),
+                                        );
 
-                                    await _generatePdf();
-                                    _downloadPdf();
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Print'),
+                                        await _generatePdf();
+                                        _downloadPdf();
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Print'),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.print,
-                          size: 20,
-                          color: AppColors.neutral,
-                        )),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    IconButton(
-                        onPressed: () {
-                          _addFiles(context);
-                        },
-                        icon: Icon(
-                          Icons.add,
-                          size: 20,
-                          color: AppColors.neutral,
-                        )),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    IconButton(
-                        onPressed: () {
-                          _showPopup(context);
-                        },
-                        icon: Icon(
-                          Icons.track_changes,
-                          size: 20,
-                          color: AppColors.neutral,
-                        )),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    if (loanDetail.requestSystemStatus == 'pending')
-                      IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditApplication(
-                                        requestid: widget.loanRequestId,
-                                      )),
-                            );
-                          },
-                          icon: Icon(
-                            Icons.edit,
-                            size: 20,
-                            color: AppColors.neutral,
-                          )),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    if (role == 'Admin' && role != 'Agent')
-                      IconButton(
-                          onPressed: () {
-                            showDeleteConfirmationDialog(context);
-                          },
-                          icon: Icon(
-                            Icons.delete,
-                            size: 20,
-                            color: AppColors.neutral,
-                          )),
-                    SizedBox(
-                      width: 10,
-                    ),
-                  ],
-                )
-              ],
-            ),
-            backgroundColor: AppColors.mainbackground,
-            body: Padding(
-              padding: EdgeInsets.all(20),
-              child: RawScrollbar(
-                thumbVisibility: true,
-                thumbColor: AppColors.mainColor,
-                radius: Radius.circular(20),
-                thickness: 5,
-                child: ListView(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                              );
+                            },
+                            icon: Icon(
+                              Icons.print,
+                              size: 20,
+                              color: AppColors.neutral,
+                            )),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * .3,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              CustomText(
-                                text: 'Form ID: ${loanDetail.id}',
+                          width: 10,
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              _addFiles(context);
+                            },
+                            icon: Icon(
+                              Icons.add,
+                              size: 20,
+                              color: AppColors.neutral,
+                            )),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              _showPopup(context);
+                            },
+                            icon: Icon(
+                              Icons.track_changes,
+                              size: 20,
+                              color: AppColors.neutral,
+                            )),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        if (loanDetail.requestSystemStatus == 'pending')
+                          IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditApplication(
+                                            requestid: widget.loanRequestId,
+                                          )),
+                                );
+                              },
+                              icon: Icon(
+                                Icons.edit,
+                                size: 20,
                                 color: AppColors.neutral,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Row(
+                              )),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        if (role == 'Admin' && role != 'Agent')
+                          IconButton(
+                              onPressed: () {
+                                showDeleteConfirmationDialog(context);
+                              },
+                              icon: Icon(
+                                Icons.delete,
+                                size: 20,
+                                color: AppColors.neutral,
+                              )),
+                        SizedBox(
+                          width: 10,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                backgroundColor: AppColors.mainbackground,
+                body: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: RawScrollbar(
+                    thumbVisibility: true,
+                    thumbColor: AppColors.mainColor,
+                    radius: Radius.circular(20),
+                    thickness: 5,
+                    child: ListView(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * .3,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   CustomText(
-                                    text:
-                                        'Assigned to: ${loanDetail.agent.name}',
+                                    text: 'Form ID: ${loanDetail.id}',
                                     color: AppColors.neutral,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),
-                                  if (role == 'Admin')
-                                    TextButton(
-                                        onPressed: () {
-                                          fetchUsers();
-                                        },
-                                        child: CustomText(
-                                          text: 'Change',
-                                          color: AppColors.primary,
-                                        ))
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  Row(
+                                    children: [
+                                      CustomText(
+                                        text:
+                                            'Assigned to: ${loanDetail.agent.name}',
+                                        color: AppColors.neutral,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      if (role == 'Admin')
+                                        TextButton(
+                                            onPressed: () {
+                                              fetchUsers();
+                                            },
+                                            child: CustomText(
+                                              text: 'Change',
+                                              color: AppColors.primary,
+                                            ))
+                                    ],
+                                  ),
                                 ],
                               ),
-                            ],
-                          ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * .3,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CustomText(
+                                    text:
+                                        'Applicant: ${loanDetail.applicants[0].surname}',
+                                    color: AppColors.neutral,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  CustomText(
+                                    text:
+                                        'Joint Application: ${loanDetail.applicantCount > 1 ? 'Yes : ${loanDetail.applicantCount}' : 'No'}',
+                                    color: AppColors.neutral,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * .3,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  CustomText(
+                                    text:
+                                        'Date: ${formatDate(loanDetail.createdAt)}',
+                                    color: AppColors.neutral,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  CustomText(
+                                    text:
+                                        'Last Updated: ${formatDate(loanDetail.updatedAt)}',
+                                    color: AppColors.neutral,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
                         ),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * .3,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CustomText(
-                                text:
-                                    'Applicant: ${loanDetail.applicants[0].surname}',
-                                color: AppColors.neutral,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              CustomText(
-                                text:
-                                    'Joint Application: ${loanDetail.applicantCount > 1 ? 'Yes : ${loanDetail.applicantCount}' : 'No'}',
-                                color: AppColors.neutral,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ],
-                          ),
+                          height: 30,
+                        ),
+                        CustomText(
+                          text: 'Part 1',
+                          color: AppColors.neutral,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
                         ),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * .3,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              CustomText(
-                                text:
-                                    'Date: ${formatDate(loanDetail.createdAt)}',
-                                color: AppColors.neutral,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              CustomText(
-                                text:
-                                    'Last Updated: ${formatDate(loanDetail.updatedAt)}',
-                                color: AppColors.neutral,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ],
-                          ),
-                        )
+                          height: 5,
+                        ),
+                        CustomText(
+                          text: 'Applicant Details',
+                          color: AppColors.neutral,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        for (int i = 0; i < loanDetail.applicants.length; i++)
+                          applicantDetails(i, i),
+
+                        // Display other details as needed
+
+                        // Display details from Section Two
+                        CustomText(
+                          text: 'Part 2',
+                          color: AppColors.neutral,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        CustomText(
+                          text: 'Employment Details',
+                          color: AppColors.neutral,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        for (int i = 0; i < loanDetail.applicants.length; i++)
+                          employmentDetals(i, i),
+                        for (int i = 0; i < loanDetail.applicants.length; i++)
+                          employmentKinDetals(i, i),
+                        CustomText(
+                          text: 'Part 3',
+                          color: AppColors.neutral,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        CustomText(
+                          text: 'Loan Details',
+                          color: AppColors.neutral,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        loanDetails(),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        CustomText(
+                          text: 'Bank Details',
+                          color: AppColors.neutral,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        bankdetails(),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        for (int i = 0; i < loanDetail.applicants.length; i++)
+                          applicantDocuments(i, i),
+                        if (loanDetail.documents.isNotEmpty)
+                          additonalDocumnets(),
+                        if (loanDetail.psmpc_purchase_order.isNotEmpty)
+                          orderDocumnets(loanDetail.psmpc_purchase_order,
+                              'PSMPC Purchase Order'),
+                        if (loanDetail.delivery_report.isNotEmpty)
+                          orderDocumnets(
+                              loanDetail.delivery_report, 'DELIVERY RECEIPT'),
+                        if (loanDetail.warranty_form.isNotEmpty)
+                          orderDocumnets(loanDetail.warranty_form,
+                              'WARRANTY DISCLAIMER FORM'),
+                        if (loanDetail.anti_fraud_form.isNotEmpty)
+                          orderDocumnets(loanDetail.anti_fraud_form,
+                              'ANTI-FRAUD DECLARATION'),
+                        if (loanDetail.authorize_letter.isNotEmpty)
+                          orderDocumnets(loanDetail.authorize_letter,
+                              'AUTHORIZATION LETTER'),
+                        if (loanDetail.invoice.isNotEmpty)
+                          orderDocumnets(loanDetail.invoice, 'TAX INVOICE'),
+                        if (loanDetail.swap_agreement.isNotEmpty)
+                          orderDocumnets(
+                              loanDetail.swap_agreement, 'SWAP AGREEMENT'),
                       ],
                     ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    CustomText(
-                      text: 'Part 1',
-                      color: AppColors.neutral,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    CustomText(
-                      text: 'Applicant Details',
-                      color: AppColors.neutral,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    for (int i = 0; i < loanDetail.applicants.length; i++)
-                      applicantDetails(i, i),
-
-                    // Display other details as needed
-
-                    // Display details from Section Two
-                    CustomText(
-                      text: 'Part 2',
-                      color: AppColors.neutral,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    CustomText(
-                      text: 'Employment Details',
-                      color: AppColors.neutral,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    for (int i = 0; i < loanDetail.applicants.length; i++)
-                      employmentDetals(i, i),
-                    for (int i = 0; i < loanDetail.applicants.length; i++)
-                      employmentKinDetals(i, i),
-                    CustomText(
-                      text: 'Part 3',
-                      color: AppColors.neutral,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    CustomText(
-                      text: 'Loan Details',
-                      color: AppColors.neutral,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    loanDetails(),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    CustomText(
-                      text: 'Bank Details',
-                      color: AppColors.neutral,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    bankdetails(),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    for (int i = 0; i < loanDetail.applicants.length; i++)
-                      applicantDocuments(i, i),
-                    if (loanDetail.documents.isNotEmpty) additonalDocumnets(),
-                    if (loanDetail.psmpc_purchase_order.isNotEmpty)
-                      orderDocumnets(loanDetail.psmpc_purchase_order,
-                          'PSMPC Purchase Order'),
-                    if (loanDetail.delivery_report.isNotEmpty)
-                      orderDocumnets(
-                          loanDetail.delivery_report, 'DELIVERY RECEIPT'),
-                    if (loanDetail.warranty_form.isNotEmpty)
-                      orderDocumnets(
-                          loanDetail.warranty_form, 'WARRANTY DISCLAIMER FORM'),
-                    if (loanDetail.anti_fraud_form.isNotEmpty)
-                      orderDocumnets(
-                          loanDetail.anti_fraud_form, 'ANTI-FRAUD DECLARATION'),
-                    if (loanDetail.authorize_letter.isNotEmpty)
-                      orderDocumnets(
-                          loanDetail.authorize_letter, 'AUTHORIZATION LETTER'),
-                    if (loanDetail.invoice.isNotEmpty)
-                      orderDocumnets(loanDetail.invoice, 'TAX INVOICE'),
-                    if (loanDetail.swap_agreement.isNotEmpty)
-                      orderDocumnets(
-                          loanDetail.swap_agreement, 'SWAP AGREEMENT'),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          )
+              )
         : Scaffold(
             backgroundColor: AppColors.mainbackground,
             body: Center(
@@ -5194,7 +5220,7 @@ class _ViewApplicationState extends State<ViewApplication> {
       if (response.statusCode == 200) {
         setState(() {
           loanDetail = LoanRequestDetails.fromJson(response.data);
-
+          permission = true;
           isloadiing = false;
         });
 
@@ -5207,6 +5233,19 @@ class _ViewApplicationState extends State<ViewApplication> {
     } catch (error) {
       // Handle Dio errors or network errors
       print('Dio error: $error');
+      // Handle Dio errors or network errors
+      print('Dio error: $error');
+      if (error is DioError) {
+        if (error.response != null && error.response!.statusCode == 403) {
+          // Set custom message for 403 Forbidden error
+          setState(() {
+            permission = false;
+            isloadiing = false;
+          });
+          var message = 'Not access to permission';
+          print(message);
+        }
+      }
     }
   }
 
