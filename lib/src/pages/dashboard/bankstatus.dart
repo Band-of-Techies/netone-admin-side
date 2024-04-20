@@ -74,12 +74,11 @@ class _BankStatusSectionState extends State<BankStatusSection> {
                             applicantCount: loanRequests![index].applicantCount,
                             loanid: loanRequests![index].id,
                             agent: loanRequests![index]
-                                .agent
-                                .name, // Replace with actual agent information from API if available
+                                .salesAgent
+                                .name!, // Replace with actual agent information from API if available
                             functionstring: 'Select Status',
-                            productname: loanRequests![index]
-                                .product
-                                .name, // Replace with actual product name from API if available
+                            productname:
+                                '', // Replace with actual product name from API if available
                             amount: loanRequests![index].loanAmount,
                             requestId: loanRequests![index]
                                 .id

@@ -75,8 +75,8 @@ class _AssignToMeState extends State<AssignToMe> {
 
                             functionstring: 'Select Agent',
                             productname: loanRequests![index]
-                                .product
-                                .name, // Replace with actual product name from API if available
+                                .salesAgent
+                                .name!, // Replace with actual product name from API if available
                             amount: loanRequests![index].loanAmount,
                             requestId: loanRequests![index]
                                 .id

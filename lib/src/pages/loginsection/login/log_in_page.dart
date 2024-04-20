@@ -162,7 +162,8 @@ class _FormSectionState extends State<_FormSection> {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', response.data['token']);
         await prefs.setString('email', email);
-        await prefs.setString('role', response.data['role']);
+        await prefs.setString('role',
+            response.data['role'] == 'Admin' ? 'Admin' : response.data['kind']);
         setState(() {
           isloading = false;
         });

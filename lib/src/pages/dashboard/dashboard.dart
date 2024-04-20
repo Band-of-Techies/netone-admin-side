@@ -11,6 +11,8 @@ import 'package:netone_loanmanagement_admin/src/createapplication/constants/colo
 import 'package:netone_loanmanagement_admin/src/createapplication/createapp.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/agents.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/assigntome.dart';
+import 'package:netone_loanmanagement_admin/src/pages/dashboard/assigntome_afterbank.dart';
+import 'package:netone_loanmanagement_admin/src/pages/dashboard/bankapproved.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/bankstatus.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/category.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/closedorders.dart';
@@ -38,6 +40,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String currentDate = '';
   String? email;
   String? token;
+  late Timer _timer;
   String? role;
   void onTabSelected(String tab) {
     setState(() {
@@ -154,37 +157,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       isSelected: selectedTab == 'requests',
                       onTap: () => onTabSelected('requests'),
                     ),
-                  if (role == 'Agent' && role != 'Admin')
+                  if (role == 'sales')
                     SidebarTab(
                       title: 'Assign to Me',
                       isSelected: selectedTab == 'assigntome',
                       onTap: () => onTabSelected('assigntome'),
                     ),
-                  SidebarTab(
-                    title: 'Netone Status',
-                    isSelected: selectedTab == 'neteon_status',
-                    onTap: () => onTabSelected('neteon_status'),
-                  ),
-                  SidebarTab(
-                    title: 'Bank Status',
-                    isSelected: selectedTab == 'bank_status',
-                    onTap: () => onTabSelected('bank_status'),
-                  ),
-                  SidebarTab(
-                    title: 'Order Confirmed',
-                    isSelected: selectedTab == 'order_confirmed',
-                    onTap: () => onTabSelected('order_confirmed'),
-                  ),
-                  SidebarTab(
-                    title: 'Order Delivered',
-                    isSelected: selectedTab == 'order_delivered',
-                    onTap: () => onTabSelected('order_delivered'),
-                  ),
-                  SidebarTab(
-                    title: 'Order Closed',
-                    isSelected: selectedTab == 'order_closed',
-                    onTap: () => onTabSelected('order_closed'),
-                  ),
+                  if (role == 'sales' || role == 'Admin')
+                    SidebarTab(
+                      title: 'Netone Status',
+                      isSelected: selectedTab == 'neteon_status',
+                      onTap: () => onTabSelected('neteon_status'),
+                    ),
+                  if (role == 'sales' || role == 'Admin')
+                    SidebarTab(
+                      title: 'Bank Status',
+                      isSelected: selectedTab == 'bank_status',
+                      onTap: () => onTabSelected('bank_status'),
+                    ),
+                  if (role == 'Admin')
+                    SidebarTab(
+                      title: 'Bank Approved',
+                      isSelected: selectedTab == 'bank_approved',
+                      onTap: () => onTabSelected('bank_approved'),
+                    ),
+                  if (role == 'delivery')
+                    SidebarTab(
+                      title: 'Assign to Me',
+                      isSelected: selectedTab == 'assigntome_after_bank',
+                      onTap: () => onTabSelected('assigntome_after_bank'),
+                    ),
+                  if (role == 'delivery' || role == 'Admin')
+                    SidebarTab(
+                      title: 'Order Confirmed',
+                      isSelected: selectedTab == 'order_confirmed',
+                      onTap: () => onTabSelected('order_confirmed'),
+                    ),
+                  if (role == 'delivery' || role == 'Admin')
+                    SidebarTab(
+                      title: 'Order Delivered',
+                      isSelected: selectedTab == 'order_delivered',
+                      onTap: () => onTabSelected('order_delivered'),
+                    ),
+                  if (role == 'delivery' || role == 'Admin')
+                    SidebarTab(
+                      title: 'Order Closed',
+                      isSelected: selectedTab == 'order_closed',
+                      onTap: () => onTabSelected('order_closed'),
+                    ),
                   SizedBox(
                     height: 30,
                   ),
@@ -254,10 +274,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.initState();
     // Update time and date every second
     _updateTimeAndDate();
-    Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       _updateTimeAndDate();
     });
     gettokens();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Cancel the timer to prevent memory leaks
+    super.dispose();
   }
 
   void _updateTimeAndDate() {
@@ -285,6 +311,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return RequestsSection();
       case 'assigntome':
         return AssignToMe();
+      case 'assigntome_after_bank':
+        return AssignToMeAfterBank();
       case 'neteon_status':
         return NetoneStatusSection();
       case 'bank_status':
@@ -297,8 +325,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return ClosedOrderStatus();
       case 'order_rejected':
         return RejectedStatus();
-      // case 'all_customers':
-      //   return CustomerSection();
+      case 'bank_approved':
+        return BankApproved();
       case 'agents':
         return AgentStatus();
       case 'search_requests':

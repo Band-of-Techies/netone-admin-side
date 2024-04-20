@@ -25,6 +25,7 @@ class _AgentStatusState extends State<AgentStatus> {
   String? createddate;
   String? emailpref;
   String? token;
+  String? _selectedAgentType;
   bool isloading = true;
   bool isEditing = true;
   @override
@@ -53,8 +54,12 @@ class _AgentStatusState extends State<AgentStatus> {
                   for (int i = 0; i < agentsList.length; i++)
                     GestureDetector(
                       onTap: () {
-                        _showEditAgentPupup(agentsList[i]['id'], context,
-                            agentsList[i]['name'], agentsList[i]['email']);
+                        _showEditAgentPupup(
+                            agentsList[i]['id'],
+                            context,
+                            agentsList[i]['name'],
+                            agentsList[i]['email'],
+                            agentsList[i]['kind']);
                       },
                       child: Container(
                         margin: EdgeInsets.all(10),
@@ -99,7 +104,7 @@ class _AgentStatusState extends State<AgentStatus> {
                                             width: 30,
                                           ),
                                           CustomText(
-                                            text: agentsList[i]['role'],
+                                            text: agentsList[i]['kind'],
                                             fontSize: 12,
                                           ),
                                         ],
@@ -125,8 +130,10 @@ class _AgentStatusState extends State<AgentStatus> {
                                     color: AppColors.mainbackground,
                                   ),
                                   onPressed: () {
-                                    _showDeleteConfirmationDialog(context,
-                                        agentsList[i]['id'].toString());
+                                    _showDeleteConfirmationDialog(
+                                        context,
+                                        agentsList[i]['id'].toString(),
+                                        agentsList[i]['name'].toString());
                                     // Show the confirmation dialog
                                   },
                                 ))
@@ -250,6 +257,7 @@ class _AgentStatusState extends State<AgentStatus> {
             'password': password,
             'password_confirmation': confirmPassword,
             'email': email,
+            'kind': _selectedAgentType
           },
         },
         options: Options(
@@ -295,7 +303,7 @@ class _AgentStatusState extends State<AgentStatus> {
   }
 
   Future<void> edituser(int id, String name, String password,
-      String confirmPassword, String email) async {
+      String confirmPassword, String email, String _selectedAgentType) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       token = prefs.getString('token');
@@ -311,6 +319,7 @@ class _AgentStatusState extends State<AgentStatus> {
             'password': password,
             'password_confirmation': confirmPassword,
             'email': email,
+            'kind': _selectedAgentType
           },
         },
         options: Options(
@@ -361,14 +370,15 @@ class _AgentStatusState extends State<AgentStatus> {
   }
 
   Future<void> _showDeleteConfirmationDialog(
-      BuildContext context, String agentid) async {
+      BuildContext context, String agentid, String agentname) async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: AppColors.sidebarbackground,
           title: CustomText(text: 'Delete Confirmation'),
-          content: CustomText(text: 'Are you sure you want to delete?'),
+          content:
+              CustomText(text: 'Are you sure you want to delete $agentname?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -410,7 +420,7 @@ class _AgentStatusState extends State<AgentStatus> {
       if (response.statusCode! > 200 || response.statusCode! < 290) {
         // Successful delete
         fetchDataAndBuildUI();
-        print('Product deleted successfully.');
+        print('Agent deleted successfully.');
       } else {
         // Handle error
         print('Error deleting product. Status code: ${response.statusCode}');
@@ -486,6 +496,46 @@ class _AgentStatusState extends State<AgentStatus> {
                       return null; // Return null if validation passes
                     },
                   ),
+                  SizedBox(height: 30),
+
+                  // Dropdown for agent type
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Type of agent',
+                      labelStyle: GoogleFonts.dmSans(
+                        color: AppColors.neutral,
+                        height: 0.5,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: AppColors.neutral)),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: AppColors.neutral)),
+                    ),
+                    value: _selectedAgentType,
+                    dropdownColor: AppColors.mainbackground,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedAgentType = newValue;
+                      });
+                    },
+                    items: <String>['sales', 'delivery']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: GoogleFonts.dmSans(
+                            color: AppColors.neutral,
+                            height: 0.5,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ],
               ),
             ),
@@ -527,8 +577,8 @@ class _AgentStatusState extends State<AgentStatus> {
     );
   }
 
-  void _showEditAgentPupup(
-      int userid, BuildContext context, String username, String email) {
+  void _showEditAgentPupup(int userid, BuildContext context, String username,
+      String email, String kind) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -548,6 +598,8 @@ class _AgentStatusState extends State<AgentStatus> {
                   CustomText(text: "Username: $username"),
                   SizedBox(height: 10),
                   CustomText(text: "Email: $email"),
+                  SizedBox(height: 10),
+                  CustomText(text: "Type: $kind"),
                   SizedBox(height: 30),
                   buildEditableField(
                     'Password',
@@ -571,6 +623,44 @@ class _AgentStatusState extends State<AgentStatus> {
                       }
                       return null; // Return null if validation passes
                     },
+                  ),
+                  SizedBox(height: 30),
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: kind,
+                      labelStyle: GoogleFonts.dmSans(
+                        color: AppColors.neutral,
+                        height: 0.5,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: AppColors.neutral)),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: AppColors.neutral)),
+                    ),
+                    value: _selectedAgentType,
+                    dropdownColor: AppColors.mainbackground,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedAgentType = newValue;
+                      });
+                    },
+                    items: <String>['sales', 'delivery']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: GoogleFonts.dmSans(
+                            color: AppColors.neutral,
+                            height: 0.5,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ],
               ),
@@ -597,8 +687,13 @@ class _AgentStatusState extends State<AgentStatus> {
                       MaterialStateProperty.all(AppColors.mainColor)),
               onPressed: () async {
                 if (_formKeycreateagent.currentState!.validate()) {
-                  edituser(userid, username, passwordController.text,
-                      confirmPasswordController.text, email);
+                  edituser(
+                      userid,
+                      username,
+                      passwordController.text,
+                      confirmPasswordController.text,
+                      email,
+                      _selectedAgentType == null ? kind : _selectedAgentType!);
                 }
               },
               child: CustomText(

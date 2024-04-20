@@ -8,12 +8,12 @@ import 'package:netone_loanmanagement_admin/src/res/serchTextFiled.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class RequestsSection extends StatefulWidget {
+class BankApproved extends StatefulWidget {
   @override
-  _RequestsSectionState createState() => _RequestsSectionState();
+  _BankApprovedState createState() => _BankApprovedState();
 }
 
-class _RequestsSectionState extends State<RequestsSection> {
+class _BankApprovedState extends State<BankApproved> {
   TextEditingController search = TextEditingController();
   // Mock data for demonstration purposes
   List<Map<String, dynamic>> agentList = [];
@@ -76,8 +76,9 @@ class _RequestsSectionState extends State<RequestsSection> {
                             agent:
                                 'Not Assigned', // Replace with actual agent information from API if available
                             functionstring: 'Select Agent',
-                            productname:
-                                '', // Replace with actual product name from API if available
+                            productname: loanRequests![index]
+                                .salesAgent
+                                .name!, // Replace with actual product name from API if available
                             amount: loanRequests![index].loanAmount,
                             requestId: loanRequests![index]
                                 .id
@@ -142,10 +143,10 @@ class _RequestsSectionState extends State<RequestsSection> {
     });
     try {
       String apiEndpoint =
-          'https://loan-managment.onrender.com/loan_requests?filter=new';
+          'https://loan-managment.onrender.com/loan_requests?filter=confirmed_orders';
       if (search.text.isNotEmpty) {
         apiEndpoint =
-            'https://loan-managment.onrender.com/loan_requests?filter=new&search=${search.text}';
+            'https://loan-managment.onrender.com/loan_requests?filter=confirmed_orders&search=${search.text}';
       }
       //print(apiEndpoint);
       String bearerToken = token!;
@@ -174,7 +175,7 @@ class _RequestsSectionState extends State<RequestsSection> {
         });
       }
       final String agentsApiEndpoint =
-          'https://loan-managment.onrender.com/users?filter=sales';
+          'https://loan-managment.onrender.com/users?filter=delivery';
       var agentsResponse = await dio.get(
         agentsApiEndpoint,
         options: Options(

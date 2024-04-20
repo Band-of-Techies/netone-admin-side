@@ -22,7 +22,6 @@ class LoanRequestDetails {
   final String requestOrderUpdateDate;
   final List<Applicant> applicants;
   final dynamic applicantCount;
-  final AgentDetails agent;
   final List<Document> documents;
   final List<Document> swap_agreement;
   final List<Document> psmpc_purchase_order;
@@ -45,8 +44,12 @@ class LoanRequestDetails {
   final String branchname;
   final String sortcode;
   final String banknameandaddress;
+  final AgentDetails salesAgent;
+  final AgentDetails deliveryAgent; // Added delivery agent
 
   LoanRequestDetails({
+    required this.salesAgent,
+    required this.deliveryAgent, // Added delivery agent
     required this.invoicedate,
     required this.original_total_cost,
     required this.requestedProducts,
@@ -73,7 +76,6 @@ class LoanRequestDetails {
     required this.requestOrderUpdateDate,
     required this.applicants,
     required this.applicantCount,
-    required this.agent,
     required this.category,
     required this.anti_fraud_form,
     required this.authorize_letter,
@@ -129,6 +131,8 @@ class LoanRequestDetails {
       original_total_cost: json["original_total_cost"].toString() ?? 0,
       documents: documents,
       id: json['id'] ?? "NA",
+      salesAgent: AgentDetails.fromJson(json['assign_to']['sales'] ?? {}),
+      deliveryAgent: AgentDetails.fromJson(json['assign_to']['delivery'] ?? {}),
       psmpc_purchase_order: psmpc_purchase_order,
       delivery_report: delivery_report,
       warranty_form: warranty_form,
@@ -156,7 +160,7 @@ class LoanRequestDetails {
       requestBankUpdateDate: (json['request_bank_update_date'] ?? "NA"),
       requestSystemUpdateDate: (json['request_system_update_date'] ?? "NA"),
       requestOrderUpdateDate: (json['request_order_update_date'] ?? "NA"),
-      agent: AgentDetails.fromJson(json['assign_to'] ?? "NA"),
+
       requestedProducts: requestedProducts,
       applicants: (json['applicants'] as List<dynamic>)
           .map(
@@ -178,17 +182,21 @@ class LoanRequestDetails {
 }
 
 class AgentDetails {
-  final dynamic id;
-  final String name;
+  final dynamic id; // Changed type to int?
+  final String? name;
+  final String? assignedAt; // Added assignedAt
 
   AgentDetails({
-    required this.id,
-    required this.name,
+    this.id,
+    this.name,
+    this.assignedAt,
   });
+
   factory AgentDetails.fromJson(Map<String, dynamic> json) {
     return AgentDetails(
-      id: json['id'] ?? "NA",
-      name: json['name'] ?? "NA",
+      id: json['id'] ?? 'NA',
+      name: json['name'] ?? 'NA',
+      assignedAt: json['assigned_at'] ?? 'NA',
     );
   }
 }

@@ -355,7 +355,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                                     children: [
                                       CustomText(
                                         text:
-                                            'Assigned to: ${loanDetail.agent.name}',
+                                            'SAgent: ${loanDetail.salesAgent.name}',
                                         color: AppColors.neutral,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
@@ -363,7 +363,8 @@ class _ViewApplicationState extends State<ViewApplication> {
                                       if (role == 'Admin')
                                         TextButton(
                                             onPressed: () {
-                                              fetchUsers();
+                                              fetchUsers(
+                                                  'Sales Agent', 'sales');
                                             },
                                             child: CustomText(
                                               text: 'Change',
@@ -371,6 +372,29 @@ class _ViewApplicationState extends State<ViewApplication> {
                                             ))
                                     ],
                                   ),
+                                  if (loanDetail.requestBankStatus ==
+                                      'approved')
+                                    Row(
+                                      children: [
+                                        CustomText(
+                                          text:
+                                              'DAgent: ${loanDetail.deliveryAgent.name}',
+                                          color: AppColors.neutral,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        if (role == 'Admin')
+                                          TextButton(
+                                              onPressed: () {
+                                                fetchUsers('Delivery Agent',
+                                                    'delivery');
+                                              },
+                                              child: CustomText(
+                                                text: 'Change',
+                                                color: AppColors.primary,
+                                              ))
+                                      ],
+                                    ),
                                 ],
                               ),
                             ),
@@ -674,7 +698,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 top: 397,
               ),
             if (loanDetail.applicantCount > 0 &&
-                loanDetail.applicants[0].ownership == 'leased')
+                loanDetail.applicants[0].ownership == 'rented')
               CustomPositionedCheck(
                 tick: tick,
                 left: 216,
@@ -1693,7 +1717,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 top: 83,
               ),
             //agri
-            if (loanDetail.category.name == 'Agricultural Asset Loan')
+            if (loanDetail.category.name == 'Agricultural asset loan')
               CustomPositionedCheck(
                 tick: tick,
                 left: 310,
@@ -1707,14 +1731,14 @@ class _ViewApplicationState extends State<ViewApplication> {
                 top: 83,
               ),
             //buidling
-            if (loanDetail.category.name == 'Building Material Loan')
+            if (loanDetail.category.name == 'Building material loan')
               CustomPositionedCheck(
                 tick: tick,
                 left: 165,
                 top: 114,
               ),
             //device
-            if (loanDetail.category.name == 'Bring Your Own Device')
+            if (loanDetail.category.name == 'Bring your own device')
               CustomPositionedCheck(
                 tick: tick,
                 left: 310,
@@ -2222,8 +2246,9 @@ class _ViewApplicationState extends State<ViewApplication> {
               top: 203,
             ),
             CustomPositionedTextNOBold(
-              text:
-                  loanDetail.agent.name != null ? loanDetail.agent.name : 'NA',
+              text: loanDetail.salesAgent.name != null
+                  ? loanDetail.salesAgent.name!
+                  : 'NA',
               left: 28,
               top: 386,
             ),
@@ -2414,8 +2439,8 @@ class _ViewApplicationState extends State<ViewApplication> {
                 top: 203,
               ),
               CustomPositionedTextNOBold(
-                text: loanDetail.agent.name != null
-                    ? loanDetail.agent.name
+                text: loanDetail.salesAgent.name != null
+                    ? loanDetail.salesAgent.name!
                     : 'NA',
                 left: 28,
                 top: 386,
@@ -2610,8 +2635,8 @@ class _ViewApplicationState extends State<ViewApplication> {
                 top: 203,
               ),
               CustomPositionedTextNOBold(
-                text: loanDetail.agent.name != null
-                    ? loanDetail.agent.name
+                text: loanDetail.salesAgent.name != null
+                    ? loanDetail.salesAgent.name!
                     : 'NA',
                 left: 28,
                 top: 386,
@@ -2806,8 +2831,8 @@ class _ViewApplicationState extends State<ViewApplication> {
                 top: 203,
               ),
               CustomPositionedTextNOBold(
-                text: loanDetail.agent.name != null
-                    ? loanDetail.agent.name
+                text: loanDetail.salesAgent.name != null
+                    ? loanDetail.salesAgent.name!
                     : 'NA',
                 left: 28,
                 top: 386,
@@ -3344,7 +3369,8 @@ class _ViewApplicationState extends State<ViewApplication> {
       ..click();
   }
 
-  Future<void> changeAgent(BuildContext context) async {
+  Future<void> changeAgent(
+      BuildContext context, String type, String parameter) async {
     String? seletedagent;
     return showDialog(
       context: context,
@@ -3352,7 +3378,7 @@ class _ViewApplicationState extends State<ViewApplication> {
         return AlertDialog(
           backgroundColor: AppColors.sidebarbackground,
           title: CustomText(
-            text: 'Change Agent',
+            text: 'Change $type',
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: AppColors.mainColor,
@@ -3443,8 +3469,8 @@ class _ViewApplicationState extends State<ViewApplication> {
             // Confirm Button
             TextButton(
               onPressed: () {
-                if (loanDetail.agent.name != null &&
-                    loanDetail.agent.name != 'NA') {
+                if (loanDetail.salesAgent.name != null &&
+                    loanDetail.salesAgent.name != 'NA') {
                   _changeAgent(widget.loanRequestId, seletedagent!);
                 } else {
                   _submitAssignment(widget.loanRequestId, seletedagent!);
@@ -3462,8 +3488,9 @@ class _ViewApplicationState extends State<ViewApplication> {
     );
   }
 
-  Future<void> fetchUsers() async {
-    final String usersApiEndpoint = 'https://loan-managment.onrender.com/users';
+  Future<void> fetchUsers(String type, String parameter) async {
+    final String usersApiEndpoint =
+        'https://loan-managment.onrender.com/users?filter=$parameter';
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       token = prefs.getString('token');
@@ -3488,7 +3515,7 @@ class _ViewApplicationState extends State<ViewApplication> {
               .toList();
         });
         // Handle the retrieved user list
-        changeAgent(context);
+        changeAgent(context, type, parameter);
       } else {
         warning('Cannot fetch agenets');
         print(
@@ -3502,7 +3529,10 @@ class _ViewApplicationState extends State<ViewApplication> {
     }
   }
 
-  Future<void> _changeAgent(int id, String seletedagent) async {
+  Future<void> _changeAgent(
+    int id,
+    String seletedagent,
+  ) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (seletedagent != null) {
       // Replace with your actual API endpoint
@@ -5530,7 +5560,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                 children: <Widget>[
                   timelinecontent(
                     'Agent Status',
-                    'Assigned Agent: ${loanDetail.agent.name}',
+                    'Assigned Agent: ${loanDetail.salesAgent.name}',
                     'Assigned Date: ${loanDetail.assignedAt}',
                     '',
                   ),
@@ -5551,7 +5581,7 @@ class _ViewApplicationState extends State<ViewApplication> {
                   timelinecontent(
                       'Order',
                       'Order Status: ${loanDetail.requestOrderStatus}',
-                      'Last Update: ${loanDetail.requestOrderUpdateDate}',
+                      'Last Update: ',
                       ''),
                 ],
               ),
