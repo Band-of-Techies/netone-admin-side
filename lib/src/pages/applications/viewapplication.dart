@@ -5550,7 +5550,7 @@ class _ViewApplicationState extends State<ViewApplication> {
               width: MediaQuery.of(context).size.width * .5,
               height: MediaQuery.of(context).size.height * .7,
               child: Timeline(
-                indicators: List<Widget>.generate(4, (index) {
+                indicators: List<Widget>.generate(5, (index) {
                   return Icon(
                     Icons.circle,
                     color: AppColors.mainColor,
@@ -5578,6 +5578,12 @@ class _ViewApplicationState extends State<ViewApplication> {
                       loanDetail.bankRejectionReason != ''
                           ? 'Rejection Reason: ${loanDetail.bankRejectionReason}'
                           : ''),
+                  timelinecontent(
+                    'Service Agent Status',
+                    'Service Agent Agent: ${loanDetail.deliveryAgent.name}',
+                    'Service Agent Date: ${DateFormat.yMd().format(DateTime.parse(loanDetail.deliveryAgent.assignedAt!))}',
+                    '',
+                  ),
                   timelinecontent(
                       'Order',
                       'Order Status: ${loanDetail.requestOrderStatus}',

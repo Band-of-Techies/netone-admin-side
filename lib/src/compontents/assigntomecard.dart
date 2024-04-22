@@ -239,7 +239,7 @@ class _AssigntoMeCardState extends State<AssigntoMeCard> {
         }
       } catch (error) {
         // Handle error
-        print('Error during POST request: $error');
+        print('Error during POST requests: $error');
       }
     } else {
       print('Access token not found. Make sure to login first.');

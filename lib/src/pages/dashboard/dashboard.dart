@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,6 +25,8 @@ import 'package:netone_loanmanagement_admin/src/pages/dashboard/orderdeliverd.da
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/rejected.dart';
 import 'package:netone_loanmanagement_admin/src/pages/dashboard/request.dart';
 import 'package:netone_loanmanagement_admin/src/pages/loginsection/login/log_in_page.dart';
+import 'package:netone_loanmanagement_admin/src/res/apis/agentinfo.dart';
+import 'package:netone_loanmanagement_admin/src/res/apis/agents.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -407,7 +410,12 @@ class _DashboardContentState extends State<DashboardContent> {
   String? email;
   ScrollController _scrollController = ScrollController();
   String? token;
-
+  bool isloading = true;
+  bool isloading_sub = false;
+  String? errortext;
+  String? sub_error;
+  List<Agent> agents = [];
+  AgentInfo? agentDetails;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -429,218 +437,768 @@ class _DashboardContentState extends State<DashboardContent> {
             )
           : SizedBox(),
       backgroundColor: AppColors.mainbackground,
-      body: Theme(
-        data: Theme.of(context).copyWith(
-          scrollbarTheme: ScrollbarThemeData(
-            thumbColor: MaterialStateProperty.all(
-                AppColors.mainColor), // Set thumb color
-            trackColor:
-                MaterialStateProperty.all(Colors.grey), // Set track color
-          ),
-        ),
-        child: Scrollbar(
-          thumbVisibility: true,
-          controller: _scrollController,
-          thickness: 5, // Adjust thickness as needed
-          // Adjust hover thickness to match the actual thickness
-          radius: Radius.circular(10), // Adj
-          child: ListView(children: [
-            Wrap(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * .35,
-                  height: 300,
-                  child: Row(
-                    children: <Widget>[
-                      const SizedBox(
-                        height: 18,
-                      ),
-                      Expanded(
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: PieChart(
-                            PieChartData(
-                              pieTouchData: PieTouchData(
-                                touchCallback:
-                                    (FlTouchEvent event, pieTouchResponse) {
-                                  setState(() {
-                                    if (!event.isInterestedForInteractions ||
-                                        pieTouchResponse == null ||
-                                        pieTouchResponse.touchedSection ==
-                                            null) {
-                                      touchedIndex = -1;
-                                      return;
-                                    }
-                                    touchedIndex = pieTouchResponse
-                                        .touchedSection!.touchedSectionIndex;
-                                  });
-                                },
-                              ),
-                              borderData: FlBorderData(
-                                show: false,
-                              ),
-                              sectionsSpace: 0,
-                              centerSpaceRadius: 80,
-                              sections: showingSections(),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Indicator(
-                            color: AppColors.mainColor,
-                            text: 'First',
-                            isSquare: true,
-                          ),
-                          SizedBox(
-                            height: 4,
-                          ),
-                          Indicator(
-                            color: AppColors.sidebarbackground,
-                            text: 'Second',
-                            isSquare: true,
-                          ),
-                          SizedBox(
-                            height: 4,
-                          ),
-                          Indicator(
-                            color: AppColors.neutral,
-                            text: 'Third',
-                            isSquare: true,
-                          ),
-                          SizedBox(
-                            height: 4,
-                          ),
-                          Indicator(
-                            color: AppColors.textLight,
-                            text: 'Fourth',
-                            isSquare: true,
-                          ),
-                          SizedBox(
-                            height: 18,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        width: 28,
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * .4,
-                  height: 300,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        const SizedBox(
-                          height: 38,
-                        ),
-                        Expanded(
-                          child: BarChart(
-                            BarChartData(
-                              maxY: 20,
-                              barTouchData: BarTouchData(
-                                touchTooltipData: BarTouchTooltipData(
-                                  tooltipBgColor: Colors.grey,
-                                  getTooltipItem: (a, b, c, d) => null,
-                                ),
-                                touchCallback: (FlTouchEvent event, response) {
-                                  if (response == null ||
-                                      response.spot == null) {
-                                    setState(() {
-                                      touchedGroupIndex = -1;
-                                      showingBarGroups = List.of(rawBarGroups);
-                                    });
-                                    return;
-                                  }
-
-                                  touchedGroupIndex =
-                                      response.spot!.touchedBarGroupIndex;
-
-                                  setState(() {
-                                    if (!event.isInterestedForInteractions) {
-                                      touchedGroupIndex = -1;
-                                      showingBarGroups = List.of(rawBarGroups);
-                                      return;
-                                    }
-                                    showingBarGroups = List.of(rawBarGroups);
-                                    if (touchedGroupIndex != -1) {
-                                      var sum = 0.0;
-                                      for (final rod
-                                          in showingBarGroups[touchedGroupIndex]
-                                              .barRods) {
-                                        sum += rod.toY;
-                                      }
-                                      final avg = sum /
-                                          showingBarGroups[touchedGroupIndex]
-                                              .barRods
-                                              .length;
-
-                                      showingBarGroups[touchedGroupIndex] =
-                                          showingBarGroups[touchedGroupIndex]
-                                              .copyWith(
-                                        barRods:
-                                            showingBarGroups[touchedGroupIndex]
-                                                .barRods
-                                                .map((rod) {
-                                          return rod.copyWith(
-                                              toY: avg, color: widget.avgColor);
-                                        }).toList(),
-                                      );
-                                    }
-                                  });
-                                },
-                              ),
-                              titlesData: FlTitlesData(
-                                show: true,
-                                rightTitles: const AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                                topTitles: const AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                                bottomTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget: bottomTitles,
-                                    reservedSize: 42,
-                                  ),
-                                ),
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 28,
-                                    interval: 1,
-                                    getTitlesWidget: leftTitles,
-                                  ),
-                                ),
-                              ),
-                              borderData: FlBorderData(
-                                show: false,
-                              ),
-                              barGroups: showingBarGroups,
-                              gridData: const FlGridData(show: false),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                      ],
-                    ),
+      body: role == 'Admin'
+          ? isloading == true
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.mainColor,
                   ),
                 )
-              ],
-            ),
-          ]),
-        ),
-      ),
+              : isloading == false && errortext != null
+                  ? Center(
+                      child: CustomText(text: errortext!),
+                    )
+                  : Theme(
+                      data: Theme.of(context).copyWith(
+                        scrollbarTheme: ScrollbarThemeData(
+                          thumbColor: MaterialStateProperty.all(
+                              AppColors.mainColor), // Set thumb color
+                          trackColor: MaterialStateProperty.all(
+                              Colors.grey), // Set track color
+                        ),
+                      ),
+                      child: Scrollbar(
+                          thumbVisibility: true,
+                          controller: _scrollController,
+                          thickness: 5, // Adjust thickness as needed
+                          // Adjust hover thickness to match the actual thickness
+                          radius: Radius.circular(10), // Adj
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width * .25,
+                                padding: EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      for (int i = 0; i < agents.length; i++)
+                                        GestureDetector(
+                                          onTap: () {
+                                            getAgentDetails(
+                                                token!, agents[i].id);
+                                            setState(() {
+                                              isloading_sub = true;
+                                            });
+                                          },
+                                          child: Container(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  25, 15, 25, 15),
+                                              margin:
+                                                  EdgeInsets.only(bottom: 20),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                color:
+                                                    AppColors.sidebarbackground,
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  CustomText(
+                                                    text:
+                                                        'Name: ${agents[i].name}',
+                                                    color: AppColors.mainColor,
+                                                    fontSize: 16,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 8,
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      CustomText(
+                                                        text:
+                                                            'Role: ${agents[i].kind}',
+                                                        color:
+                                                            AppColors.neutral,
+                                                        fontSize: 12,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      CustomText(
+                                                        text:
+                                                            'Request: ${agents[i].totalRequests}',
+                                                        color:
+                                                            AppColors.neutral,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              )),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              isloading_sub == true
+                                  ? Container(
+                                      height: 250,
+                                      width: MediaQuery.of(context).size.width *
+                                          .4,
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          color: AppColors.mainColor,
+                                        ),
+                                      ),
+                                    )
+                                  : agentDetails != null
+                                      ? SingleChildScrollView(
+                                          child: Container(
+                                            margin: EdgeInsets.only(top: 20),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .4,
+                                            padding: EdgeInsets.fromLTRB(
+                                                20, 15, 20, 15),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              color:
+                                                  AppColors.sidebarbackground,
+                                            ),
+                                            child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      CustomText(
+                                                        text:
+                                                            agentDetails!.name,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            AppColors.mainColor,
+                                                      ),
+                                                      CustomText(
+                                                        text: agentDetails!
+                                                            .assignedRequests[
+                                                                'total']
+                                                            .toString(),
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            AppColors.neutral,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 12,
+                                                  ),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      CustomText(
+                                                        text:
+                                                            'Agent Role: ${agentDetails!.kind}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.neutral,
+                                                      ),
+                                                      CustomText(
+                                                        text:
+                                                            '${agentDetails!.email}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.neutral,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      CustomText(
+                                                        text:
+                                                            'Created: ${convertTimestamp(agentDetails!.createdAt)}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.neutral,
+                                                      ),
+                                                      CustomText(
+                                                        text:
+                                                            'Updated: ${convertTimestamp(agentDetails!.updatedAt)}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.neutral,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 25,
+                                                  ),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      CustomText(
+                                                        text:
+                                                            'Netone Requests: ${agentDetails!.assignedRequests['netone']['count']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.primary,
+                                                      ),
+                                                      CustomText(
+                                                        text:
+                                                            'Amount: ${agentDetails!.assignedRequests['netone']['total_cost']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.primary,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      CustomText(
+                                                        text:
+                                                            'Bank Status: ${agentDetails!.assignedRequests['bank']['count']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.neutral,
+                                                      ),
+                                                      CustomText(
+                                                        text:
+                                                            'Amount: ${agentDetails!.assignedRequests['bank']['total_cost']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.neutral,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      CustomText(
+                                                        text:
+                                                            'Bank Approved: ${agentDetails!.assignedRequests['unconfirmed_orders']['count']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.primary,
+                                                      ),
+                                                      CustomText(
+                                                        text:
+                                                            'Amount: ${agentDetails!.assignedRequests['unconfirmed_orders']['total_cost']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.primary,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      CustomText(
+                                                        text:
+                                                            'Order Confiremd: ${agentDetails!.assignedRequests['confirmed_orders']['count']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.neutral,
+                                                      ),
+                                                      CustomText(
+                                                        text:
+                                                            'Amount: ${agentDetails!.assignedRequests['confirmed_orders']['total_cost']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.neutral,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      CustomText(
+                                                        text:
+                                                            'Delivered: ${agentDetails!.assignedRequests['delivered_orders']['count']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.primary,
+                                                      ),
+                                                      CustomText(
+                                                        text:
+                                                            'Amount: ${agentDetails!.assignedRequests['delivered_orders']['total_cost']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.primary,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      CustomText(
+                                                        text:
+                                                            'Closed request: ${agentDetails!.assignedRequests['closed_orders']['count']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.neutral,
+                                                      ),
+                                                      CustomText(
+                                                        text:
+                                                            'Amount: ${agentDetails!.assignedRequests['closed_orders']['total_cost']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.neutral,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      CustomText(
+                                                        text:
+                                                            'Pending: ${agentDetails!.assignedRequests['order_pending']['count']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.primary,
+                                                      ),
+                                                      CustomText(
+                                                        text:
+                                                            'Amount: ${agentDetails!.assignedRequests['order_pending']['total_cost']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.primary,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      CustomText(
+                                                        text:
+                                                            'Rejected request: ${agentDetails!.assignedRequests['rejected']['count']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.neutral,
+                                                      ),
+                                                      CustomText(
+                                                        text:
+                                                            'Amount: ${agentDetails!.assignedRequests['rejected']['total_cost']}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColors.neutral,
+                                                      ),
+                                                    ],
+                                                  )
+                                                ]),
+                                          ),
+                                        )
+                                      : isloading_sub == true
+                                          ? Container(
+                                              height: 250,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .4,
+                                              child: Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  color: AppColors.mainColor,
+                                                ),
+                                              ),
+                                            )
+                                          : Container(
+                                              height: 250,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .4,
+                                              child: Center(
+                                                child: CustomText(
+                                                    text: 'No Datas'),
+                                              ),
+                                            )
+                            ],
+                          )),
+                    )
+          : Theme(
+              data: Theme.of(context).copyWith(
+                scrollbarTheme: ScrollbarThemeData(
+                  thumbColor: MaterialStateProperty.all(
+                      AppColors.mainColor), // Set thumb color
+                  trackColor:
+                      MaterialStateProperty.all(Colors.grey), // Set track color
+                ),
+              ),
+              child: Scrollbar(
+                thumbVisibility: true,
+                controller: _scrollController,
+                thickness: 5, // Adjust thickness as needed
+                // Adjust hover thickness to match the actual thickness
+                radius: Radius.circular(10), // Adj
+                child: SingleChildScrollView(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 20),
+                    width: MediaQuery.of(context).size.width * .4,
+                    padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.sidebarbackground,
+                    ),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText(
+                                text: 'name',
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.mainColor,
+                              ),
+                              CustomText(
+                                text: 'cost',
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.neutral,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText(
+                                text: 'Agent Role: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.neutral,
+                              ),
+                              CustomText(
+                                text: '',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.neutral,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText(
+                                text: 'Created: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.neutral,
+                              ),
+                              CustomText(
+                                text: 'Updated: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.neutral,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 25,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText(
+                                text: 'Netone Requests:',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.primary,
+                              ),
+                              CustomText(
+                                text: 'Amount:',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.primary,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText(
+                                text: 'Bank Status: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.neutral,
+                              ),
+                              CustomText(
+                                text: 'Amount: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.neutral,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText(
+                                text: 'Bank Approved:',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.primary,
+                              ),
+                              CustomText(
+                                text: 'Amount: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.primary,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText(
+                                text: 'Order Confiremd: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.neutral,
+                              ),
+                              CustomText(
+                                text: 'Amount: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.neutral,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText(
+                                text: 'Delivered: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.primary,
+                              ),
+                              CustomText(
+                                text: 'Amount: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.primary,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText(
+                                text: 'Closed request: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.neutral,
+                              ),
+                              CustomText(
+                                text: 'Amount: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.neutral,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText(
+                                text: 'Pending: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.primary,
+                              ),
+                              CustomText(
+                                text: 'Amount: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.primary,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText(
+                                text: 'Rejected request: ',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.neutral,
+                              ),
+                              CustomText(
+                                text: 'Amount:',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.neutral,
+                              ),
+                            ],
+                          )
+                        ]),
+                  ),
+                ),
+              )),
     );
   }
 
@@ -648,27 +1206,77 @@ class _DashboardContentState extends State<DashboardContent> {
   void initState() {
     super.initState();
     gettokens();
-    final barGroup1 = makeGroupData(0, 5, 12);
-    final barGroup2 = makeGroupData(1, 16, 12);
-    final barGroup3 = makeGroupData(2, 18, 5);
-    final barGroup4 = makeGroupData(3, 20, 16);
-    final barGroup5 = makeGroupData(4, 17, 6);
-    final barGroup6 = makeGroupData(5, 19, 1.5);
-    final barGroup7 = makeGroupData(6, 10, 1.5);
+  }
 
-    final items = [
-      barGroup1,
-      barGroup2,
-      barGroup3,
-      barGroup4,
-      barGroup5,
-      barGroup6,
-      barGroup7,
-    ];
+  void getAgents(String tokenValue) async {
+    String url = 'https://loan-managment.onrender.com/users';
 
-    rawBarGroups = items;
+    try {
+      Dio dio = Dio();
+      dio.options.headers['Authorization'] = 'Bearer $token';
 
-    showingBarGroups = rawBarGroups;
+      Response response = await dio.get(url);
+
+      if (response.statusCode == 200) {
+        // Parse the JSON response
+        List<dynamic> responseData = response.data['users'];
+        setState(() {
+          agents = responseData.map((json) => Agent.fromJson(json)).toList();
+
+          isloading = false;
+          errortext = null;
+        });
+      } else {
+        // Handle error
+        setState(() {
+          isloading = false;
+          errortext = 'Error:404';
+        });
+        print('Failed to load agents: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network error
+      setState(() {
+        isloading = false;
+        errortext = 'Error';
+      });
+      print('Error fetching agents: $e');
+    }
+  }
+
+  String convertTimestamp(String timestamp) {
+    // Parse the provided timestamp string
+    DateTime dateTime = DateTime.parse(timestamp);
+
+    // Format the DateTime object into the desired format
+    String formattedDate = DateFormat('dd MMMM yyyy').format(dateTime);
+
+    return formattedDate;
+  }
+
+  void getAgentDetails(String tokenValue, dynamic agentId) async {
+    String url = 'https://loan-managment.onrender.com/users/$agentId';
+
+    try {
+      Dio dio = Dio();
+      dio.options.headers['Authorization'] = 'Bearer $tokenValue';
+
+      Response response = await dio.get(url);
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseData = response.data;
+        setState(() {
+          agentDetails = AgentInfo.fromJson(responseData);
+          isloading_sub = false;
+        });
+      } else {
+        // Handle error
+        print('Failed to load agent details: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network error
+      print('Error fetching agent details: $e');
+    }
   }
 
   void gettokens() async {
@@ -678,6 +1286,7 @@ class _DashboardContentState extends State<DashboardContent> {
       email = prefs.getString('email');
       role = prefs.getString('role');
     });
+    getAgents(token!);
   }
 
   Widget leftTitles(double value, TitleMeta meta) {
@@ -715,132 +1324,5 @@ class _DashboardContentState extends State<DashboardContent> {
       space: 16, //margin top
       child: text,
     );
-  }
-
-  BarChartGroupData makeGroupData(int x, double y1, double y2) {
-    return BarChartGroupData(
-      barsSpace: 4,
-      x: x,
-      barRods: [
-        BarChartRodData(
-          toY: y1,
-          color: widget.leftBarColor,
-          width: width,
-        ),
-        BarChartRodData(
-          toY: y2,
-          color: widget.rightBarColor,
-          width: width,
-        ),
-      ],
-    );
-  }
-
-  Widget makeTransactionsIcon() {
-    const width = 4.5;
-    const space = 3.5;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Container(
-          width: width,
-          height: 10,
-          color: Colors.white.withOpacity(0.4),
-        ),
-        const SizedBox(
-          width: space,
-        ),
-        Container(
-          width: width,
-          height: 28,
-          color: Colors.white.withOpacity(0.8),
-        ),
-        const SizedBox(
-          width: space,
-        ),
-        Container(
-          width: width,
-          height: 42,
-          color: Colors.white.withOpacity(1),
-        ),
-        const SizedBox(
-          width: space,
-        ),
-        Container(
-          width: width,
-          height: 28,
-          color: Colors.white.withOpacity(0.8),
-        ),
-        const SizedBox(
-          width: space,
-        ),
-        Container(
-          width: width,
-          height: 10,
-          color: Colors.white.withOpacity(0.4),
-        ),
-      ],
-    );
-  }
-
-  List<PieChartSectionData> showingSections() {
-    return List.generate(4, (i) {
-      final isTouched = i == touchedIndex;
-      final fontSize = isTouched ? 25.0 : 16.0;
-      final radius = isTouched ? 60.0 : 50.0;
-      const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: AppColors.sidebarbackground,
-            value: 40,
-            title: '40%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: AppColors.neutral,
-            ),
-          );
-        case 1:
-          return PieChartSectionData(
-            color: AppColors.neutral,
-            value: 30,
-            title: '30%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: AppColors.sidebarbackground,
-            ),
-          );
-        case 2:
-          return PieChartSectionData(
-            color: AppColors.mainbackground,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: GoogleFonts.dmSans(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: AppColors.neutral,
-            ),
-          );
-        case 3:
-          return PieChartSectionData(
-            color: AppColors.mainColor,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: AppColors.neutral,
-            ),
-          );
-        default:
-          throw Error();
-      }
-    });
   }
 }
