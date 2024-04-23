@@ -406,14 +406,17 @@ class _DashboardContentState extends State<DashboardContent> {
   late List<BarChartGroupData> rawBarGroups;
   late List<BarChartGroupData> showingBarGroups;
   String? role;
+  String? userid;
   int touchedGroupIndex = -1;
   String? email;
   ScrollController _scrollController = ScrollController();
   String? token;
   bool isloading = true;
   bool isloading_sub = false;
+  bool isloading_agent_sub = true;
   String? errortext;
   String? sub_error;
+  String? sub_agent_error;
   List<Agent> agents = [];
   AgentInfo? agentDetails;
   @override
@@ -940,265 +943,297 @@ class _DashboardContentState extends State<DashboardContent> {
                             ],
                           )),
                     )
-          : Theme(
-              data: Theme.of(context).copyWith(
-                scrollbarTheme: ScrollbarThemeData(
-                  thumbColor: MaterialStateProperty.all(
-                      AppColors.mainColor), // Set thumb color
-                  trackColor:
-                      MaterialStateProperty.all(Colors.grey), // Set track color
-                ),
-              ),
-              child: Scrollbar(
-                thumbVisibility: true,
-                controller: _scrollController,
-                thickness: 5, // Adjust thickness as needed
-                // Adjust hover thickness to match the actual thickness
-                radius: Radius.circular(10), // Adj
-                child: SingleChildScrollView(
-                  child: Container(
-                    margin: EdgeInsets.only(top: 20),
-                    width: MediaQuery.of(context).size.width * .4,
-                    padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColors.sidebarbackground,
-                    ),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(
-                                text: 'name',
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.mainColor,
-                              ),
-                              CustomText(
-                                text: 'cost',
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.neutral,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 12,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(
-                                text: 'Agent Role: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.neutral,
-                              ),
-                              CustomText(
-                                text: '',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.neutral,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(
-                                text: 'Created: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.neutral,
-                              ),
-                              CustomText(
-                                text: 'Updated: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.neutral,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 25,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(
-                                text: 'Netone Requests:',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.primary,
-                              ),
-                              CustomText(
-                                text: 'Amount:',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.primary,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(
-                                text: 'Bank Status: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.neutral,
-                              ),
-                              CustomText(
-                                text: 'Amount: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.neutral,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(
-                                text: 'Bank Approved:',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.primary,
-                              ),
-                              CustomText(
-                                text: 'Amount: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.primary,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(
-                                text: 'Order Confiremd: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.neutral,
-                              ),
-                              CustomText(
-                                text: 'Amount: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.neutral,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(
-                                text: 'Delivered: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.primary,
-                              ),
-                              CustomText(
-                                text: 'Amount: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.primary,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(
-                                text: 'Closed request: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.neutral,
-                              ),
-                              CustomText(
-                                text: 'Amount: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.neutral,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(
-                                text: 'Pending: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.primary,
-                              ),
-                              CustomText(
-                                text: 'Amount: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.primary,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(
-                                text: 'Rejected request: ',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.neutral,
-                              ),
-                              CustomText(
-                                text: 'Amount:',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.neutral,
-                              ),
-                            ],
-                          )
-                        ]),
+          : isloading_agent_sub == true
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.mainColor,
                   ),
-                ),
-              )),
+                )
+              : sub_agent_error != null
+                  ? Center(
+                      child: CustomText(text: sub_agent_error!),
+                    )
+                  : Theme(
+                      data: Theme.of(context).copyWith(
+                        scrollbarTheme: ScrollbarThemeData(
+                          thumbColor: MaterialStateProperty.all(
+                              AppColors.mainColor), // Set thumb color
+                          trackColor: MaterialStateProperty.all(
+                              Colors.grey), // Set track color
+                        ),
+                      ),
+                      child: Scrollbar(
+                        thumbVisibility: true,
+                        controller: _scrollController,
+                        thickness: 5, // Adjust thickness as needed
+                        // Adjust hover thickness to match the actual thickness
+                        radius: Radius.circular(10), // Adj
+                        child: SingleChildScrollView(
+                          child: Container(
+                            margin: EdgeInsets.only(top: 20),
+                            width: MediaQuery.of(context).size.width * .4,
+                            padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: AppColors.sidebarbackground,
+                            ),
+                            child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomText(
+                                        text: 'name',
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.mainColor,
+                                      ),
+                                      CustomText(
+                                        text: 'cost',
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.neutral,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 12,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomText(
+                                        text: 'Agent Role: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.neutral,
+                                      ),
+                                      CustomText(
+                                        text: '',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.neutral,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomText(
+                                        text: 'Created: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.neutral,
+                                      ),
+                                      CustomText(
+                                        text: 'Updated: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.neutral,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 25,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomText(
+                                        text: 'Netone Requests:',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.primary,
+                                      ),
+                                      CustomText(
+                                        text: 'Amount:',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.primary,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomText(
+                                        text: 'Bank Status: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.neutral,
+                                      ),
+                                      CustomText(
+                                        text: 'Amount: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.neutral,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomText(
+                                        text: 'Bank Approved:',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.primary,
+                                      ),
+                                      CustomText(
+                                        text: 'Amount: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.primary,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomText(
+                                        text: 'Order Confiremd: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.neutral,
+                                      ),
+                                      CustomText(
+                                        text: 'Amount: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.neutral,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomText(
+                                        text: 'Delivered: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.primary,
+                                      ),
+                                      CustomText(
+                                        text: 'Amount: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.primary,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomText(
+                                        text: 'Closed request: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.neutral,
+                                      ),
+                                      CustomText(
+                                        text: 'Amount: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.neutral,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomText(
+                                        text: 'Pending: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.primary,
+                                      ),
+                                      CustomText(
+                                        text: 'Amount: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.primary,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomText(
+                                        text: 'Rejected request: ',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.neutral,
+                                      ),
+                                      CustomText(
+                                        text: 'Amount:',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.neutral,
+                                      ),
+                                    ],
+                                  )
+                                ]),
+                          ),
+                        ),
+                      )),
     );
   }
 
@@ -1268,14 +1303,25 @@ class _DashboardContentState extends State<DashboardContent> {
         setState(() {
           agentDetails = AgentInfo.fromJson(responseData);
           isloading_sub = false;
+          isloading_agent_sub = false;
+          sub_agent_error = null;
         });
       } else {
         // Handle error
         print('Failed to load agent details: ${response.statusCode}');
+        setState(() {
+          isloading_agent_sub = false;
+          sub_agent_error =
+              'Failed to load agent details: ${response.statusCode}';
+        });
       }
     } catch (e) {
       // Handle network error
       print('Error fetching agent details: $e');
+      setState(() {
+        isloading_agent_sub = false;
+        sub_agent_error = 'Error fetching agent details';
+      });
     }
   }
 
@@ -1285,8 +1331,14 @@ class _DashboardContentState extends State<DashboardContent> {
       token = prefs.getString('token');
       email = prefs.getString('email');
       role = prefs.getString('role');
+      userid = prefs.getString('userid');
     });
-    getAgents(token!);
+    if (role == 'Admin') {
+      getAgents(token!);
+    }
+    if (role == 'sales' || role == 'delivery') {
+      getAgentDetails(token!, userid);
+    }
   }
 
   Widget leftTitles(double value, TitleMeta meta) {
