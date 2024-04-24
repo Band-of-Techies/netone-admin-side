@@ -146,7 +146,7 @@ class _BankApprovedState extends State<BankApproved> {
           'https://loan-managment.onrender.com/loan_requests?filter=unconfirmed_orders';
       if (search.text.isNotEmpty) {
         apiEndpoint =
-            'https://loan-managment.onrender.com/loan_requests?filter=confirmed_orders&search=${search.text}';
+            'https://loan-managment.onrender.com/loan_requests?filter=unconfirmed_orders&search=${search.text}';
       }
       //print(apiEndpoint);
       String bearerToken = token!;
