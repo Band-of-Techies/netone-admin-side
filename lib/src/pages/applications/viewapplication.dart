@@ -1821,10 +1821,12 @@ class _ViewApplicationState extends State<ViewApplication> {
             //filldetails
             if (loanDetail.applicantCount > 0)
               CustomPositionedText(
-                text: loanDetail.applicants[0].surname,
-                left: 85,
+                text:
+                    '${loanDetail.applicants[0].surname}  ${loanDetail.applicants[0].middleName.isNotEmpty ? loanDetail.applicants[0].middleName : ''}  ${loanDetail.applicants[0].firstName}',
+                left: 75,
                 top: 549,
               ),
+
             if (loanDetail.applicantCount > 0)
               pw.Positioned(
                 left: 60,
@@ -1844,7 +1846,8 @@ class _ViewApplicationState extends State<ViewApplication> {
               ),
             if (loanDetail.applicantCount > 1)
               CustomPositionedText(
-                text: loanDetail.applicants[1].surname,
+                text:
+                    '${loanDetail.applicants[1].surname}  ${loanDetail.applicants[1].middleName.isNotEmpty ? loanDetail.applicants[1].middleName : ''}  ${loanDetail.applicants[1].firstName}',
                 left: 85,
                 top: 691,
               ),
@@ -1883,7 +1886,8 @@ class _ViewApplicationState extends State<ViewApplication> {
               ),
             if (loanDetail.applicantCount > 2)
               CustomPositionedText(
-                text: loanDetail.applicants[2].surname,
+                text:
+                    '${loanDetail.applicants[2].surname}  ${loanDetail.applicants[2].middleName.isNotEmpty ? loanDetail.applicants[2].middleName : ''}  ${loanDetail.applicants[2].firstName}',
                 left: 85,
                 top: 180,
               ),
@@ -1906,7 +1910,8 @@ class _ViewApplicationState extends State<ViewApplication> {
               ),
             if (loanDetail.applicantCount > 3)
               CustomPositionedText(
-                text: loanDetail.applicants[3].surname,
+                text:
+                    '${loanDetail.applicants[3].surname}  ${loanDetail.applicants[3].middleName.isNotEmpty ? loanDetail.applicants[3].middleName : ''}  ${loanDetail.applicants[3].firstName}',
                 left: 85,
                 top: 321,
               ),
@@ -2034,7 +2039,8 @@ class _ViewApplicationState extends State<ViewApplication> {
             ),
             if (loanDetail.applicantCount > 0)
               CustomPositionedText(
-                text: loanDetail.applicants[0].surname,
+                text:
+                    '${loanDetail.applicants[0].surname}  ${loanDetail.applicants[0].middleName.isNotEmpty ? loanDetail.applicants[0].middleName : ''}  ${loanDetail.applicants[0].firstName}',
                 left: 328,
                 top: 221,
               ),
@@ -2057,7 +2063,8 @@ class _ViewApplicationState extends State<ViewApplication> {
               ),
             if (loanDetail.applicantCount > 1)
               CustomPositionedText(
-                text: loanDetail.applicants[1].surname,
+                text:
+                    '${loanDetail.applicants[1].surname}  ${loanDetail.applicants[1].middleName.isNotEmpty ? loanDetail.applicants[1].middleName : ''}  ${loanDetail.applicants[1].firstName}',
                 left: 328,
                 top: 328,
               ),
@@ -2080,7 +2087,8 @@ class _ViewApplicationState extends State<ViewApplication> {
               ),
             if (loanDetail.applicantCount > 2)
               CustomPositionedText(
-                text: loanDetail.applicants[2].surname,
+                text:
+                    '${loanDetail.applicants[2].surname}  ${loanDetail.applicants[2].middleName.isNotEmpty ? loanDetail.applicants[2].middleName : ''}  ${loanDetail.applicants[2].firstName}',
                 left: 328,
                 top: 445,
               ),
@@ -2103,7 +2111,8 @@ class _ViewApplicationState extends State<ViewApplication> {
               ),
             if (loanDetail.applicantCount > 3)
               CustomPositionedText(
-                text: loanDetail.applicants[3].surname,
+                text:
+                    '${loanDetail.applicants[3].surname}  ${loanDetail.applicants[3].middleName.isNotEmpty ? loanDetail.applicants[3].middleName : ''}  ${loanDetail.applicants[3].firstName}',
                 left: 328,
                 top: 565,
               ),
@@ -2241,7 +2250,8 @@ class _ViewApplicationState extends State<ViewApplication> {
               top: 161,
             ),
             CustomPositionedTextBold(
-              text: loanDetail.applicants[0].surname,
+              text:
+                  '${loanDetail.applicants[0].surname}  ${loanDetail.applicants[0].middleName.isNotEmpty ? loanDetail.applicants[0].middleName : ''}  ${loanDetail.applicants[0].firstName}',
               left: 85,
               top: 203,
             ),
@@ -2390,6 +2400,21 @@ class _ViewApplicationState extends State<ViewApplication> {
                               //taxrate
                             ])
                       ])),
+            pw.Positioned(
+              left: 450,
+              top: 750,
+              child: pw.Column(children: [
+                TextNOBold(
+                  text: 'Customer Signtaure',
+                ),
+                pw.Image(
+                  pw.MemoryImage(signatures[
+                      0]), // Assuming image7 is the image you want to place
+                  width: 50, // Adjust width as needed
+                  height: 30, // Adjust height as needed
+                ),
+              ]),
+            ),
 
             //vat
 
@@ -2434,7 +2459,8 @@ class _ViewApplicationState extends State<ViewApplication> {
                 top: 161,
               ),
               CustomPositionedTextBold(
-                text: loanDetail.applicants[0].surname,
+                text:
+                    '${loanDetail.applicants[0].surname}  ${loanDetail.applicants[0].middleName.isNotEmpty ? loanDetail.applicants[0].middleName : ''}  ${loanDetail.applicants[0].firstName}',
                 left: 85,
                 top: 203,
               ),
@@ -2630,7 +2656,8 @@ class _ViewApplicationState extends State<ViewApplication> {
                 top: 161,
               ),
               CustomPositionedTextBold(
-                text: loanDetail.applicants[0].surname,
+                text:
+                    '${loanDetail.applicants[0].surname}  ${loanDetail.applicants[0].middleName.isNotEmpty ? loanDetail.applicants[0].middleName : ''}  ${loanDetail.applicants[0].firstName}',
                 left: 85,
                 top: 203,
               ),
@@ -2826,7 +2853,8 @@ class _ViewApplicationState extends State<ViewApplication> {
                 top: 161,
               ),
               CustomPositionedTextBold(
-                text: loanDetail.applicants[0].surname,
+                text:
+                    '${loanDetail.applicants[0].surname}  ${loanDetail.applicants[0].middleName.isNotEmpty ? loanDetail.applicants[0].middleName : ''}  ${loanDetail.applicants[0].firstName}',
                 left: 85,
                 top: 203,
               ),
