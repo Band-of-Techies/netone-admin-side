@@ -25,6 +25,10 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
+
 class SectionThree extends StatefulWidget {
   final MyTabController myTabController;
   late TabController _tabController;
@@ -165,7 +169,7 @@ class _SectionThreeState extends State<SectionThree>
   }
 
   void fetchCategories() async {
-    final String apiUrl = 'https://loan-managment.onrender.com/categories';
+    final String apiUrl = '$endpoint/categories';
 
     try {
       final dio = Dio();
@@ -202,8 +206,7 @@ class _SectionThreeState extends State<SectionThree>
   }
 
   void fetchProducts(String id) async {
-    final String apiUrl =
-        'https://loan-managment.onrender.com/products?category_id=$id';
+    final String apiUrl = '$endpoint/products?category_id=$id';
 
     try {
       final dio = Dio();
@@ -257,7 +260,7 @@ class _SectionThreeState extends State<SectionThree>
       dio.options.headers['Authorization'] = 'Bearer $bearertoken';
 
       final response = await dio.get(
-        'https://loan-managment.onrender.com/loan_requests/$requestId',
+        '$endpoint/loan_requests/$requestId',
         // Add headers or parameters as needed
       );
 
@@ -2272,8 +2275,7 @@ class _SectionThreeState extends State<SectionThree>
       token = prefs.getString('token');
       email = prefs.getString('email');
     });
-    final String apiUrl =
-        'https://loan-managment.onrender.com/loan_requests/$id';
+    final String apiUrl = '$endpoint/loan_requests/$id';
 
     try {
       var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
@@ -2502,7 +2504,7 @@ class _SectionThreeState extends State<SectionThree>
 
   Future<void> deleteAttachment(String id, String documentId) async {
     final String apiUrl =
-        'https://loan-managment.onrender.com/loan_requests/$id/remove_attachment?document_id=$documentId';
+        '$endpoint/loan_requests/$id/remove_attachment?document_id=$documentId';
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isloadiing = true;
@@ -2541,7 +2543,7 @@ class _SectionThreeState extends State<SectionThree>
       isloadiing = true;
       token = prefs.getString('token');
     });
-    String url = 'https://loan-managment.onrender.com/loan_requests/$id';
+    String url = '$endpoint/loan_requests/$id';
 
     // Define the request body
     Map<String, dynamic> requestBody = {
@@ -2598,7 +2600,7 @@ class _SectionThreeState extends State<SectionThree>
       token = prefs.getString('token');
     });
 
-    String url = 'https://loan-managment.onrender.com/loan_requests/$id';
+    String url = '$endpoint/loan_requests/$id';
 
     Map<String, dynamic> requestBody = {
       "loan_request": {

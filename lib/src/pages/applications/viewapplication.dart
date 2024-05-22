@@ -28,6 +28,9 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class ViewApplication extends StatefulWidget {
   final int loanRequestId;
@@ -3517,8 +3520,7 @@ class _ViewApplicationState extends State<ViewApplication> {
   }
 
   Future<void> fetchUsers(String type, String parameter) async {
-    final String usersApiEndpoint =
-        'https://loan-managment.onrender.com/users?filter=$parameter';
+    final String usersApiEndpoint = '$endpoint/users?filter=$parameter';
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       token = prefs.getString('token');
@@ -3565,8 +3567,7 @@ class _ViewApplicationState extends State<ViewApplication> {
     if (seletedagent != null) {
       // Replace with your actual API endpoint
 
-      String apiUrl =
-          "https://loan-managment.onrender.com/loan_requests/$id/assign_to_agent";
+      String apiUrl = "$endpoint/loan_requests/$id/assign_to_agent";
       // Replace 'yourAccessToken' with the actual token
       String accessToken = prefs.getString('token')!;
 
@@ -3607,8 +3608,7 @@ class _ViewApplicationState extends State<ViewApplication> {
     if (seletedagent != null) {
       // Replace with your actual API endpoint
 
-      String apiUrl =
-          "https://loan-managment.onrender.com/loan_requests/$id/assign_to_agent";
+      String apiUrl = "$endpoint/loan_requests/$id/assign_to_agent";
       // Replace 'yourAccessToken' with the actual token
       String accessToken = prefs.getString('token')!;
 
@@ -3696,8 +3696,7 @@ class _ViewApplicationState extends State<ViewApplication> {
       token = prefs.getString('token');
       email = prefs.getString('email');
     });
-    final String apiUrl =
-        'https://loan-managment.onrender.com/loan_requests/$id';
+    final String apiUrl = '$endpoint/loan_requests/$id';
     final String accessToken = token!;
 
     try {
@@ -5266,7 +5265,7 @@ class _ViewApplicationState extends State<ViewApplication> {
       String bearerToken = token!;
 
       final response = await dio.get(
-        'https://loan-managment.onrender.com/loan_requests/$loanRequestId',
+        '$endpoint/loan_requests/$loanRequestId',
         options: Options(
           headers: {
             'Authorization': 'Bearer $bearerToken',
@@ -5695,8 +5694,7 @@ class _ViewApplicationState extends State<ViewApplication> {
       email = prefs.getString('email');
       role = prefs.getString('role');
     });
-    final String apiUrl =
-        'https://loan-managment.onrender.com/loan_requests/${widget.loanRequestId}';
+    final String apiUrl = '$endpoint/loan_requests/${widget.loanRequestId}';
 
     try {
       var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));

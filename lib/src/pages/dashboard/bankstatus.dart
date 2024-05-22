@@ -8,6 +8,9 @@ import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/serchTextFiled.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class BankStatusSection extends StatefulWidget {
   const BankStatusSection({super.key});
@@ -139,11 +142,10 @@ class _BankStatusSectionState extends State<BankStatusSection> {
       email = prefs.getString('email');
     });
     try {
-      String apiEndpoint =
-          'https://loan-managment.onrender.com/loan_requests?filter=bank';
+      String apiEndpoint = '$endpoint/loan_requests?filter=bank';
       if (search.text.isNotEmpty) {
         apiEndpoint =
-            'https://loan-managment.onrender.com/loan_requests?filter=bank&search=${search.text}';
+            '$endpoint/loan_requests?filter=bank&search=${search.text}';
       }
       final String bearerToken = token!;
 

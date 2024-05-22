@@ -16,6 +16,9 @@ import 'package:http/http.dart' as http;
 import 'dart:html' as html;
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class SectionOne extends StatefulWidget {
   final MyTabController myTabController;
@@ -861,7 +864,7 @@ class _SectionOneState extends State<SectionOne>
       dio.options.headers['Authorization'] = 'Bearer $bearertoken';
 
       final response = await dio.get(
-        'https://loan-managment.onrender.com/loan_requests/$requestId',
+        '$endpoint/loan_requests/$requestId',
         // Add headers or parameters as needed
       );
 
@@ -927,8 +930,7 @@ class _SectionOneState extends State<SectionOne>
       token = prefs.getString('token');
       email = prefs.getString('email');
     });
-    final String apiUrl =
-        'https://loan-managment.onrender.com/loan_requests/$id';
+    final String apiUrl = '$endpoint/loan_requests/$id';
 
     try {
       var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));

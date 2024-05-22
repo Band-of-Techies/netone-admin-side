@@ -7,6 +7,9 @@ import 'package:intl/intl.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class CategoryStatus extends StatefulWidget {
   const CategoryStatus({super.key});
@@ -195,8 +198,7 @@ class _CategoryStatusState extends State<CategoryStatus> {
       print(productId);
       Dio dio = Dio();
       dio.options.headers['Authorization'] = token!;
-      final response = await dio
-          .delete('https://loan-managment.onrender.com/categories/$productId');
+      final response = await dio.delete('$endpoint/categories/$productId');
 
       // Check the response status code and handle accordingly
       if (response.statusCode == 200) {
@@ -333,7 +335,7 @@ class _CategoryStatusState extends State<CategoryStatus> {
       String bearerToken = token!;
 
       final response = await Dio().get(
-        'https://loan-managment.onrender.com/categories',
+        '$endpoint/categories',
         options: Options(
           headers: {
             'Authorization': 'Bearer $bearerToken',
@@ -385,7 +387,7 @@ class _CategoryStatusState extends State<CategoryStatus> {
       print('here');
       // Perform the POST request using Dio
       Response response = await Dio().post(
-        'https://loan-managment.onrender.com/categories',
+        '$endpoint/categories',
         data: categoryData,
         options: Options(
           headers: {
@@ -441,7 +443,7 @@ class _CategoryStatusState extends State<CategoryStatus> {
 
       // Perform the POST request using Dio
       Response response = await Dio().put(
-        'https://loan-managment.onrender.com/categories/$id',
+        '$endpoint/categories/$id',
         data: productData,
         options: Options(
           headers: {

@@ -15,6 +15,9 @@ import 'package:http/http.dart' as http;
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class AgentRequestItem extends StatefulWidget {
   final String requestId;
@@ -768,7 +771,7 @@ class _AgentRequestItemState extends State<AgentRequestItem> {
     if (seletedagent != null) {
       print(seletedagent);
       // Replace with your actual API endpoint
-      String apiUrl = "https://loan-managment.onrender.com/loan_requests/$id";
+      String apiUrl = "$endpoint/loan_requests/$id";
       // Replace 'yourAccessToken' with the actual token
       print(apiUrl);
       String accessToken = prefs.getString('token')!;
@@ -831,8 +834,7 @@ class _AgentRequestItemState extends State<AgentRequestItem> {
   }
 
   Future<void> updateWithDoc(int id, String seletedagent) async {
-    final String apiUrl =
-        'https://loan-managment.onrender.com/loan_requests/$id';
+    final String apiUrl = '$endpoint/loan_requests/$id';
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));

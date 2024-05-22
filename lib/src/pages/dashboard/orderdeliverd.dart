@@ -8,6 +8,9 @@ import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/serchTextFiled.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class OrderDeliverdStatus extends StatefulWidget {
   const OrderDeliverdStatus({super.key});
@@ -141,11 +144,10 @@ class _OrderDeliverdStatusState extends State<OrderDeliverdStatus> {
         token = prefs.getString('token');
         email = prefs.getString('email');
       });
-      String apiEndpoint =
-          'https://loan-managment.onrender.com/loan_requests?filter=delivered_orders';
+      String apiEndpoint = '$endpoint/loan_requests?filter=delivered_orders';
       if (search.text.isNotEmpty) {
         apiEndpoint =
-            'https://loan-managment.onrender.com/loan_requests?filter=delivered_orders&search=${search.text}';
+            '$endpoint/loan_requests?filter=delivered_orders&search=${search.text}';
       }
       final String bearerToken = token!;
 

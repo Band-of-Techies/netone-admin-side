@@ -156,7 +156,7 @@ class _SectionThreeState extends State<SectionThree>
   }
 
   void fetchProducts() async {
-    final String apiUrl = 'https://loan-managment.onrender.com/products';
+    final String apiUrl = '$endpoint/products';
 
     try {
       final dio = Dio();
@@ -197,7 +197,7 @@ class _SectionThreeState extends State<SectionThree>
       dio.options.headers['Authorization'] = 'Bearer $bearertoken';
 
       final response = await dio.get(
-        'https://loan-managment.onrender.com/loan_requests/$requestId',
+        '$endpoint/loan_requests/$requestId',
         // Add headers or parameters as needed
       );
 
@@ -1147,7 +1147,7 @@ class _SectionThreeState extends State<SectionThree>
       email = prefs.getString('email');
     });
     final String apiUrl =
-        'https://loan-managment.onrender.com/loan_requests/$id';
+        '$endpoint/loan_requests/$id';
 
     try {
       var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));
@@ -1222,7 +1222,7 @@ class _SectionThreeState extends State<SectionThree>
       email = prefs.getString('email');
     });
     final String apiUrl =
-        'https://loan-managment.onrender.com/loan_requests/${widget.id}';
+        '$endpoint/loan_requests/${widget.id}';
 
     try {
       var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));

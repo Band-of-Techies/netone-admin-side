@@ -7,6 +7,9 @@ import 'package:intl/intl.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class AgentStatus extends StatefulWidget {
   const AgentStatus({super.key});
@@ -210,7 +213,7 @@ class _AgentStatusState extends State<AgentStatus> {
       String bearerToken = token!;
 
       final response = await Dio().get(
-        'https://loan-managment.onrender.com/users',
+        '$endpoint/users',
         options: Options(
           headers: {
             'Authorization': 'Bearer $bearerToken',
@@ -250,7 +253,7 @@ class _AgentStatusState extends State<AgentStatus> {
     });
     try {
       final response = await Dio().post(
-        'https://loan-managment.onrender.com/users',
+        '$endpoint/users',
         data: {
           'user': {
             'name': name,
@@ -312,7 +315,7 @@ class _AgentStatusState extends State<AgentStatus> {
     });
     try {
       final response = await Dio().patch(
-        'https://loan-managment.onrender.com/users/$id',
+        '$endpoint/users/$id',
         data: {
           'user': {
             'name': name,
@@ -413,8 +416,7 @@ class _AgentStatusState extends State<AgentStatus> {
       print(agentid);
       Dio dio = Dio();
       dio.options.headers['Authorization'] = token!;
-      final response = await dio
-          .delete('https://loan-managment.onrender.com/users/$agentid');
+      final response = await dio.delete('$endpoint/users/$agentid');
 
       // Check the response status code and handle accordingly
       if (response.statusCode! > 200 || response.statusCode! < 290) {

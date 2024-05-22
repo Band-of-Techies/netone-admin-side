@@ -8,6 +8,9 @@ import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/serchTextFiled.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class RejectedStatus extends StatefulWidget {
   const RejectedStatus({super.key});
@@ -138,11 +141,10 @@ class _RejectedStatusState extends State<RejectedStatus> {
       email = prefs.getString('email');
     });
     try {
-      String apiEndpoint =
-          'https://loan-managment.onrender.com/loan_requests?filter=rejected';
+      String apiEndpoint = '$endpoint/loan_requests?filter=rejected';
       if (search.text.isNotEmpty) {
         apiEndpoint =
-            'https://loan-managment.onrender.com/loan_requests?filter=rejected&search=${search.text}';
+            '$endpoint/loan_requests?filter=rejected&search=${search.text}';
       }
       final String bearerToken = token!;
 

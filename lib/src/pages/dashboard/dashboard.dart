@@ -30,6 +30,9 @@ import 'package:netone_loanmanagement_admin/src/res/apis/agents.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -1264,7 +1267,7 @@ class _DashboardContentState extends State<DashboardContent> {
   }
 
   void getAgents(String tokenValue) async {
-    String url = 'https://loan-managment.onrender.com/users';
+    String url = '$endpoint/users';
 
     try {
       Dio dio = Dio();
@@ -1310,7 +1313,7 @@ class _DashboardContentState extends State<DashboardContent> {
   }
 
   void getAgentDetails(String tokenValue, dynamic agentId) async {
-    String url = 'https://loan-managment.onrender.com/users/$agentId';
+    String url = '$endpoint/users/$agentId';
 
     try {
       Dio dio = Dio();

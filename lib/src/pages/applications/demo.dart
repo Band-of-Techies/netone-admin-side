@@ -2621,7 +2621,7 @@
 //   }
 
 //   Future<void> fetchUsers() async {
-//     final String usersApiEndpoint = 'https://loan-managment.onrender.com/users';
+//     final String usersApiEndpoint = '$endpoint/users';
 //     final SharedPreferences prefs = await SharedPreferences.getInstance();
 //     setState(() {
 //       token = prefs.getString('token');
@@ -2665,7 +2665,7 @@
 //     if (seletedagent != null) {
 //       // Replace with your actual API endpoint
 
-//       String apiUrl = "https://loan-managment.onrender.com/loan_requests/$id";
+//       String apiUrl = "$endpoint/loan_requests/$id";
 //       // Replace 'yourAccessToken' with the actual token
 //       String accessToken = prefs.getString('token')!;
 
@@ -2752,7 +2752,7 @@
 //       email = prefs.getString('email');
 //     });
 //     final String apiUrl =
-//         'https://loan-managment.onrender.com/loan_requests/$id';
+//         '$endpoint/loan_requests/$id';
 //     final String accessToken = token!;
 
 //     try {
@@ -4242,7 +4242,7 @@
 //       String bearerToken = token!;
 
 //       final response = await dio.get(
-//         'https://loan-managment.onrender.com/loan_requests/$loanRequestId',
+//         '$endpoint/loan_requests/$loanRequestId',
 //         options: Options(
 //           headers: {
 //             'Authorization': 'Bearer $bearerToken',
@@ -4653,7 +4653,7 @@
 //       role = prefs.getString('role');
 //     });
 //     final String apiUrl =
-//         'https://loan-managment.onrender.com/loan_requests/${widget.loanRequestId}';
+//         '$endpoint/loan_requests/${widget.loanRequestId}';
 
 //     try {
 //       var request = http.MultipartRequest('PATCH', Uri.parse(apiUrl));

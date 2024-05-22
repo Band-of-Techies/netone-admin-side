@@ -8,6 +8,9 @@ import 'package:netone_loanmanagement_admin/src/pages/applications/viewapplicati
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class AssigntoMeCard extends StatefulWidget {
   final String gender;
@@ -211,8 +214,7 @@ class _AssigntoMeCardState extends State<AssigntoMeCard> {
 
     if (accessToken != null) {
       // Replace with your actual API endpoint
-      String apiUrl =
-          "https://loan-managment.onrender.com/loan_requests/$id/assign_to_me";
+      String apiUrl = "$endpoint/loan_requests/$id/assign_to_me";
 
       Dio dio = Dio();
       dio.options.headers = {

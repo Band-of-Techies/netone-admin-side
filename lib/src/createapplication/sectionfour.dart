@@ -15,6 +15,9 @@ import 'package:provider/provider.dart';
 
 import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class SectionFour extends StatefulWidget {
   final MyTabController myTabController;
@@ -1055,7 +1058,7 @@ class _SectionFourState extends State<SectionFour>
     setState(() {
       isloadiing = true;
     });
-    final String apiUrl = 'https://loan-managment.onrender.com/loan_requests';
+    final String apiUrl = '$endpoint/loan_requests';
 
     try {
       var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
@@ -1409,8 +1412,7 @@ class _SectionFourState extends State<SectionFour>
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token') ?? '';
 
-    final String url =
-        'https://loan-managment.onrender.com/loan_requests/$request_id/assign_to_me';
+    final String url = '$endpoint/loan_requests/$request_id/assign_to_me';
 
     try {
       final response = await http.post(
@@ -1442,7 +1444,7 @@ class _SectionFourState extends State<SectionFour>
   //   });
 
   //   // Prepare the API endpoint URL
-  //   final apiUrl = 'https://loan-managment.onrender.com/loan_requests';
+  //   final apiUrl = '$endpoint/loan_requests';
 
   //   // Prepare the headers (bearer token)
   //   final headers = {'Authorization': 'Bearer your_bearer_token_here'};

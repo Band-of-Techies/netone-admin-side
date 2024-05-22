@@ -8,6 +8,9 @@ import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/serchTextFiled.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class AssignToMeAfterBank extends StatefulWidget {
   @override
@@ -136,11 +139,10 @@ class _AssignToMeAfterBankState extends State<AssignToMeAfterBank> {
       email = prefs.getString('email');
     });
     try {
-      String apiEndpoint =
-          'https://loan-managment.onrender.com/loan_requests?filter=unconfirmed_orders';
+      String apiEndpoint = '$endpoint/loan_requests?filter=unconfirmed_orders';
       if (search.text.isNotEmpty) {
         apiEndpoint =
-            'https://loan-managment.onrender.com/loan_requests?filter=confirmed_orders&search=${search.text}';
+            '$endpoint/loan_requests?filter=confirmed_orders&search=${search.text}';
       }
       //print(apiEndpoint);
       String bearerToken = token!;

@@ -7,6 +7,9 @@ import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/serchTextFiled.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class BankApproved extends StatefulWidget {
   @override
@@ -142,11 +145,10 @@ class _BankApprovedState extends State<BankApproved> {
       email = prefs.getString('email');
     });
     try {
-      String apiEndpoint =
-          'https://loan-managment.onrender.com/loan_requests?filter=unconfirmed_orders';
+      String apiEndpoint = '$endpoint/loan_requests?filter=unconfirmed_orders';
       if (search.text.isNotEmpty) {
         apiEndpoint =
-            'https://loan-managment.onrender.com/loan_requests?filter=unconfirmed_orders&search=${search.text}';
+            '$endpoint/loan_requests?filter=unconfirmed_orders&search=${search.text}';
       }
       //print(apiEndpoint);
       String bearerToken = token!;
@@ -174,8 +176,7 @@ class _BankApprovedState extends State<BankApproved> {
           errorMessage = 'Error';
         });
       }
-      final String agentsApiEndpoint =
-          'https://loan-managment.onrender.com/users?filter=delivery';
+      final String agentsApiEndpoint = '$endpoint/users?filter=delivery';
       var agentsResponse = await dio.get(
         agentsApiEndpoint,
         options: Options(

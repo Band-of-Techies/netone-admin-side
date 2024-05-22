@@ -8,6 +8,9 @@ import 'package:netone_loanmanagement_admin/src/pages/applications/viewapplicati
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class RequestItem extends StatefulWidget {
   final String gender;
@@ -292,8 +295,7 @@ class _RequestItemState extends State<RequestItem> {
     if (seletedagent != null) {
       // Replace with your actual API endpoint
 
-      String apiUrl =
-          "https://loan-managment.onrender.com/loan_requests/$id/assign_to_agent";
+      String apiUrl = "$endpoint/loan_requests/$id/assign_to_agent";
       // Replace 'yourAccessToken' with the actual token
       String accessToken = prefs.getString('token')!;
 

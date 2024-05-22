@@ -14,6 +14,9 @@ import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/serchTextFiled.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class SearchStatus extends StatefulWidget {
   const SearchStatus({super.key});
@@ -487,16 +490,13 @@ class _SearchStatusState extends State<SearchStatus> {
           'apply_date_from=$startselecteddate&apply_date_to=$endselecteddate';
     }
     if (searchValue != null && searchdates != null) {
-      apiEndpoint =
-          'https://loan-managment.onrender.com/loan_requests?search=$searchValue&$searchdates';
+      apiEndpoint = '$endpoint/loan_requests?search=$searchValue&$searchdates';
     } else if (searchValue != null) {
-      apiEndpoint =
-          'https://loan-managment.onrender.com/loan_requests?search=$searchValue';
+      apiEndpoint = '$endpoint/loan_requests?search=$searchValue';
     } else if (searchdates != null) {
-      apiEndpoint =
-          'https://loan-managment.onrender.com/loan_requests?$searchdates';
+      apiEndpoint = '$endpoint/loan_requests?$searchdates';
     } else {
-      apiEndpoint = 'https://loan-managment.onrender.com/loan_requests';
+      apiEndpoint = '$endpoint/loan_requests';
     }
 
     final String bearerToken = token!;
@@ -522,8 +522,7 @@ class _SearchStatusState extends State<SearchStatus> {
       } else {
         print('Error: ${response.statusCode} - ${response.statusMessage}');
       }
-      final String agentsApiEndpoint =
-          'https://loan-managment.onrender.com/users';
+      final String agentsApiEndpoint = '$endpoint/users';
       var agentsResponse = await dio.get(
         agentsApiEndpoint,
         options: Options(

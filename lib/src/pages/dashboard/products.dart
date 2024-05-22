@@ -8,6 +8,9 @@ import 'package:intl/intl.dart';
 import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 import 'package:netone_loanmanagement_admin/src/res/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class ProductsStatus extends StatefulWidget {
   const ProductsStatus({super.key});
@@ -214,8 +217,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
       print(productId);
       Dio dio = Dio();
       dio.options.headers['Authorization'] = token!;
-      final response = await dio
-          .delete('https://loan-managment.onrender.com/products/$productId');
+      final response = await dio.delete('$endpoint/products/$productId');
 
       // Check the response status code and handle accordingly
       if (response.statusCode == 200) {
@@ -420,7 +422,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
       String bearerToken = token!;
 
       final response = await Dio().get(
-        'https://loan-managment.onrender.com/products',
+        '$endpoint/products',
         options: Options(
           headers: {
             'Authorization': 'Bearer $bearerToken',
@@ -461,7 +463,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
       String bearerToken = token!;
 
       final response = await Dio().get(
-        'https://loan-managment.onrender.com/categories',
+        '$endpoint/categories',
         options: Options(
           headers: {
             'Authorization': 'Bearer $bearerToken',
@@ -512,7 +514,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
       print('here');
       // Perform the POST request using Dio
       Response response = await Dio().post(
-        'https://loan-managment.onrender.com/products',
+        '$endpoint/products',
         data: productData,
         options: Options(
           headers: {
@@ -572,7 +574,7 @@ class _ProductsStatusState extends State<ProductsStatus> {
 
       // Perform the POST request using Dio
       Response response = await Dio().put(
-        'https://loan-managment.onrender.com/products/$id',
+        '$endpoint/products/$id',
         data: productData,
         options: Options(
           headers: {

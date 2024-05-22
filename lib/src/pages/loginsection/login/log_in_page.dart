@@ -9,6 +9,9 @@ import 'package:netone_loanmanagement_admin/src/shared/input_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -149,7 +152,7 @@ class _FormSectionState extends State<_FormSection> {
     });
     try {
       final response = await Dio().post(
-        'https://loan-managment.onrender.com/users/sign_in',
+        '$endpoint/users/sign_in',
         data: {'email': email, 'password': password},
       );
 

@@ -14,6 +14,9 @@ import 'package:netone_loanmanagement_admin/src/res/colors.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
 
 class EditApplication extends StatefulWidget {
   int? requestid;
@@ -167,7 +170,7 @@ class _EditApplication extends State<EditApplication>
       dio.options.headers['Authorization'] = 'Bearer $bearertoken';
 
       final response = await dio.get(
-        'https://loan-managment.onrender.com/loan_requests/$requestId',
+        '$endpoint/loan_requests/$requestId',
         // Add headers or parameters as needed
       );
 

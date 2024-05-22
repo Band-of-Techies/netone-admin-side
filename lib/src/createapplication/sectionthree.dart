@@ -22,6 +22,10 @@ import 'dart:js' as js;
 import 'package:provider/provider.dart';
 import 'dart:html' as html;
 
+import 'package:netone_loanmanagement_admin/config/config_dev.dart';
+
+final String endpoint = AppConfig.apiUrl;
+
 class SectionThree extends StatefulWidget {
   final MyTabController myTabController;
   late TabController _tabController;
@@ -379,7 +383,7 @@ class _SectionThreeState extends State<SectionThree>
   }
 
   void fetchCategories() async {
-    final String apiUrl = 'https://loan-managment.onrender.com/categories';
+    final String apiUrl = '$endpoint/categories';
 
     try {
       final dio = Dio();
@@ -416,8 +420,7 @@ class _SectionThreeState extends State<SectionThree>
   }
 
   void fetchProducts(String id) async {
-    final String apiUrl =
-        'https://loan-managment.onrender.com/products?category_id=$id';
+    final String apiUrl = '$endpoint/products?category_id=$id';
 
     try {
       final dio = Dio();
